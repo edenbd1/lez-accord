@@ -2611,9 +2611,9 @@ CMakeFiles/qml_host.dir/qml_host.cpp.o
  /opt/homebrew/opt/qt/lib/QtNetwork.framework/Headers/qtnetworkexports.h
  /opt/homebrew/opt/qt/lib/QtNetwork.framework/Headers/qtnetworkglobal.h
  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/QJSValue
- /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/QQmlApplicationEngine
  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/QQmlComponent
  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/QQmlContext
+ /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/QQmlEngine
  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qjsengine.h
  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qjsmanagedvalue.h
  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qjsnumbercoercion.h
@@ -2621,7 +2621,6 @@ CMakeFiles/qml_host.dir/qml_host.cpp.o
  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qjsvalue.h
  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqml.h
  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlabstracturlinterceptor.h
- /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlapplicationengine.h
  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlcomponent.h
  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlcontext.h
  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmldebug.h

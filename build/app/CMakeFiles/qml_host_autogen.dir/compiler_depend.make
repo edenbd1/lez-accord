@@ -1272,9 +1272,9 @@ qml_host_autogen/timestamp: /Applications/Xcode.app/Contents/Developer/Toolchain
   /opt/homebrew/Cellar/qtbase/6.11.1/lib/QtNetwork.framework/Versions/A/Headers/qtnetworkglobal.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/include/QtQmlIntegration/qqmlintegration.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/QJSValue \
-  /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/QQmlApplicationEngine \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/QQmlComponent \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/QQmlContext \
+  /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/QQmlEngine \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qjsengine.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qjsmanagedvalue.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qjsnumbercoercion.h \
@@ -1282,7 +1282,6 @@ qml_host_autogen/timestamp: /Applications/Xcode.app/Contents/Developer/Toolchain
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qjsvalue.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qqml.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qqmlabstracturlinterceptor.h \
-  /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qqmlapplicationengine.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qqmlcomponent.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qqmlcontext.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qqmldebug.h \
@@ -2760,6 +2759,10 @@ qml_host_autogen/timestamp: /Applications/Xcode.app/Contents/Developer/Toolchain
 
 /opt/homebrew/opt/qt/lib/cmake/Qt6Qml/QmlPlugins/Qt6qtvkbsettingspluginTargets-release.cmake:
 
+/opt/homebrew/opt/qt/lib/cmake/Qt6Qml/QmlPlugins/Qt6workerscriptpluginConfig.cmake:
+
+/opt/homebrew/opt/qt/lib/cmake/Qt6Qml/QmlPlugins/Qt6qtvkbpluginspluginTargetsPrecheck.cmake:
+
 /opt/homebrew/opt/qt/lib/cmake/Qt6Qml/QmlPlugins/Qt6qtvkbpluginspluginTargets-release.cmake:
 
 /opt/homebrew/opt/qt/lib/cmake/Qt6Qml/QmlPlugins/Qt6qtvkbpluginspluginAdditionalTargetInfo.cmake:
@@ -3373,8 +3376,6 @@ qml_host_autogen/timestamp: /Applications/Xcode.app/Contents/Developer/Toolchain
 /opt/homebrew/opt/qt/lib/cmake/Qt6Qml/QmlPlugins/Qt6DataVisualizationQmlpluginTargetsPrecheck.cmake:
 
 /opt/homebrew/opt/qt/lib/cmake/Qt6Qml/QmlPlugins/Qt6DataVisualizationQmlpluginTargets.cmake:
-
-/opt/homebrew/opt/qt/lib/cmake/Qt6Qml/QmlPlugins/Qt6DataVisualizationQmlpluginTargets-release.cmake:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk/usr/include/c++/v1/__variant/monostate.h:
 
@@ -5204,12 +5205,6 @@ CMakeFiles/4.1.2/CMakeCXXCompiler.cmake:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk/usr/include/c++/v1/__ranges/ref_view.h:
 
-/opt/homebrew/opt/qt/lib/cmake/Qt6Qml/QmlPlugins/Qt6workerscriptpluginConfig.cmake:
-
-/opt/homebrew/opt/qt/lib/cmake/Qt6Qml/QmlPlugins/Qt6qtvkbpluginspluginTargetsPrecheck.cmake:
-
-/opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/QQmlApplicationEngine:
-
 /opt/homebrew/opt/qt/lib/cmake/Qt6Qml/QmlPlugins/Qt6qtquickcontrols2imaginestylepluginConfig.cmake:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk/usr/include/c++/v1/__exception/exception.h:
@@ -5550,6 +5545,8 @@ CMakeFiles/4.1.2/CMakeCXXCompiler.cmake:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk/usr/include/c++/v1/__log_hardening_failure:
 
+/opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/QQmlEngine:
+
 qml_host_autogen/moc_predefs.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk/usr/include/_locale.h:
@@ -5697,6 +5694,8 @@ qml_host_autogen/moc_predefs.h:
 /opt/homebrew/opt/qt/lib/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginTargets.cmake:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk/usr/include/c++/v1/__iterator/aliasing_iterator.h:
+
+/opt/homebrew/opt/qt/lib/cmake/Qt6Qml/QmlPlugins/Qt6DataVisualizationQmlpluginTargets-release.cmake:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk/usr/include/sys/_pthread/_pthread_cond_t.h:
 
@@ -6051,8 +6050,6 @@ qml_host_autogen/moc_predefs.h:
 /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk/usr/include/c++/v1/__new/global_new_delete.h:
 
 /opt/homebrew/lib/cmake/Qt6/QtPublicAndroidHelpers.cmake:
-
-/opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qqmlapplicationengine.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk/usr/include/c++/v1/__locale_dir/support/apple.h:
 

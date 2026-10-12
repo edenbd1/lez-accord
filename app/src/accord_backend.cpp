@@ -5,7 +5,11 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QJsonDocument>
+#include <QJsonArray>
 #include <QStandardPaths>
+
+// Generated umbrella: LogosModules (behind modules()) from metadata.json's dependencies.
+#include "logos_sdk.h"
 
 namespace {
 const char* kDefaultRpc = "https://testnet.lez.logos.co";
@@ -73,5 +77,82 @@ QString AccordBackend::saveSettings(QString rpc, QString program) {
     if (!f.open(QIODevice::WriteOnly)) return QStringLiteral("error: cannot save settings");
     f.write(QJsonDocument(QJsonObject{{"rpc", rpc}, {"program", program.trimmed()}}).toJson());
     apply(rpc, program.trimmed());
+    return {};
+}
+
+// ── The room ───────────────────────────────────────────────────────────────
+//
+// A Logos Chat group conversation (MLS, end-to-end encrypted, over Logos
+// Delivery) per multisig per configuration epoch. Messages are text: a line of
+// deliberation, or an approval package's JSON, which the view decodes from its
+// bytes exactly as it decodes a package opened from a file. The chat module is
+// a transport here: the program verifies every approval again.
+
+void AccordBackend::onContextReady() {}
+
+QString AccordBackend::chatStart() {
+    if (chatUp_) return {};
+    auto& chat = modules().chat_module;
+    chat.on(QStringLiteral("message_received"), [this](const QVariantList& a) {
+        emit roomMessage(a.value(0).toString(), a.value(3).toString(), a.value(1).toString(), false);
+    });
+    chat.on(QStringLiteral("message_sent"), [this](const QVariantList& a) {
+        emit roomMessage(a.value(0).toString(), chatAddress(), a.value(1).toString(), true);
+    });
+    chat.on(QStringLiteral("delivery_state_changed"), [this](const QVariantList& a) {
+        setChatState(a.value(0).toString());
+        if (a.value(0).toString() == QLatin1String("online")) setChatAddress(modules().chat_module.get_address());
+    });
+    ChatModule::ChatConfig config;
+    config.delivery_preset = envOr("ACCORD_CHAT_PRESET", QStringLiteral("logos.test"));
+    config.log_level = QStringLiteral("warn");
+    const LogosResult res = chat.init(config);
+    if (!res.success) return QStringLiteral("error: the chat module did not start: ") + res.getError<QString>();
+    chatUp_ = true;
+    setChatState(QStringLiteral("initialising"));
+    setChatAddress(chat.get_address());
+    return {};
+}
+
+QString AccordBackend::roomCreate(QString token, QString name) {
+    if (!chatUp_) return QStringLiteral("error: start the room first");
+    const LogosResult res = modules().chat_module.create_group_conversation(name, QStringLiteral("Accord coordination room"));
+    if (!res.success) return QStringLiteral("error: ") + res.getError<QString>();
+    reply(token, QJsonObject{{"ok", true}, {"convo_id", res.getValue<QString>()}});
+    return {};
+}
+
+QString AccordBackend::roomAdd(QString convoId, QString address) {
+    if (!chatUp_) return QStringLiteral("error: start the room first");
+    const LogosResult res = modules().chat_module.add_group_member(convoId, address.trimmed());
+    return res.success ? QString() : QStringLiteral("error: ") + res.getError<QString>();
+}
+
+QString AccordBackend::roomPost(QString convoId, QString textOrPackage) {
+    if (!chatUp_) return QStringLiteral("error: start the room first");
+    QString content = textOrPackage.trimmed();
+    if (!content.startsWith('{') && QFileInfo::exists(content)) {
+        QFile f(content);
+        if (!f.open(QIODevice::ReadOnly)) return QStringLiteral("error: cannot read ") + content;
+        const QJsonObject p = accord::readPackage(f.readAll());
+        if (!p["ok"].toBool() || !p["digest_matches"].toBool()) return QStringLiteral("error: not a valid approval package");
+        f.seek(0);
+        content = QString::fromUtf8(QJsonDocument::fromJson(f.readAll()).toJson(QJsonDocument::Compact));
+    }
+    const LogosResult res = modules().chat_module.send_message(convoId, content);
+    return res.success ? QString() : QStringLiteral("error: ") + res.getError<QString>();
+}
+
+QString AccordBackend::roomList(QString token) {
+    if (!chatUp_) return QStringLiteral("error: start the room first");
+    QJsonArray rooms;
+    for (const ChatModule::Conversation& c : modules().chat_module.list_conversations()) {
+        if (c.kind != QLatin1String("group") || c.history_only) continue;
+        QJsonArray members;
+        for (const ChatModule::GroupMember& m : modules().chat_module.list_group_members(c.convo_id))
+            members.append(QJsonObject{{"address", m.address}, {"pending", m.pending}});
+        rooms.append(QJsonObject{{"convo_id", c.convo_id}, {"name", c.name.value_or(QString())}, {"members", members}});
+    }
+    reply(token, QJsonObject{{"ok", true}, {"rooms", rooms}});
     return {};
 }

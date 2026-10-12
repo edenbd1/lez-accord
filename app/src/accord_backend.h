@@ -18,8 +18,17 @@ public:
     QString loadMultisig(QString token, QString multisigId) override;
     QString loadPackage(QString token, QString multisigId, QString pathOrJson) override;
     QString saveSettings(QString rpc, QString program) override;
+    QString chatStart() override;
+    QString roomCreate(QString token, QString name) override;
+    QString roomAdd(QString convoId, QString address) override;
+    QString roomPost(QString convoId, QString textOrPackage) override;
+    QString roomList(QString token) override;
+
+protected:
+    void onContextReady() override;
 
 private:
+    bool chatUp_ = false;
     QString dataDir() const;
     void apply(const QString& rpc, const QString& program);
     void reply(const QString& token, const QJsonObject& json);

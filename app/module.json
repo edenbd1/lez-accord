@@ -1,23 +1,38 @@
 {
   "name": "accord",
   "display_name": "Accord",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "ui_qml",
   "interface": "universal",
   "category": "defi",
-  "description": "See an Accord multisig on LEZ: its members, roles, threshold, time lock, vault and spending limits, and every approval package you open, decoded from the exact bytes its approvals sign, with who has approved, the time lock against the chain's clock, and the exact command for the next step. Read-only: it holds no keys and signs nothing.",
+  "description": "See an Accord multisig on LEZ: its members, roles, threshold, time lock, vault and spending limits, and every approval package you open, decoded from the exact bytes its approvals sign, with who has approved, the time lock against the chain's clock, and the exact command for the next step. Its coordination room is a Logos Chat group per configuration epoch: packages posted there appear here, decoded. It holds no keys and signs nothing.",
   "author": "edenbd1",
   "main": "accord_plugin",
   "icon": "assets/icon.png",
   "view": "qml/Main.qml",
-  "dependencies": [],
+  "dependencies": [
+    {
+      "name": "chat_module",
+      "version": ">=0.3.0"
+    },
+    {
+      "name": "delivery_module",
+      "version": ">=0.3.0"
+    }
+  ],
   "codegen": {
-    "rep": "src/accord.rep"
+    "rep": "src/accord.rep",
+    "backend_class": "AccordBackend",
+    "backend_header": "accord_backend.h"
   },
   "nix": {
     "packages": {
       "build": [],
-      "runtime": []
+      "runtime": [
+        "qt6.qtdeclarative",
+        "zstd",
+        "abseil-cpp"
+      ]
     },
     "external_libraries": [],
     "cmake": {

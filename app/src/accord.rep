@@ -13,6 +13,24 @@ class Accord
     // Saved under the Basecamp user directory; an empty value restores the default.
     SLOT(QString saveSettings(QString rpc, QString program))
 
+    // ── The room: a Logos Chat group conversation per configuration epoch ──
+    // Bring the chat module up (once per session). chatState follows the
+    // delivery node: "initialising", "online", "error".
+    SLOT(QString chatStart())
+    // Create the room for a multisig's epoch; json: {ok, convo_id} or {ok: false, error}.
+    SLOT(QString roomCreate(QString token, QString name))
+    // Invite a member's chat address (their address is shown in their own app).
+    SLOT(QString roomAdd(QString convoId, QString address))
+    // Post a line of deliberation, or an approval package (a path or its JSON).
+    SLOT(QString roomPost(QString convoId, QString textOrPackage))
+    // {convo_id, name, kind, members: [{address, pending}]} for every room held.
+    SLOT(QString roomList(QString token))
+
+    PROP(QString chatState="off" READONLY)
+    PROP(QString chatAddress="" READONLY)
+    // A message in any room: the view decodes it if it is an approval package.
+    SIGNAL(roomMessage(QString convoId, QString sender, QString content, bool fromSelf))
+
     PROP(QString appVersion="" READONLY)
     PROP(QString rpc="" READONLY)
     PROP(QString program="" READONLY)

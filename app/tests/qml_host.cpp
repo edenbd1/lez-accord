@@ -62,6 +62,10 @@ public:
         return {};
     }
     Q_INVOKABLE QString saveSettings(QString, QString) { return {}; }
+    // The room needs Basecamp's chat module; the test host has none.
+    Q_PROPERTY(QString chatState MEMBER chatState_ CONSTANT)
+    QString chatState_ = QStringLiteral("off");
+    Q_INVOKABLE QString chatStart() { return QStringLiteral("error: no chat module in the test host"); }
 signals:
     void answered(QString token, QString json);
 };

@@ -108,6 +108,35 @@ Item {
         ignoreUnknownSignals: true
         function onViewModuleReadyChanged(name, isReady) { if (name === "accord") root.ready = isReady && root.backend !== null }
     }
+    // ── the room ──
+    property string room: ""
+    property var roomLines: []
+    function startRoom() {
+        logos.watch(backend.chatStart(), function (r) {
+            if (r) { root.error = String(r).replace("error: ", ""); return }
+            ask(t => backend.roomList(t), o => { if (o.ok && o.rooms.length && !root.room) root.room = o.rooms[0].convo_id })
+        }, function (e) { root.error = "The room did not start: " + e })
+    }
+    function createRoom() {
+        ask(t => backend.roomCreate(t, "accord " + (ms.id_text || "") + " e" + (ms.epoch || 0)), o => { if (o.ok) root.room = o.convo_id; else root.error = o.error })
+    }
+    function roomCall(pending) { logos.watch(pending, function (r) { if (r) root.error = String(r).replace("error: ", "") }, function (e) { root.error = String(e) }) }
+    function addLine(sender, text, mine) {
+        const l = root.roomLines.slice(); l.push({ sender: sender, text: text, mine: mine }); root.roomLines = l.slice(-6)
+    }
+    Connections {
+        target: root.backend
+        ignoreUnknownSignals: true
+        function onRoomMessage(convoId, sender, content, fromSelf) {
+            if (!root.room) root.room = convoId
+            if (convoId !== root.room) return
+            const c = String(content)
+            if (c.charAt(0) === "{" && c.indexOf("\"digest\"") >= 0) {
+                addLine(sender, "approval package", fromSelf)
+                openPackage(c)
+            } else addLine(sender, c, fromSelf)
+        }
+    }
     Connections {
         target: root.backend
         ignoreUnknownSignals: true
@@ -239,6 +268,38 @@ Item {
                                   modelData.min_signers + " of " + modelData.spenders.map(k => label(k)).join(", ") +
                                   "  ·  spent " + modelData.spent
                         }
+                    }
+                    Rectangle { Layout.fillWidth: true; height: 1; color: line }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Text { text: "ROOM"; color: accent; font.pixelSize: 11; font.bold: true; font.letterSpacing: 1 }
+                        Text { text: backend && backend.chatState ? "· " + backend.chatState : ""; color: dim; font.pixelSize: 11 }
+                        Item { Layout.fillWidth: true }
+                        Button { text: "Start"; visible: !backend || !backend.chatState || backend.chatState === "off"; onClicked: startRoom() }
+                        Button { text: "Create for epoch " + (ms.epoch || 0); visible: !!backend && backend.chatState === "online" && !root.room && !!ms.ok; onClicked: createRoom() }
+                    }
+                    TextEdit { visible: !!backend && !!backend.chatAddress; readOnly: true; selectByMouse: true; color: dim; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: TextEdit.WrapAnywhere
+                               text: backend && backend.chatAddress ? "my chat address: " + backend.chatAddress : "" }
+                    Text { visible: root.room !== ""; text: "room " + abbrev(root.room); color: fg; font.pixelSize: 12 }
+                    RowLayout {
+                        visible: root.room !== ""
+                        Layout.fillWidth: true
+                        TextField { id: inviteField; Layout.fillWidth: true; placeholderText: "a member's chat address"; color: fg; font.pixelSize: 12
+                                    background: Rectangle { radius: 8; color: bg; border.color: line } }
+                        Button { text: "Invite"; onClicked: { roomCall(backend.roomAdd(root.room, inviteField.text)); inviteField.text = "" } }
+                    }
+                    RowLayout {
+                        visible: root.room !== ""
+                        Layout.fillWidth: true
+                        TextField { id: postField; Layout.fillWidth: true; placeholderText: "a message, or a package path / JSON"; color: fg; font.pixelSize: 12
+                                    background: Rectangle { radius: 8; color: bg; border.color: line }
+                                    onAccepted: { roomCall(backend.roomPost(root.room, text)); text = "" } }
+                        Button { text: "Post"; onClicked: { roomCall(backend.roomPost(root.room, postField.text)); postField.text = "" } }
+                    }
+                    Repeater {
+                        model: root.roomLines
+                        delegate: Text { Layout.fillWidth: true; wrapMode: Text.Wrap; font.pixelSize: 12; color: modelData.mine ? dim : fg
+                                         text: (modelData.mine ? "me" : abbrev(modelData.sender)) + ": " + modelData.text }
                     }
                     Item { Layout.fillHeight: true }
                     Text { text: "No keys. Signs nothing. Every action below is decoded from the exact bytes its approvals sign."; color: dim; font.pixelSize: 11; wrapMode: Text.Wrap; Layout.fillWidth: true }
