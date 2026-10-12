@@ -1,0 +1,39 @@
+# The accord_multisig guest for LEZ v0.3 (RFP-005 prototype).
+#
+# Written against lee_core directly: SPEL has no v0.3 support. Every LEZ crate
+# is pinned to the v0.3.0 tag, commit db66590ab. The logic lives in `core`, so
+# the CLI and the host tests run the very plan/apply functions the guest runs.
+[workspace]
+members = [".", "core"]
+resolver = "2"
+
+[package]
+name    = "accord-guest"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[[bin]]
+name = "accord_multisig"
+path = "src/bin/accord_multisig.rs"
+
+[dependencies]
+accord-core = { path = "core" }
+lee_core   = { git = "https://github.com/logos-blockchain/logos-execution-zone.git", rev = "db66590ab821a4e142c211017a3866d007f6fa77" }
+risc0-zkvm = { version = "=3.0.5", default-features = false, features = ["std"] }
+
+[profile.release]
+opt-level     = 3
+lto           = "thin"
+codegen-units = 1
+panic         = "abort"
+
+# RISC Zero's accelerated forks: BIP-340 verification goes through the zkVM's
+# bigint2 curve arithmetic instead of software field operations. Without them
+# one verification costs several million cycles, so even M = 2 overruns the
+# 10,000,000 gas cap of a transaction (docs/BENCHMARKS.md).
+[patch.crates-io]
+k256          = { git = "https://github.com/risc0/RustCrypto-elliptic-curves", tag = "k256/v0.13.4-risczero.1" }
+crypto-bigint = { git = "https://github.com/risc0/RustCrypto-crypto-bigint", tag = "v0.5.5-risczero.0" }
+sha2          = { git = "https://github.com/risc0/RustCrypto-hashes", tag = "sha2-v0.10.8-risczero.0" }

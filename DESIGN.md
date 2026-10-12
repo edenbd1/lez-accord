@@ -1,4 +1,4 @@
-# Antumbra Quorum: design
+# Accord: design
 
 An M-of-N multisig program for the Logos Execution Zone v0.3 (tag `v0.3.0`,
 commit `db66590a`), written against `lee_core` directly. This is the design
@@ -97,7 +97,7 @@ pub enum Action {
 pub struct Call { pub program: AccountId, pub accounts: Vec<CallAccount>, pub data: Vec<u8> }
 ```
 
-`digest = SHA-256("antumbra_quorum/v1/action" ‖ configuration account ‖ epoch
+`digest = SHA-256("accord_multisig/v1/action" ‖ configuration account ‖ epoch
 (u32 LE) ‖ expires_at (u64 LE) ‖ borsh(action))`.
 
 Everything a signer approves is in those bytes: the multisig, the

@@ -13,19 +13,19 @@ use lee::{
     Account, AccountId, PrivateKey, ProgramShardSelector, PublicKey, PublicTransaction, ShardData, Signature,
     V03State, ValidatedStateDiff,
 };
-use antumbra_quorum_core::{Instruction, Multisig, Queued, Sig};
+use accord_core::{Instruction, Multisig, Queued, Sig};
 use token_core::{TokenDefinition, TokenHolding};
 
 /// The most execution gas one transaction may declare; gas is cycles one for one.
 pub const GAS_CAP: u64 = 10_000_000;
 
 /// The header account the tests deploy the program at.
-pub const MSIG: AccountId = AccountId::new(*b"antumbra/quorum/testheader/v03/1");
+pub const MSIG: AccountId = AccountId::new(*b"accord_multisig/test/header/0001");
 /// A second instance of the same binary, used as "another program" an
 /// approved action calls with the vault as its authority.
-pub const MSIG2: AccountId = AccountId::new(*b"antumbra/quorum/testheader/v03/2");
+pub const MSIG2: AccountId = AccountId::new(*b"accord_multisig/test/header/0002");
 
-pub const BIN: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../artifacts/programs/v0.3/antumbra_quorum.bin");
+pub const BIN: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../artifacts/programs/v0.3/accord_multisig.bin");
 
 /// A LEZ key: as an account (it signs transactions) or as an approval key (it
 /// signs digests). The same type serves both, which is the point: a wallet key
@@ -83,7 +83,7 @@ impl Chain {
     /// definition, balance). Every definition named is created too.
     #[must_use]
     pub fn new(native: &[(AccountId, u128)], tokens: &[(AccountId, AccountId, u128)]) -> Self {
-        let bin = std::fs::read(BIN).expect("build the guest first: artifacts/programs/v0.3/antumbra_quorum.bin");
+        let bin = std::fs::read(BIN).expect("build the guest first: artifacts/programs/v0.3/accord_multisig.bin");
         let program = lee::program::Program::new(bin.clone().into()).expect("a RISC0 program binary");
         let program2 = lee::program::Program::new(bin.into()).expect("a RISC0 program binary");
         let token = programs::token_account_id();
@@ -167,12 +167,12 @@ impl Chain {
 
     #[must_use]
     pub fn multisig(&self, program: AccountId, multisig_id: &[u8; 32]) -> Multisig {
-        antumbra_quorum_core::load(&self.shard(antumbra_quorum_core::config_account(&program, multisig_id), program))
+        accord_core::load(&self.shard(accord_core::config_account(&program, multisig_id), program))
     }
 
     #[must_use]
     pub fn queued(&self, multisig_id: &[u8; 32], digest: &[u8; 32]) -> Queued {
-        antumbra_quorum_core::load_queued(&self.shard(antumbra_quorum_core::queued_account(&MSIG, multisig_id, digest), MSIG))
+        accord_core::load_queued(&self.shard(accord_core::queued_account(&MSIG, multisig_id, digest), MSIG))
     }
 }
 

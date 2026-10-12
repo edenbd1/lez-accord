@@ -1,4 +1,4 @@
-//! antumbra_quorum on LEZ v0.3: the wire types, the digests and the whole
+//! accord_multisig on LEZ v0.3: the wire types, the digests and the whole
 //! program logic.
 //!
 //! The guest binary hands [`plan`] and [`apply`] to
@@ -360,13 +360,13 @@ pub fn registry_account(me: &AccountId, program: &AccountId, idl_sha256: &[u8; 3
 
 // ----------------------------------------------------------------- digests
 
-pub const TAG_ACTION: &[u8] = b"antumbra_quorum/v1/action";
-pub const TAG_PROPOSE: &[u8] = b"antumbra_quorum/v1/propose";
-pub const TAG_APPROVE: &[u8] = b"antumbra_quorum/v1/approve";
-pub const TAG_EXECUTE: &[u8] = b"antumbra_quorum/v1/execute";
-pub const TAG_ACTIVATE: &[u8] = b"antumbra_quorum/v1/activate";
-pub const TAG_SPEND: &[u8] = b"antumbra_quorum/v1/spend";
-pub const TAG_BIND: &[u8] = b"antumbra_quorum/v1/bind";
+pub const TAG_ACTION: &[u8] = b"accord_multisig/v1/action";
+pub const TAG_PROPOSE: &[u8] = b"accord_multisig/v1/propose";
+pub const TAG_APPROVE: &[u8] = b"accord_multisig/v1/approve";
+pub const TAG_EXECUTE: &[u8] = b"accord_multisig/v1/execute";
+pub const TAG_ACTIVATE: &[u8] = b"accord_multisig/v1/activate";
+pub const TAG_SPEND: &[u8] = b"accord_multisig/v1/spend";
+pub const TAG_BIND: &[u8] = b"accord_multisig/v1/bind";
 
 /// The digest every approval of `action` signs, under `epoch`, until `expires_at`.
 #[must_use]
@@ -446,10 +446,10 @@ pub fn verify(key: &[u8; 32], message: &[u8; 32], sig: &[u8; 64]) -> bool {
 
 // ------------------------------------------------------------------ events
 
-/// `sha256("antumbra_quorum::<Name>")[..8]`.
+/// `sha256("accord_multisig::<Name>")[..8]`.
 #[must_use]
 pub fn event_selector(name: &str) -> [u8; 8] {
-    let full = sha256(&[b"antumbra_quorum::", name.as_bytes()]);
+    let full = sha256(&[b"accord_multisig::", name.as_bytes()]);
     full[..8].try_into().expect("8 of 32 bytes")
 }
 
@@ -1072,6 +1072,66 @@ pub fn apply(effect: Effect, pre: &[u8]) -> Option<Vec<u8>> {
             refuse_unless(pre.is_empty(), E_EXISTS, "this registry entry exists");
             Some(store(&entry))
         }
+    }
+}
+
+/// The account rows each instruction takes, in order, for clients. The plan
+/// checks exactly these.
+pub mod rows {
+    use super::*;
+
+    fn own(me: &AccountId, id: AccountId) -> ProgramShardSelector {
+        ProgramShardSelector::new(id, *me)
+    }
+
+    #[must_use]
+    pub fn create(me: &AccountId, multisig_id: &[u8; 32], creator: AccountId) -> Vec<ProgramShardSelector> {
+        vec![own(me, config_account(me, multisig_id)), own(me, creator)]
+    }
+
+    #[must_use]
+    pub fn activate(me: &AccountId, multisig_id: &[u8; 32]) -> Vec<ProgramShardSelector> {
+        vec![own(me, config_account(me, multisig_id))]
+    }
+
+    #[must_use]
+    pub fn queue(me: &AccountId, multisig_id: &[u8; 32], digest: &[u8; 32]) -> Vec<ProgramShardSelector> {
+        vec![own(me, config_account(me, multisig_id)), own(me, queued_account(me, multisig_id, digest))]
+    }
+
+    /// `execute`'s rows: the configuration, the queued record, then what the
+    /// action needs: the target record of a cancellation, or every account
+    /// the calls name (each once, with the shard its first use selects).
+    #[must_use]
+    pub fn execute(me: &AccountId, multisig_id: &[u8; 32], digest: &[u8; 32], action: &Action) -> Vec<ProgramShardSelector> {
+        let mut out = queue(me, multisig_id, digest);
+        match action {
+            Action::Calls(calls) => {
+                for a in calls.iter().flat_map(|c| &c.accounts) {
+                    let sel = ProgramShardSelector::new(a.account, a.shard_program);
+                    if !out.contains(&sel) {
+                        out.push(sel);
+                    }
+                }
+            }
+            Action::Config(_) => {}
+            Action::CancelQueued { digest: target } => out.push(own(me, queued_account(me, multisig_id, target))),
+        }
+        out
+    }
+
+    #[must_use]
+    pub fn spend(me: &AccountId, multisig_id: &[u8; 32], asset: &Asset, destination: AccountId) -> Vec<ProgramShardSelector> {
+        vec![
+            own(me, config_account(me, multisig_id)),
+            ProgramShardSelector::new(vault_account(me, multisig_id), asset.shard_program()),
+            ProgramShardSelector::new(destination, asset.shard_program()),
+        ]
+    }
+
+    #[must_use]
+    pub fn register(me: &AccountId, program: &AccountId, idl_sha256: &[u8; 32], registrant: AccountId) -> Vec<ProgramShardSelector> {
+        vec![own(me, registry_account(me, program, idl_sha256)), own(me, registrant)]
     }
 }
 
