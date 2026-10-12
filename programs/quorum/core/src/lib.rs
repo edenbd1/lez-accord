@@ -1,4 +1,4 @@
-//! lez_multisig on LEZ v0.3: the wire types, the digests and the whole
+//! antumbra_quorum on LEZ v0.3: the wire types, the digests and the whole
 //! program logic.
 //!
 //! The guest binary hands [`plan`] and [`apply`] to
@@ -360,13 +360,13 @@ pub fn registry_account(me: &AccountId, program: &AccountId, idl_sha256: &[u8; 3
 
 // ----------------------------------------------------------------- digests
 
-pub const TAG_ACTION: &[u8] = b"lez_multisig/v1/action";
-pub const TAG_PROPOSE: &[u8] = b"lez_multisig/v1/propose";
-pub const TAG_APPROVE: &[u8] = b"lez_multisig/v1/approve";
-pub const TAG_EXECUTE: &[u8] = b"lez_multisig/v1/execute";
-pub const TAG_ACTIVATE: &[u8] = b"lez_multisig/v1/activate";
-pub const TAG_SPEND: &[u8] = b"lez_multisig/v1/spend";
-pub const TAG_BIND: &[u8] = b"lez_multisig/v1/bind";
+pub const TAG_ACTION: &[u8] = b"antumbra_quorum/v1/action";
+pub const TAG_PROPOSE: &[u8] = b"antumbra_quorum/v1/propose";
+pub const TAG_APPROVE: &[u8] = b"antumbra_quorum/v1/approve";
+pub const TAG_EXECUTE: &[u8] = b"antumbra_quorum/v1/execute";
+pub const TAG_ACTIVATE: &[u8] = b"antumbra_quorum/v1/activate";
+pub const TAG_SPEND: &[u8] = b"antumbra_quorum/v1/spend";
+pub const TAG_BIND: &[u8] = b"antumbra_quorum/v1/bind";
 
 /// The digest every approval of `action` signs, under `epoch`, until `expires_at`.
 #[must_use]
@@ -446,10 +446,10 @@ pub fn verify(key: &[u8; 32], message: &[u8; 32], sig: &[u8; 64]) -> bool {
 
 // ------------------------------------------------------------------ events
 
-/// `sha256("lez_multisig::<Name>")[..8]`.
+/// `sha256("antumbra_quorum::<Name>")[..8]`.
 #[must_use]
 pub fn event_selector(name: &str) -> [u8; 8] {
-    let full = sha256(&[b"lez_multisig::", name.as_bytes()]);
+    let full = sha256(&[b"antumbra_quorum::", name.as_bytes()]);
     full[..8].try_into().expect("8 of 32 bytes")
 }
 

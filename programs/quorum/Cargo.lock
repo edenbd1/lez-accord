@@ -30,6 +30,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "antumbra-quorum-core"
+version = "0.1.0"
+dependencies = [
+ "borsh",
+ "k256",
+ "lee_core",
+ "risc0-zkvm",
+ "token_core",
+]
+
+[[package]]
+name = "antumbra-quorum-guest"
+version = "0.1.0"
+dependencies = [
+ "antumbra-quorum-core",
+ "lee_core",
+ "risc0-zkvm",
+]
+
+[[package]]
 name = "anyhow"
 version = "1.0.104"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1233,26 +1253,6 @@ dependencies = [
  "serde",
  "serde_with",
  "thiserror",
-]
-
-[[package]]
-name = "lez-multisig-core"
-version = "0.1.0"
-dependencies = [
- "borsh",
- "k256",
- "lee_core",
- "risc0-zkvm",
- "token_core",
-]
-
-[[package]]
-name = "lez-multisig-guest"
-version = "0.1.0"
-dependencies = [
- "lee_core",
- "lez-multisig-core",
- "risc0-zkvm",
 ]
 
 [[package]]
