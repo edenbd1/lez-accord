@@ -78,8 +78,12 @@ enum Cmd {
     ImageId,
     /// The chain clock (ms).
     Now,
-    /// The configuration and vault accounts of a multisig id.
-    Ids { multisig: String },
+    /// The configuration and vault accounts of a multisig id (and a queued record's, with `--digest`).
+    Ids {
+        multisig: String,
+        #[arg(long)]
+        digest: Option<String>,
+    },
     /// Deploy `--elf` through program_loader.
     Deploy {
         #[arg(long)]
@@ -612,10 +616,14 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
             println!("{}", image_hex(&program));
         }
         Cmd::Now => println!("{}", ctx.now().await?),
-        Cmd::Ids { multisig } => {
+        Cmd::Ids { multisig, digest } => {
             let p = ctx.program()?;
             let id = id32(&multisig)?;
-            println!("{}", serde_json::json!({"multisig_id": hex::encode(id), "configuration": config_account(&p, &id).to_string(), "vault": vault_account(&p, &id).to_string()}));
+            let mut j = serde_json::json!({"multisig_id": hex::encode(id), "configuration": config_account(&p, &id).to_string(), "vault": vault_account(&p, &id).to_string()});
+            if let Some(d) = digest {
+                j["queued"] = queued_account(&p, &id, &id32(&d)?).to_string().into();
+            }
+            println!("{j}");
         }
         Cmd::Deploy { payer, header, segment } => {
             let bytecode = std::fs::read(elf).with_context(|| format!("reading {}", elf.display()))?;
