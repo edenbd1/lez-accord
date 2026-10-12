@@ -44,7 +44,7 @@ arithmetic through the zkVM's bigint2 accelerator; a different scheme
 (Ed25519, P-256).
 
 **Chosen.** The accelerated fork. About 275,000 cycles per verification;
-`queue` with M = 32 approvals (33 verifications) uses 9.14M cycles, 91.4% of
+`queue` with M = 32 approvals (33 verifications) uses 9.18M cycles, 91.8% of
 the cap (`docs/BENCHMARKS.md`). The scheme stays BIP-340, the one LEZ uses
 for its own witness sets, so any LEZ wallet key works as an approval key.
 

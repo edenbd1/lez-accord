@@ -21,20 +21,20 @@ budget of one transaction (gas is cycles one for one). Raw output:
 | op | cycles | share of the 10M gas cap |
 |---|---:|---:|
 | create (3 members) | 124,073 | 1.2% |
-| queue, M = 2 (3 signatures) | 867,409 | 8.7% |
-| execute, native transfer (1 signature) | 329,527 | 3.3% |
-| spend within a limit (1 signature) | 311,850 | 3.1% |
+| queue, M = 2 (3 signatures) | 874,920 | 8.7% |
+| execute, native transfer (1 signature) | 329,908 | 3.3% |
+| spend within a limit (1 signature) | 312,005 | 3.1% |
 
 | M | queue cycles | share of the cap |
 |---:|---:|---:|
-| 1 | 599,411 | 6.0% |
-| 3 | 1,147,522 | 11.5% |
-| 5 | 1,705,954 | 17.1% |
-| 7 | 2,253,008 | 22.5% |
-| 10 | 3,074,907 | 30.7% |
-| 16 | 4,731,766 | 47.3% |
-| 24 | 6,952,355 | 69.5% |
-| 32 | 9,136,004 | 91.4% |
+| 1 | 589,776 | 5.9% |
+| 3 | 1,148,731 | 11.5% |
+| 5 | 1,701,981 | 17.0% |
+| 7 | 2,248,843 | 22.5% |
+| 10 | 3,077,940 | 30.8% |
+| 16 | 4,735,052 | 47.4% |
+| 24 | 6,937,289 | 69.4% |
+| 32 | 9,177,864 | 91.8% |
 
 About **275,000 cycles per approval**, linear in M. **M = 32**, the most
 members a configuration may hold, fits one transaction. The RFP's line,
