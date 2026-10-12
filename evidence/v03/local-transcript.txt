@@ -1,0 +1,164 @@
+{"header":"EZTHmUEMJNu5qXGms4PGnvb7hasjy9HmqAgn35AmCmTL","image_id":"f82aabe82fef01e98bd24ab723917762c7fc0a1ddb90f52aedc929156d0a7c09","op":"deploy","segments":["EUW8idvdzm3r6upyTGS5MV9czPs1bNjpUABMZPFYt7CT","7mBmwypynKYuBAPbsxFwEfT3cDXpahThLQ65zwTAEjSt","WLAs6tPXk8oykhUYMkLudKYKLDnyiCzE6zZZshKeMTS","415Rn8e6xjqGCgHf464H23PuJb2W4UqKsheVh6enkQdu","EMpmX6cpjDQpmB7AtqiL2AqTXXcci5beqYL9p5tcARF1"]}
+# run against http://127.0.0.1:3040, 2026-10-12T17:31:42Z
+# program EZTHmUEMJNu5qXGms4PGnvb7hasjy9HmqAgn35AmCmTL f82aabe82fef01e98bd24ab723917762c7fc0a1ddb90f52aedc929156d0a7c09
+== 1. create a 2-of-3 with a 45s time lock and a spending limit; fund its vault
+{"block":8,"label":"create","op":"create","tx":"e0aafad20e537be912f7288846c55707e1708ff77ed8150eddc882849f2c1a35","verdict":"applied"}
+  ok  create: applied
+  fund vault: Transaction hash is c1981e3b52267f28763453cd80a59d7675a2e008d016058b8645cc960e22cf9a
+  ok  vault funded before activation: 1000
+  ok  not initialised yet: False
+== 2. a vault cannot be drained before it is fully initialised
+{
+  "calls": [
+    {
+      "accounts": [
+        "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW [native]",
+        "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm [native]"
+      ],
+      "decoded": {
+        "amount": "10",
+        "from": "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW",
+        "instruction": "Transfer",
+        "program": "native token",
+        "to": "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm"
+      },
+      "target": "11111111111111111111111111111111"
+    }
+  ],
+  "kind": "calls"
+}
+{
+  "calls": [
+    {
+      "accounts": [
+        "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW [native]",
+        "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm [native]"
+      ],
+      "decoded": {
+        "amount": "10",
+        "from": "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW",
+        "instruction": "Transfer",
+        "program": "native token",
+        "to": "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm"
+      },
+      "target": "11111111111111111111111111111111"
+    }
+  ],
+  "kind": "calls"
+}
+{"block":10,"label":"queue-before-activation","op":"queue","tx":"3a2f5ac8447040c6cb10cc63fa2efd0f2de4fa2ecfde485175c1ee25a1bc0b95","verdict":"reverted"}
+  ok  queue-before-activation: reverted
+{"block":11,"label":"spend-before-activation","op":"spend","tx":"099c368fdcf44ea8b6df0d53b8df942ab83ad0f6b78219b0b653abf7f82a94a6","verdict":"reverted"}
+  ok  spend-before-activation: reverted
+{"block":12,"label":"activate-below-threshold","op":"activate","tx":"5f0330a56d4b803d2fdee72ceaf0c8e8a92fdd3b42e3bff370328ac0cb024520","verdict":"reverted"}
+  ok  activate-below-threshold: reverted
+{"block":13,"label":"activate","op":"activate","tx":"77b91e5a3e63ca84984ba820295bfe132321c5abfff09182c31d27891d2d7ef3","verdict":"applied"}
+  ok  activate: applied
+  ok  vault untouched: 1000
+== 3. propose, approve off-chain, queue, time lock, execute
+  ok  the package decodes from its bytes: 40
+{
+  "calls": [
+    {
+      "accounts": [
+        "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW [native]",
+        "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm [native]"
+      ],
+      "decoded": {
+        "amount": "40",
+        "from": "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW",
+        "instruction": "Transfer",
+        "program": "native token",
+        "to": "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm"
+      },
+      "target": "11111111111111111111111111111111"
+    }
+  ],
+  "kind": "calls"
+}
+{"block":14,"label":"queue-one-approval","op":"queue","tx":"2b99566b2bfcc86a7f8d092f60c556af75ac660b67eb8844153ce3de333990bf","verdict":"reverted"}
+  ok  queue-one-approval: reverted
+{
+  "calls": [
+    {
+      "accounts": [
+        "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW [native]",
+        "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm [native]"
+      ],
+      "decoded": {
+        "amount": "40",
+        "from": "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW",
+        "instruction": "Transfer",
+        "program": "native token",
+        "to": "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm"
+      },
+      "target": "11111111111111111111111111111111"
+    }
+  ],
+  "kind": "calls"
+}
+{"block":15,"label":"queue","op":"queue","tx":"b2c56e7dfdd5c01a97f74e51be232c18a4612624ee6b9f5f7abab21ae9466b1b","verdict":"applied"}
+  ok  queue: applied
+{"block":16,"label":"execute-in-time-lock","op":"execute","tx":"21cc4b4260f6754256ded2228797461c2d650679821a758f035150fb83e84edc","verdict":"reverted"}
+  ok  execute-in-time-lock: reverted
+{"block":17,"label":"execute-by-non-executor","op":"execute","tx":"5e6680e679dc5f696e1af12d2e6ec7a455ced537ab2ed50d197c0f86219c82ca","verdict":"reverted"}
+  ok  execute-by-non-executor: reverted
+  waiting 50s for the time lock
+{"block":21,"label":"execute","op":"execute","tx":"01073796c64d3b78127fdd703a1b500c0e49d3bbedd0550cf6847322bcbf2d16","verdict":"applied"}
+  ok  execute: applied
+  ok  destination received 40: 40
+  ok  vault paid 40: 960
+  ok  queued record executed: executed
+{"block":22,"label":"queue-again","op":"queue","tx":"1c350f95b0faca5901026847a1b5ade34ddad2548bbe41b19b7e22aa0757eddc","verdict":"reverted"}
+  ok  queue-again: reverted
+{"block":23,"label":"execute-again","op":"execute","tx":"b93b1143eb018184908bfcf3ec0bc470ed8475fb98c6c6d422e785e830599739","verdict":"reverted"}
+  ok  execute-again: reverted
+== 4. spending limit: small transfers without the quorum
+{"block":24,"label":"spend-60","op":"spend","tx":"bdb8d3b2915a3b5f0ad25c6809e85bdd5e08cf1f5b67d84146497da2053d6e3a","verdict":"applied"}
+  ok  spend-60: applied
+{"block":25,"label":"spend-over-limit","op":"spend","tx":"9dd2e6ad32723465ff67759a6ae60fe26f282bb6e07182cbb37db321a90607ff","verdict":"reverted"}
+  ok  spend-over-limit: reverted
+{"block":26,"label":"spend-by-non-spender","op":"spend","tx":"8a190f36323ab24e6f5f5ec555d2d3f631d0750bb87d03d033d2228ccdaff83c","verdict":"reverted"}
+  ok  spend-by-non-spender: reverted
+  ok  spend paid 60: 60
+== 5. an action carries only the vault's authority
+{
+  "calls": [
+    {
+      "accounts": [
+        "6iArKUXxhUJqS7kCaPNhwMWt3ro71PDyBj7jwAyE2VQV [native]",
+        "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm [native]"
+      ],
+      "decoded": {
+        "amount": "5",
+        "from": "6iArKUXxhUJqS7kCaPNhwMWt3ro71PDyBj7jwAyE2VQV",
+        "instruction": "Transfer",
+        "program": "native token",
+        "to": "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm"
+      },
+      "target": "11111111111111111111111111111111"
+    }
+  ],
+  "kind": "calls"
+}
+{
+  "calls": [
+    {
+      "accounts": [
+        "6iArKUXxhUJqS7kCaPNhwMWt3ro71PDyBj7jwAyE2VQV [native]",
+        "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm [native]"
+      ],
+      "decoded": {
+        "amount": "5",
+        "from": "6iArKUXxhUJqS7kCaPNhwMWt3ro71PDyBj7jwAyE2VQV",
+        "instruction": "Transfer",
+        "program": "native token",
+        "to": "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm"
+      },
+      "target": "11111111111111111111111111111111"
+    }
+  ],
+  "kind": "calls"
+}
+{"block":27,"label":"queue-steal","op":"queue","tx":"2ad0a3d3a3ff3c0e6ab4daddb278aef4ccff27a225becdc5a8c28714432875db","verdict":"applied"}
+  ok  queue-steal: applied

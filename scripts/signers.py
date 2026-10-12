@@ -7,7 +7,7 @@ LEZ signer of every transaction should be the fee payer.
 
 usage: signers.py <rpc> <manifest>   (prints the signer account ids, space-separated)
 """
-import hashlib, json, sys, urllib.request
+import base64, hashlib, json, sys, urllib.request
 
 B58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 def b58(b):
@@ -22,22 +22,20 @@ def call(rpc, method, param):
     with urllib.request.urlopen(req, timeout=25) as r:
         return json.load(r)
 
-def keys(o):
-    """Public keys found in a transaction's witness set, wherever the JSON puts them."""
-    if isinstance(o, dict):
-        for k, v in o.items():
-            if k in ("signatures_and_public_keys",) and isinstance(v, list):
-                for pair in v:
-                    yield pair[1]
-            else:
-                yield from keys(v)
-    elif isinstance(o, list):
-        for v in o:
-            yield from keys(v)
+def witness_keys(raw):
+    """The public keys of a borsh PublicTransaction's witness set, which ends the
+    encoding: u32 count, then count x (64-byte signature, 32-byte x-only key)."""
+    for n in range(1, 64):
+        at = len(raw) - (4 + 96 * n)
+        if at < 0:
+            break
+        if int.from_bytes(raw[at:at + 4], "little") == n:
+            return [raw[at + 4 + 96 * i + 64: at + 4 + 96 * (i + 1)] for i in range(n)]
+    raise ValueError("no witness set at the end of the transaction")
 
 def account_of(pk):
     # LEZ: AccountId = SHA-256("/LEE/v0.3/AccountId/Public/" padded to 32 || x-only key)
-    raw = bytes(pk) if isinstance(pk, list) else bytes.fromhex(pk)
+    raw = pk
     prefix = b"/LEE/v0.3/AccountId/Public/".ljust(32, b"\0")
     return b58(hashlib.sha256(prefix + raw).digest())
 
@@ -52,6 +50,6 @@ for line in open(manifest):
     res = call(rpc, "getTransaction", tx).get("result")
     if not res:
         continue
-    for pk in keys(res[0] if isinstance(res, list) else res):
+    for pk in witness_keys(base64.b64decode(res[0])):
         seen.add(account_of(pk))
 print(" ".join(sorted(seen)))

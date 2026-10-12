@@ -19,6 +19,8 @@
 //! and a verdict read back from the chain (`applied`, `reverted`, `rejected`,
 //! `not-included`), with the refusal code's advice when the program refused.
 
+mod room;
+
 use std::{path::PathBuf, str::FromStr, time::Duration};
 
 use accord_core::{
@@ -159,7 +161,7 @@ enum Cmd {
     Activate {
         multisig: String,
         #[arg(long = "key", required = true)]
-        keys: Vec<String>,
+        signers: Vec<String>,
     },
     /// Spend from the vault within a spending limit.
     Spend {
@@ -173,7 +175,12 @@ enum Cmd {
         #[arg(long)]
         token: Option<AccountId>,
         #[arg(long = "key", required = true)]
-        keys: Vec<String>,
+        signers: Vec<String>,
+    },
+    /// The coordination room over Logos Delivery (docs/ROOM.md).
+    Room {
+        #[command(subcommand)]
+        op: RoomCmd,
     },
     /// Register a program's IDL hash and ImageID in the on-chain registry.
     Register {
@@ -185,6 +192,61 @@ enum Cmd {
         /// The ImageID to record; read from the target's header if omitted.
         #[arg(long)]
         image_id: Option<String>,
+    },
+}
+
+#[derive(Subcommand)]
+enum RoomCmd {
+    /// Open the room of the multisig's current epoch: a fresh secret, sealed
+    /// to every current member, invites posted on the invite topic and written to `--invites`.
+    Open {
+        multisig: String,
+        #[arg(long)]
+        key: String,
+        #[arg(long)]
+        out: PathBuf,
+        #[arg(long)]
+        invites: PathBuf,
+        /// Also publish the invites over Delivery.
+        #[arg(long)]
+        publish: bool,
+    },
+    /// Join with your invite (from a file, or heard on the invite topic within `--seconds`).
+    Join {
+        multisig: String,
+        #[arg(long)]
+        key: String,
+        #[arg(long)]
+        out: PathBuf,
+        #[arg(long)]
+        invites: Option<PathBuf>,
+        #[arg(long, default_value_t = 120)]
+        seconds: u64,
+    },
+    /// Post an approval package, or a line of deliberation, to the room.
+    Post {
+        room: PathBuf,
+        #[arg(long)]
+        key: String,
+        #[arg(long)]
+        package: Option<PathBuf>,
+        #[arg(long)]
+        say: Option<String>,
+        /// Seconds to stay up after sending, so relays carry it.
+        #[arg(long, default_value_t = 15)]
+        linger: u64,
+    },
+    /// Listen for `--seconds`, verify every frame, and merge the approvals of
+    /// every package heard into `--into/<digest>.json`.
+    Listen {
+        room: PathBuf,
+        #[arg(long)]
+        into: PathBuf,
+        #[arg(long, default_value_t = 120)]
+        seconds: u64,
+        /// Stop once a package in `--into` holds this many approvals.
+        #[arg(long)]
+        until_approvals: Option<usize>,
     },
 }
 
@@ -825,16 +887,16 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
             };
             ctx.send("execute", &ix, rows::execute(&p, &id, &d, &action), &[], &[(q, p)]).await?;
         }
-        Cmd::Activate { multisig, keys } => {
+        Cmd::Activate { multisig, signers } => {
             let p = ctx.program()?;
             let id = id32(&multisig)?;
             let m = ctx.multisig(&id).await?;
             let msg = activate_message(&config_account(&p, &id), m.epoch);
-            let approvals = keys.iter().map(|k| ctx.sign(k, &msg)).collect::<Result<_>>()?;
+            let approvals = signers.iter().map(|k| ctx.sign(k, &msg)).collect::<Result<_>>()?;
             let cfg = config_account(&p, &id);
             ctx.send("activate", &Instruction::Activate { multisig_id: id, epoch: m.epoch, approvals }, rows::activate(&p, &id), &[], &[(cfg, p)]).await?;
         }
-        Cmd::Spend { multisig, limit, to, amount, token, keys } => {
+        Cmd::Spend { multisig, limit, to, amount, token, signers } => {
             let p = ctx.program()?;
             let id = id32(&multisig)?;
             let m = ctx.multisig(&id).await?;
@@ -842,10 +904,11 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
             let asset = token.map_or(Asset::Native, |definition_id| Asset::Token { definition_id });
             let cfg = config_account(&p, &id);
             let msg = spend_message(&cfg, limit, l.uses, &to, &asset, amount);
-            let approvals = keys.iter().map(|k| ctx.sign(k, &msg)).collect::<Result<_>>()?;
+            let approvals = signers.iter().map(|k| ctx.sign(k, &msg)).collect::<Result<_>>()?;
             let ix = Instruction::Spend { multisig_id: id, limit, uses: l.uses, asset, amount, approvals, at: ctx.now().await? };
             ctx.send("spend", &ix, rows::spend(&p, &id, &asset, to), &[], &[(cfg, p)]).await?;
         }
+        Cmd::Room { op } => room_cmd(&ctx, op).await?,
         Cmd::Register { target, idl, name, image_id } => {
             let p = ctx.program()?;
             let bytes = std::fs::read(&idl)?;
@@ -867,4 +930,170 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
         }
     }
     Ok(())
+}
+
+fn read_json<T: for<'a> Deserialize<'a>>(p: &PathBuf) -> Result<T> {
+    serde_json::from_slice(&std::fs::read(p).with_context(|| format!("reading {}", p.display()))?).with_context(|| format!("parsing {}", p.display()))
+}
+
+/// Merge `incoming`'s valid approvals into the package stored at `path`
+/// (or store it). Signatures are checked here, against the digest the
+/// package's own bytes hash to; the program checks them again.
+fn merge_package(path: &PathBuf, incoming: &Package) -> Result<usize> {
+    let d = incoming.checked_digest()?;
+    let mut base = if path.exists() { Package::read(path)? } else { Package { approvals: vec![], ..incoming.clone() } };
+    ensure!(base.digest == incoming.digest, "a different package is stored at {}", path.display());
+    if base.proposer.is_none() {
+        base.proposer = incoming.proposer.clone();
+    }
+    for a in &incoming.approvals {
+        let s = Sig::try_from(a)?;
+        if accord_core::verify(&s.key, &approve_message(&d), &s.sig) && !base.approvals.iter().any(|b| b.key == a.key) {
+            base.approvals.push(a.clone());
+        }
+    }
+    base.write(path)?;
+    Ok(base.approvals.len())
+}
+
+/// The node library takes over the process's standard output once it starts,
+/// so results are written through a copy of fd 1 taken before.
+static OUT: std::sync::OnceLock<std::sync::Mutex<std::fs::File>> = std::sync::OnceLock::new();
+
+macro_rules! say {
+    ($($t:tt)*) => {{
+        use std::io::Write as _;
+        let mut f = OUT.get().expect("room output").lock().unwrap();
+        let _ = writeln!(f, $($t)*);
+        let _ = f.flush();
+    }};
+}
+
+async fn room_cmd(ctx: &Ctx, op: RoomCmd) -> Result<()> {
+    #[cfg(unix)]
+    {
+        use std::os::fd::FromRawFd as _;
+        let fd = unsafe { libc_dup(1) };
+        ensure!(fd >= 0, "cannot duplicate stdout");
+        let _ = OUT.set(std::sync::Mutex::new(unsafe { std::fs::File::from_raw_fd(fd) }));
+    }
+    match op {
+        RoomCmd::Open { multisig, key, out, invites, publish } => {
+            let p = ctx.program()?;
+            let id = id32(&multisig)?;
+            let m = ctx.multisig(&id).await?;
+            let me = ctx.public(&key)?;
+            ensure!(m.members.iter().any(|x| x.key == me), "{key} is not a member of this configuration");
+            let mut secret = [0u8; 32];
+            rand::RngCore::fill_bytes(&mut rand::thread_rng(), &mut secret);
+            let r = room::Room { program: p.to_string(), multisig_id: hex::encode(id), config_account: config_account(&p, &id).to_string(), epoch: m.epoch, secret: hex::encode(secret) };
+            let inv: Vec<room::Invite> = m.members.iter().map(|x| room::seal_invite(&x.key, &secret, m.epoch)).collect::<Result<_>>()?;
+            std::fs::write(&out, serde_json::to_vec_pretty(&r)?)?;
+            std::fs::write(&invites, serde_json::to_vec_pretty(&inv)?)?;
+            if publish {
+                let d = room::Delivery::up()?;
+                let t = room::invite_topic(&config_account(&p, &id));
+                for i in &inv {
+                    d.publish(&t, &serde_json::to_vec(i)?)?;
+                }
+                std::thread::sleep(Duration::from_secs(10));
+            }
+            say!("{}", serde_json::json!({"op": "room-open", "epoch": m.epoch, "topic": r.topic()?, "invites": inv.len(), "invite_topic": room::invite_topic(&config_account(&p, &id))}));
+        }
+        RoomCmd::Join { multisig, key, out, invites, seconds } => {
+            let p = ctx.program()?;
+            let id = id32(&multisig)?;
+            let me = ctx.public(&key)?;
+            let sk = ctx.secret(&key)?;
+            let mine = |i: &room::Invite| room::open_invite(i, sk.value(), &me).ok().map(|s| (s, i.epoch));
+            let found = match invites {
+                Some(f) => read_json::<Vec<room::Invite>>(&f)?.iter().find_map(mine),
+                None => {
+                    let d = room::Delivery::up()?;
+                    let t = room::invite_topic(&config_account(&p, &id));
+                    d.subscribe(&t)?;
+                    let start = std::time::Instant::now();
+                    let mut got = None;
+                    while got.is_none() && start.elapsed() < Duration::from_secs(seconds) {
+                        while let Some((topic, payload)) = d.next() {
+                            if topic == t {
+                                if let Ok(i) = serde_json::from_slice::<room::Invite>(&payload) {
+                                    got = got.or_else(|| mine(&i));
+                                }
+                            }
+                        }
+                        std::thread::sleep(Duration::from_millis(200));
+                    }
+                    got
+                }
+            };
+            let (secret, epoch) = found.ok_or_else(|| anyhow!("no invite opens with {key}"))?;
+            let r = room::Room { program: p.to_string(), multisig_id: hex::encode(id), config_account: config_account(&p, &id).to_string(), epoch, secret: hex::encode(secret) };
+            std::fs::write(&out, serde_json::to_vec_pretty(&r)?)?;
+            say!("{}", serde_json::json!({"op": "room-join", "epoch": epoch, "topic": r.topic()?}));
+        }
+        RoomCmd::Post { room: rp, key, package, say, linger } => {
+            let r: room::Room = read_json(&rp)?;
+            let signer = |m: &[u8; 32]| ctx.sign(&key, m);
+            let frame = match (package, say) {
+                (Some(f), None) => {
+                    let pkg = Package::read(&f)?;
+                    pkg.checked_digest()?;
+                    r.seal(&signer, "package", &serde_json::to_value(&pkg)?)?
+                }
+                (None, Some(text)) => r.seal(&signer, "chat", &serde_json::json!({"text": text}))?,
+                _ => bail!("post one of --package or --say"),
+            };
+            let d = room::Delivery::up()?;
+            d.publish(&r.topic()?, &frame)?;
+            std::thread::sleep(Duration::from_secs(linger));
+            say!("{}", serde_json::json!({"op": "room-post", "topic": r.topic()?, "bytes": frame.len()}));
+        }
+        RoomCmd::Listen { room: rp, into, seconds, until_approvals } => {
+            let r: room::Room = read_json(&rp)?;
+            let id = id32(&r.multisig_id)?;
+            let members: Vec<[u8; 32]> = ctx.multisig(&id).await?.members.iter().map(|m| m.key).collect();
+            std::fs::create_dir_all(&into)?;
+            let d = room::Delivery::up()?;
+            let t = r.topic()?;
+            d.subscribe(&t)?;
+            eprintln!("listening on {t}");
+            let start = std::time::Instant::now();
+            let mut most = 0;
+            while start.elapsed() < Duration::from_secs(seconds) {
+                while let Some((topic, payload)) = d.next() {
+                    if topic != t {
+                        continue;
+                    }
+                    match r.open(&payload, &members) {
+                        Ok((who, body)) => match body["kind"].as_str() {
+                            Some("package") => {
+                                let pkg: Package = serde_json::from_value(body["body"].clone())?;
+                                let path = into.join(format!("{}.json", pkg.digest));
+                                match merge_package(&path, &pkg) {
+                                    Ok(n) => {
+                                        most = most.max(n);
+                                        say!("{}", serde_json::json!({"op": "room-package", "from": hex::encode(who), "digest": pkg.digest, "approvals": n, "path": path.display().to_string()}));
+                                    }
+                                    Err(e) => say!("{}", serde_json::json!({"op": "room-dropped", "from": hex::encode(who), "why": e.to_string()})),
+                                }
+                            }
+                            _ => say!("{}", serde_json::json!({"op": "room-chat", "from": hex::encode(who), "text": body["body"]["text"]})),
+                        },
+                        Err(e) => say!("{}", serde_json::json!({"op": "room-dropped", "why": e.to_string()})),
+                    }
+                }
+                if until_approvals.is_some_and(|n| most >= n) {
+                    break;
+                }
+                std::thread::sleep(Duration::from_millis(200));
+            }
+        }
+    }
+    Ok(())
+}
+
+extern "C" {
+    #[link_name = "dup"]
+    fn libc_dup(fd: i32) -> i32;
 }

@@ -1,0 +1,1106 @@
+{
+  "version": "0.1.0",
+  "name": "accord_multisig",
+  "lez": "v0.3.0 (db66590ab821a4e142c211017a3866d007f6fa77)",
+  "notes": [
+    "Hand-maintained in SPEL's IDL shape: SPEL has no LEZ v0.3 support. scripts/check-idl.py decodes borsh vectors emitted by the core crate with this file and fails on any drift.",
+    "The instruction is a borsh enum: one u8 discriminant, then the args in order.",
+    "Every account row selects one shard. shard=self is this program's shard; shard=asset is the native shard (all-zero id) for Asset::Native, the token program's shard for Asset::Token. A signer handle is a signing row with shard=self that the program never writes.",
+    "PDAs derive from the program's header account: AccountId::for_public_pda(header, seed). One seed is used as is; several are combined as SHA-256 of their concatenation. Const seeds are zero-padded to 32 bytes.",
+    "Approvals are BIP-340 signatures by members' approval keys over domain-separated 32-byte messages (see `messages`), verified by the program. No member's LEZ account signs a multisig transaction.",
+    "Refusals are guest panics whose message starts with E<code>:"
+  ],
+  "messages": {
+    "action_digest": "SHA-256(\"accord_multisig/v1/action\" || configuration || u32_le(epoch) || u64_le(expires_at) || borsh(action))",
+    "propose": "SHA-256(\"accord_multisig/v1/propose\" || digest)",
+    "approve": "SHA-256(\"accord_multisig/v1/approve\" || digest)",
+    "execute": "SHA-256(\"accord_multisig/v1/execute\" || digest)",
+    "activate": "SHA-256(\"accord_multisig/v1/activate\" || configuration || u32_le(epoch))",
+    "spend": "SHA-256(\"accord_multisig/v1/spend\" || configuration || u32_le(limit) || u64_le(uses) || destination || asset_code(33) || u128_le(amount))",
+    "bind": "SHA-256(\"accord_multisig/v1/bind\" || configuration || u32_le(epoch) || chat_identity)"
+  },
+  "instructions": [
+    {
+      "name": "create",
+      "discriminant": 0,
+      "accounts": [
+        {
+          "name": "configuration",
+          "writable": true,
+          "signer": false,
+          "init": true,
+          "shard": "self",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "multisig_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "creator",
+          "writable": false,
+          "signer": true,
+          "init": false,
+          "shard": "self"
+        }
+      ],
+      "args": [
+        {
+          "name": "multisig_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "config",
+          "type": {
+            "defined": "Config"
+          }
+        }
+      ],
+      "effects": "writes the configuration, not initialised"
+    },
+    {
+      "name": "activate",
+      "discriminant": 1,
+      "accounts": [
+        {
+          "name": "configuration",
+          "writable": true,
+          "signer": false,
+          "init": false,
+          "shard": "self",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "multisig_id"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "multisig_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "epoch",
+          "type": "u32"
+        },
+        {
+          "name": "approvals",
+          "type": {
+            "vec": {
+              "defined": "Sig"
+            }
+          }
+        }
+      ],
+      "effects": "sets initialised once approve-role signatures over `activate` reach the threshold"
+    },
+    {
+      "name": "queue",
+      "discriminant": 2,
+      "accounts": [
+        {
+          "name": "configuration",
+          "writable": true,
+          "signer": false,
+          "init": false,
+          "shard": "self",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "multisig_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "queued",
+          "writable": true,
+          "signer": false,
+          "init": true,
+          "shard": "self",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "multisig_id"
+              },
+              {
+                "kind": "computed",
+                "path": "action_digest(configuration, epoch, expires_at, action)"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "multisig_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "epoch",
+          "type": "u32"
+        },
+        {
+          "name": "expires_at",
+          "type": "u64"
+        },
+        {
+          "name": "action",
+          "type": {
+            "defined": "Action"
+          }
+        },
+        {
+          "name": "time_lock_ms",
+          "type": "u64"
+        },
+        {
+          "name": "proposer",
+          "type": {
+            "defined": "Sig"
+          }
+        },
+        {
+          "name": "approvals",
+          "type": {
+            "vec": {
+              "defined": "Sig"
+            }
+          }
+        },
+        {
+          "name": "at",
+          "type": "u64"
+        }
+      ],
+      "timestamp_window": "[at, at + 120000)",
+      "effects": "verifies epoch, proposer role, approvals and threshold; writes the queued record once with quorum_at = at"
+    },
+    {
+      "name": "execute",
+      "discriminant": 3,
+      "accounts": [
+        {
+          "name": "configuration",
+          "writable": true,
+          "signer": false,
+          "init": false,
+          "shard": "self",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "multisig_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "queued",
+          "writable": true,
+          "signer": false,
+          "init": false,
+          "shard": "self",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "multisig_id"
+              },
+              {
+                "kind": "computed",
+                "path": "action_digest(configuration, epoch, expires_at, action)"
+              }
+            ]
+          }
+        },
+        {
+          "name": "action_accounts",
+          "writable": true,
+          "signer": false,
+          "init": false,
+          "shard": "per call",
+          "rest": true
+        }
+      ],
+      "args": [
+        {
+          "name": "multisig_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "epoch",
+          "type": "u32"
+        },
+        {
+          "name": "expires_at",
+          "type": "u64"
+        },
+        {
+          "name": "action",
+          "type": {
+            "defined": "Action"
+          }
+        },
+        {
+          "name": "executor",
+          "type": {
+            "defined": "Sig"
+          }
+        },
+        {
+          "name": "at",
+          "type": "u64"
+        }
+      ],
+      "timestamp_window": "[at, at + 120000)",
+      "effects": "verifies the executor, time lock and expiry; marks the record executed; makes the action's calls with the vault seed, applies a configuration change, or cancels the target record"
+    },
+    {
+      "name": "spend",
+      "discriminant": 4,
+      "accounts": [
+        {
+          "name": "configuration",
+          "writable": true,
+          "signer": false,
+          "init": false,
+          "shard": "self",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "multisig_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "signer": false,
+          "init": false,
+          "shard": "asset",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "multisig_id"
+              },
+              {
+                "kind": "const",
+                "value": "vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "destination",
+          "writable": true,
+          "signer": false,
+          "init": false,
+          "shard": "asset"
+        }
+      ],
+      "args": [
+        {
+          "name": "multisig_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "limit",
+          "type": "u32"
+        },
+        {
+          "name": "uses",
+          "type": "u64"
+        },
+        {
+          "name": "asset",
+          "type": {
+            "defined": "Asset"
+          }
+        },
+        {
+          "name": "amount",
+          "type": "u128"
+        },
+        {
+          "name": "approvals",
+          "type": {
+            "vec": {
+              "defined": "Sig"
+            }
+          }
+        },
+        {
+          "name": "at",
+          "type": "u64"
+        }
+      ],
+      "timestamp_window": "[at, at + 120000)",
+      "effects": "checks the limit's spenders, sub-quorum, counter and allowance; pays from the vault"
+    },
+    {
+      "name": "register",
+      "discriminant": 5,
+      "accounts": [
+        {
+          "name": "entry",
+          "writable": true,
+          "signer": false,
+          "init": true,
+          "shard": "self",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": "registry"
+              },
+              {
+                "kind": "arg",
+                "path": "program"
+              },
+              {
+                "kind": "arg",
+                "path": "idl_sha256"
+              }
+            ]
+          }
+        },
+        {
+          "name": "registrant",
+          "writable": false,
+          "signer": true,
+          "init": false,
+          "shard": "self"
+        }
+      ],
+      "args": [
+        {
+          "name": "program",
+          "type": "account_id"
+        },
+        {
+          "name": "image_id",
+          "type": {
+            "array": [
+              "u32",
+              8
+            ]
+          }
+        },
+        {
+          "name": "idl_sha256",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "name",
+          "type": "string"
+        }
+      ],
+      "effects": "writes an append-only registry entry"
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Multisig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "version",
+            "type": "u8"
+          },
+          {
+            "name": "initialised",
+            "type": "u8"
+          },
+          {
+            "name": "epoch",
+            "type": "u32"
+          },
+          {
+            "name": "members",
+            "type": {
+              "vec": {
+                "defined": "Member"
+              }
+            }
+          },
+          {
+            "name": "threshold",
+            "type": "u64"
+          },
+          {
+            "name": "time_lock_ms",
+            "type": "u64"
+          },
+          {
+            "name": "limits",
+            "type": {
+              "vec": {
+                "defined": "Limit"
+              }
+            }
+          },
+          {
+            "name": "vault",
+            "type": "account_id"
+          },
+          {
+            "name": "creator",
+            "type": "account_id"
+          },
+          {
+            "name": "queued",
+            "type": "u64"
+          },
+          {
+            "name": "executed",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Queued",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "digest",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "kind",
+            "type": "u8"
+          },
+          {
+            "name": "epoch",
+            "type": "u32"
+          },
+          {
+            "name": "quorum_at",
+            "type": "u64"
+          },
+          {
+            "name": "expires_at",
+            "type": "u64"
+          },
+          {
+            "name": "time_lock_ms",
+            "type": "u64"
+          },
+          {
+            "name": "proposer",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "approvers",
+            "type": {
+              "vec": {
+                "array": [
+                  "u8",
+                  32
+                ]
+              }
+            }
+          },
+          {
+            "name": "status",
+            "type": "u8"
+          },
+          {
+            "name": "executed_at",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RegistryEntry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "program",
+            "type": "account_id"
+          },
+          {
+            "name": "image_id",
+            "type": {
+              "array": [
+                "u32",
+                8
+              ]
+            }
+          },
+          {
+            "name": "idl_sha256",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "registrant",
+            "type": "account_id"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "Asset",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Native",
+            "fields": []
+          },
+          {
+            "name": "Token",
+            "fields": [
+              {
+                "name": "definition_id",
+                "type": "account_id"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Member",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "key",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "roles",
+            "type": "u8"
+          },
+          {
+            "name": "weight",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LimitSpec",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "spenders",
+            "type": {
+              "vec": {
+                "array": [
+                  "u8",
+                  32
+                ]
+              }
+            }
+          },
+          {
+            "name": "min_signers",
+            "type": "u8"
+          },
+          {
+            "name": "asset",
+            "type": {
+              "defined": "Asset"
+            }
+          },
+          {
+            "name": "amount",
+            "type": "u128"
+          },
+          {
+            "name": "period_ms",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Limit",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "spec",
+            "type": {
+              "defined": "LimitSpec"
+            }
+          },
+          {
+            "name": "period_start",
+            "type": "u64"
+          },
+          {
+            "name": "spent",
+            "type": "u128"
+          },
+          {
+            "name": "uses",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Config",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "members",
+            "type": {
+              "vec": {
+                "defined": "Member"
+              }
+            }
+          },
+          {
+            "name": "threshold",
+            "type": "u64"
+          },
+          {
+            "name": "time_lock_ms",
+            "type": "u64"
+          },
+          {
+            "name": "limits",
+            "type": {
+              "vec": {
+                "defined": "LimitSpec"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "CallAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "account",
+            "type": "account_id"
+          },
+          {
+            "name": "shard_program",
+            "type": "account_id"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Call",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "program",
+            "type": "account_id"
+          },
+          {
+            "name": "accounts",
+            "type": {
+              "vec": {
+                "defined": "CallAccount"
+              }
+            }
+          },
+          {
+            "name": "data",
+            "type": "bytes"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Action",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Calls",
+            "fields": [
+              {
+                "name": "calls",
+                "type": {
+                  "vec": {
+                    "defined": "Call"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "Config",
+            "fields": [
+              {
+                "name": "config",
+                "type": {
+                  "defined": "Config"
+                }
+              }
+            ]
+          },
+          {
+            "name": "CancelQueued",
+            "fields": [
+              {
+                "name": "digest",
+                "type": {
+                  "array": [
+                    "u8",
+                    32
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Sig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "key",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "sig",
+            "type": {
+              "array": [
+                "u8",
+                64
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "roles": {
+    "propose": 1,
+    "approve": 2,
+    "execute": 4
+  },
+  "events": [
+    {
+      "name": "Created",
+      "selector": "e421c2a2b1f8be8a",
+      "fields": [
+        {
+          "name": "multisig_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "vault",
+          "type": "account_id"
+        }
+      ]
+    },
+    {
+      "name": "Activated",
+      "selector": "d94f7364c12a1fc7",
+      "fields": [
+        {
+          "name": "multisig_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "epoch",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "ActionQueued",
+      "selector": "3084901562b6d010",
+      "fields": [
+        {
+          "name": "multisig_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "digest",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "kind",
+          "type": "u8"
+        },
+        {
+          "name": "at",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "ActionExecuted",
+      "selector": "832e82a689e77f86",
+      "fields": [
+        {
+          "name": "multisig_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "digest",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "kind",
+          "type": "u8"
+        },
+        {
+          "name": "at",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "Spent",
+      "selector": "018480295065c38b",
+      "fields": [
+        {
+          "name": "multisig_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "limit",
+          "type": "u32"
+        },
+        {
+          "name": "amount",
+          "type": "u128"
+        },
+        {
+          "name": "destination",
+          "type": "account_id"
+        }
+      ]
+    },
+    {
+      "name": "Registered",
+      "selector": "1f305d499ca02899",
+      "fields": [
+        {
+          "name": "program",
+          "type": "account_id"
+        },
+        {
+          "name": "idl_sha256",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "advice": "No multisig exists at this id. Check the id and the program header.",
+      "code": 7100,
+      "name": "NoMultisig"
+    },
+    {
+      "advice": "The multisig has not been activated: collect threshold approvals of the activation and send `activate` first.",
+      "code": 7101,
+      "name": "NotInitialised"
+    },
+    {
+      "advice": "The configuration changed since these signatures were made. Re-propose under the current epoch.",
+      "code": 7102,
+      "name": "WrongEpoch"
+    },
+    {
+      "advice": "This was already done: the action is queued, or the id is taken.",
+      "code": 7103,
+      "name": "AlreadyExists"
+    },
+    {
+      "advice": "A signing key is not a current member with the role this step needs (propose, approve or execute).",
+      "code": 7104,
+      "name": "BadRole"
+    },
+    {
+      "advice": "Not enough approval weight: collect more approvals from distinct current approvers.",
+      "code": 7105,
+      "name": "BelowThreshold"
+    },
+    {
+      "advice": "The action names an account that signs this transaction, or this program itself. Only the vault's authority may reach an action.",
+      "code": 7106,
+      "name": "ForbiddenAccount"
+    },
+    {
+      "advice": "The time lock has not elapsed. Execute after the time shown.",
+      "code": 7107,
+      "name": "TimeLocked"
+    },
+    {
+      "advice": "The proposal expired. Propose it again.",
+      "code": 7108,
+      "name": "Expired"
+    },
+    {
+      "advice": "No pending queued action matches this digest: it was never queued, already executed, or cancelled.",
+      "code": 7109,
+      "name": "NotQueued"
+    },
+    {
+      "advice": "A signature does not verify over this action. Re-collect it from the package you are submitting.",
+      "code": 7110,
+      "name": "BadSignature"
+    },
+    {
+      "advice": "The configuration is invalid: check members, roles, weights, threshold and limits.",
+      "code": 7111,
+      "name": "BadConfig"
+    },
+    {
+      "advice": "The spend exceeds what the limit allows in this period.",
+      "code": 7112,
+      "name": "LimitExceeded"
+    },
+    {
+      "advice": "No such spending limit, or the asset or counter does not match: re-read the configuration.",
+      "code": 7113,
+      "name": "BadLimit"
+    },
+    {
+      "advice": "The transaction's accounts are not the ones this instruction takes.",
+      "code": 7114,
+      "name": "Accounts"
+    },
+    {
+      "advice": "A row that must sign does not.",
+      "code": 7115,
+      "name": "NotSigned"
+    },
+    {
+      "advice": "The same key appears twice: each member counts once.",
+      "code": 7116,
+      "name": "Duplicate"
+    }
+  ]
+}

@@ -10,6 +10,7 @@ dependencies = [
  "k256",
  "lee_core",
  "risc0-zkvm",
+ "serde_json",
  "token_core",
 ]
 

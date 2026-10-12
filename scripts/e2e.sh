@@ -144,7 +144,7 @@ off propose "$MS" --calls "$PK/steal-calls.json" --key alice --out "$PK/steal.js
 off approve "$PK/steal.json" --key bob >/dev/null; off approve "$PK/steal.json" --key carol >/dev/null
 step queue-steal applied -- "${P[@]}" queue "$PK/steal.json"
 sleep "$LOCK_S"
-step execute-steal refused -- "${P[@]}" --force --payer "$PAYER" execute "$PK/steal.json" --key carol
+step execute-steal refused -- "${P[@]}" --force execute "$PK/steal.json" --key carol
 
 echo "== 6. a configuration change invalidates pending approvals"
 # a package approved under epoch 0, held back
@@ -182,7 +182,7 @@ step execute-vetoed refused -- "${P[@]}" --force execute "$PK/big.json" --key ca
 check "vault after everything" "$(bal "$VAULT")" 900
 
 echo "== 8. registry: append-only"
-echo '{"name":"token","version":"v0.3.0"}' > "$PK/token.idl.json"
+echo "{\"name\":\"token\",\"version\":\"v0.3.0\",\"run\":\"$TAG\"}" > "$PK/token.idl.json"
 TOKEN=AxDdLwqkWgR9qaSctvABV1ZtvWJJyzXB8199xZueifPj
 IMG=0000000000000000000000000000000000000000000000000000000000000000
 step register applied -- "${P[@]}" register "$TOKEN" --idl "$PK/token.idl.json" --name token --image-id "$IMG"

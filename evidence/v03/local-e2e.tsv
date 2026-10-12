@@ -1,0 +1,27 @@
+# run against http://127.0.0.1:3040, 2026-10-12T17:31:42Z
+# program EZTHmUEMJNu5qXGms4PGnvb7hasjy9HmqAgn35AmCmTL f82aabe82fef01e98bd24ab723917762c7fc0a1ddb90f52aedc929156d0a7c09
+# payer 6iArKUXxhUJqS7kCaPNhwMWt3ro71PDyBj7jwAyE2VQV dest GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm dest2 5cBb1xkZM7HVzMchAnge64n4P417ZRkMbgBxBKC5v6yW multisig local3
+create	applied	applied	8	e0aafad20e537be912f7288846c55707e1708ff77ed8150eddc882849f2c1a35
+# check ok: vault funded before activation = 1000
+# check ok: not initialised yet = False
+queue-before-activation	refused	reverted	10	3a2f5ac8447040c6cb10cc63fa2efd0f2de4fa2ecfde485175c1ee25a1bc0b95
+spend-before-activation	refused	reverted	11	099c368fdcf44ea8b6df0d53b8df942ab83ad0f6b78219b0b653abf7f82a94a6
+activate-below-threshold	refused	reverted	12	5f0330a56d4b803d2fdee72ceaf0c8e8a92fdd3b42e3bff370328ac0cb024520
+activate	applied	applied	13	77b91e5a3e63ca84984ba820295bfe132321c5abfff09182c31d27891d2d7ef3
+# check ok: vault untouched = 1000
+# check ok: the package decodes from its bytes = 40
+queue-one-approval	refused	reverted	14	2b99566b2bfcc86a7f8d092f60c556af75ac660b67eb8844153ce3de333990bf
+queue	applied	applied	15	b2c56e7dfdd5c01a97f74e51be232c18a4612624ee6b9f5f7abab21ae9466b1b
+execute-in-time-lock	refused	reverted	16	21cc4b4260f6754256ded2228797461c2d650679821a758f035150fb83e84edc
+execute-by-non-executor	refused	reverted	17	5e6680e679dc5f696e1af12d2e6ec7a455ced537ab2ed50d197c0f86219c82ca
+execute	applied	applied	21	01073796c64d3b78127fdd703a1b500c0e49d3bbedd0550cf6847322bcbf2d16
+# check ok: destination received 40 = 40
+# check ok: vault paid 40 = 960
+# check ok: queued record executed = executed
+queue-again	refused	reverted	22	1c350f95b0faca5901026847a1b5ade34ddad2548bbe41b19b7e22aa0757eddc
+execute-again	refused	reverted	23	b93b1143eb018184908bfcf3ec0bc470ed8475fb98c6c6d422e785e830599739
+spend-60	applied	applied	24	bdb8d3b2915a3b5f0ad25c6809e85bdd5e08cf1f5b67d84146497da2053d6e3a
+spend-over-limit	refused	reverted	25	9dd2e6ad32723465ff67759a6ae60fe26f282bb6e07182cbb37db321a90607ff
+spend-by-non-spender	refused	reverted	26	8a190f36323ab24e6f5f5ec555d2d3f631d0750bb87d03d033d2228ccdaff83c
+# check ok: spend paid 60 = 60
+queue-steal	applied	applied	27	2ad0a3d3a3ff3c0e6ab4daddb278aef4ccff27a225becdc5a8c28714432875db
