@@ -27,7 +27,7 @@ Item {
     property string error: ""
     property bool narrow: width < 900
 
-    function short(k) { return k ? k.slice(0, 8) + "…" + k.slice(-4) : "" }
+    function abbrev(k) { return k ? k.slice(0, 8) + "…" + k.slice(-4) : "" }
     function memberOf(key) {
         const m = ms.members || []
         for (let i = 0; i < m.length; ++i) if (m[i].key === key) return m[i]
@@ -35,7 +35,7 @@ Item {
     }
     function label(key) {
         const names = backend ? backend.names : ({})
-        return names[key] ? names[key] : short(key)
+        return names[key] ? names[key] : abbrev(key)
     }
     function dur(ms_) {
         if (ms_ <= 0) return "0"
@@ -209,7 +209,7 @@ Item {
                         columns: 2; columnSpacing: 12; rowSpacing: 4
                         Text { text: "epoch"; color: dim; font.pixelSize: 12 }  Text { text: ms.epoch !== undefined ? ms.epoch : "–"; color: fg; font.pixelSize: 12 }
                         Text { text: "time lock"; color: dim; font.pixelSize: 12 } Text { text: ms.time_lock_ms !== undefined ? dur(ms.time_lock_ms) : "–"; color: fg; font.pixelSize: 12 }
-                        Text { text: "vault"; color: dim; font.pixelSize: 12 }  Text { text: short(ms.vault) + "  ·  " + (ms.vault_native || "0") + " LGO"; color: fg; font.pixelSize: 12 }
+                        Text { text: "vault"; color: dim; font.pixelSize: 12 }  Text { text: abbrev(ms.vault) + "  ·  " + (ms.vault_native || "0") + " LGO"; color: fg; font.pixelSize: 12 }
                         Text { text: "queued / executed"; color: dim; font.pixelSize: 12 } Text { text: (ms.queued || 0) + " / " + (ms.executed || 0); color: fg; font.pixelSize: 12 }
                     }
                     Rectangle { Layout.fillWidth: true; height: 1; color: line }
@@ -279,7 +279,7 @@ Item {
                                 RowLayout {
                                     Layout.fillWidth: true
                                     Text { text: p.decoded ? p.decoded.kind : "?"; color: fg; font.pixelSize: 15; font.bold: true }
-                                    Text { text: "· " + short(p.digest); color: dim; font.pixelSize: 12 }
+                                    Text { text: "· " + abbrev(p.digest); color: dim; font.pixelSize: 12 }
                                     Item { Layout.fillWidth: true }
                                     Rectangle {
                                         radius: 9; implicitHeight: 20; implicitWidth: stt.implicitWidth + 16
@@ -295,7 +295,7 @@ Item {
                                         Layout.fillWidth: true; wrapMode: Text.Wrap; font.pixelSize: 13
                                         color: modelData.decoded ? fg : warn
                                         text: modelData.decoded
-                                              ? modelData.decoded.instruction + " " + modelData.decoded.amount + " (" + modelData.decoded.program + ")  " + short(modelData.decoded.from) + " → " + short(modelData.decoded.to)
+                                              ? modelData.decoded.instruction + " " + modelData.decoded.amount + " (" + modelData.decoded.program + ")  " + abbrev(modelData.decoded.from) + " → " + abbrev(modelData.decoded.to)
                                               : modelData.warning + "  " + modelData.program + "  data " + modelData.data_hex
                                     }
                                 }
