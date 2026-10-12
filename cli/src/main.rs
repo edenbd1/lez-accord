@@ -954,6 +954,10 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
                     ctx.send("execute", &ix, rows::execute(&p, &id, &d, &action), &[], &[(q, p)]).await?;
                 }
                 Some(group) => {
+                    // The private vault's note must be the latest one, or its nullifier is spent.
+                    let w = ctx.wallet.as_mut().expect("this command opens the wallet");
+                    w.sync_to_latest_block().await?;
+                    w.store_persistent_data()?;
                     let (vault, identity) = private_vault_identity(&ctx, &id, &group)?;
                     let mentions: Vec<AccountMention> = rows::execute(&p, &id, &d, &action)
                         .into_iter()
@@ -971,6 +975,9 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
                     eprintln!("proving the private-vault execution locally; this takes minutes");
                     let sent = ctx.wallet().send_privacy_preserving_tx(mentions, Program::serialize_instruction(ix)?, &pwd).await.map(|(h, _)| h);
                     report_private(&ctx, "execute-private", sent.map_err(|e| anyhow!("{e:?}")), q, p, before, vault).await?;
+                    let w = ctx.wallet.as_mut().expect("this command opens the wallet");
+                    w.sync_to_latest_block().await?;
+                    w.store_persistent_data()?;
                 }
             }
         }
@@ -999,6 +1006,10 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
                     ctx.send("spend", &ix, rows::spend(&p, &id, &asset, to), &[], &[(cfg, p)]).await?;
                 }
                 Some(group) => {
+                    // The private vault's note must be the latest one, or its nullifier is spent.
+                    let w = ctx.wallet.as_mut().expect("this command opens the wallet");
+                    w.sync_to_latest_block().await?;
+                    w.store_persistent_data()?;
                     let (vault, identity) = private_vault_identity(&ctx, &id, &group)?;
                     let mentions = vec![
                         AccountIdentity::PublicNoSign(cfg).select_program_shard(p),
@@ -1011,6 +1022,9 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
                     eprintln!("proving the private-vault spend locally; this takes minutes");
                     let sent = ctx.wallet().send_privacy_preserving_tx(mentions, Program::serialize_instruction(ix)?, &pwd).await.map(|(h, _)| h);
                     report_private(&ctx, "spend-private", sent.map_err(|e| anyhow!("{e:?}")), cfg, p, before, vault).await?;
+                    let w = ctx.wallet.as_mut().expect("this command opens the wallet");
+                    w.sync_to_latest_block().await?;
+                    w.store_persistent_data()?;
                 }
             }
         }

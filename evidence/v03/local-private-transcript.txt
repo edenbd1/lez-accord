@@ -1,0 +1,29 @@
+{"header":"CMT8HTUYPGVpTQwtZQ3DJurN2aKDEanB4i3HsqdRCNsz","image_id":"24d955ee85544249ebe79f3c9bab5482158898ef1753c655ebd59d030e27762a","op":"deploy","segments":["CWm84CZ3QcJEqCmHtxh7GedCZvAFxBXpcPXWV4pndBRV","Ct2J6srQECKfwM8tZyt95Gmc9qkgp8urxgYQiWiqMHZV","5pnpCi2HMjPQSQM2GoPaH81kXfF77Ztw648Xfj9uJyu1","J4K3V53BvcVX3uX82sFeqxrj2NNUTerLobuU11o3zyoc","wpn9PY5mKedfbSLRF8GTrGrFireArDRtEayGZLd4u3C"]}
+# run against http://127.0.0.1:3040, 2026-10-12T18:26:02Z
+# program CMT8HTUYPGVpTQwtZQ3DJurN2aKDEanB4i3HsqdRCNsz 24d955ee85544249ebe79f3c9bab5482158898ef1753c655ebd59d030e27762a
+== 1. a 2-of-3 whose vault is private
+{"block":225,"label":"create","op":"create","tx":"2466464b6525f18b534c271c11faf3d3b5ea7cf3d993c14c2701f6908d1c0eb7","verdict":"applied"}
+  ok  create: applied
+{"block":226,"label":"activate","op":"activate","tx":"dff5c65c2b2899d648c01f6857db594663e21e2248f3e15dc785b6f07f3e81d3","verdict":"applied"}
+  ok  activate: applied
+{"block":235,"label":"fund-private-vault","op":"vault-fund","tx":"ece737775445a353848be65ebb53620e1519cfdc80a3afce042cbea26b06c238","vault":"2GqXMMNUJQjSnbYKd5wQgHzAJ35JZjDjxWFYCQ6qLn3Q","verdict":"applied"}
+  ok  fund-private-vault: applied
+  ok  the group's member sees the private vault's balance: 500
+  ok  the vault's balance is not public: 0
+== 2. the group keys alone cannot spend it
+{"error":"TransactionBuildError(InvalidProgramBehavior(NativeTransferFailed(UnauthorizedSender { account_id: 2GqXMMNUJQjSnbYKd5wQgHzAJ35JZjDjxWFYCQ6qLn3Q })))","label":"steal-with-group-keys","op":"vault-steal","vault":"2GqXMMNUJQjSnbYKd5wQgHzAJ35JZjDjxWFYCQ6qLn3Q","verdict":"rejected"}
+  ok  steal-with-group-keys: rejected
+  ok  nothing moved: 0
+== 3. a spend within the limit, through the program, proved locally
+{"block":246,"label":"spend-private","op":"spend-private","tx":"42484ede7a8445c4f9e86dafd9e546fdb0c8e8017e6018ce2968965c4dac6e31","vault":"2GqXMMNUJQjSnbYKd5wQgHzAJ35JZjDjxWFYCQ6qLn3Q","verdict":"applied"}
+  ok  spend-private: applied
+  ok  destination received 60: 60
+== 4. an M-of-N action on the private vault
+{"block":247,"label":"queue","op":"queue","tx":"17ca3619cae2047309b7de70a6748bfe0181ee09af5bea000b31bb13f89b369e","verdict":"applied"}
+  ok  queue: applied
+{"block":259,"label":"execute-private","op":"execute-private","tx":"44e513d0df8d9b46c52f28a802597ce4829ba242255cc74e08c06897ac247461","vault":"2GqXMMNUJQjSnbYKd5wQgHzAJ35JZjDjxWFYCQ6qLn3Q","verdict":"applied"}
+  ok  execute-private: applied
+  ok  destination received 100 more: 160
+  ok  the members' view of the vault: 340
+  ok  and still nothing public about it: 0
+summary: 6 applied, 1 refused as expected, 7 state checks ok, failures=0
