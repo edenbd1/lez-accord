@@ -101,7 +101,12 @@ QString AccordBackend::chatStart() {
     });
     chat.on(QStringLiteral("delivery_state_changed"), [this](const QVariantList& a) {
         setChatState(a.value(0).toString());
-        if (a.value(0).toString() == QLatin1String("online")) setChatAddress(modules().chat_module.get_address());
+        if (a.value(0).toString() == QLatin1String("online")) {
+            setChatAddress(modules().chat_module.get_address());
+            // Also on disk, so a member can hand it to the others from a script.
+            QFile f(dataDir() + QStringLiteral("/chat_address"));
+            if (f.open(QIODevice::WriteOnly)) f.write(chatAddress().toUtf8());
+        }
     });
     ChatModule::ChatConfig config;
     config.delivery_preset = envOr("ACCORD_CHAT_PRESET", QStringLiteral("logos.test"));
