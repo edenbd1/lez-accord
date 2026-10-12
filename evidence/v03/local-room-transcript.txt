@@ -1,0 +1,32 @@
+# run against http://127.0.0.1:3040, 2026-10-12T18:56:24Z
+# program FrMKbGNQtE5vbFHCbYLvpDdfJZdQKJVqadfGYoFBWtXi 24d955ee85544249ebe79f3c9bab5482158898ef1753c655ebd59d030e27762a
+== 1. a 2-of-3; three members, three key directories
+{"block":347,"label":"create","op":"create","tx":"5f0a4fbeaadaae60fe7fb4a24c01288ee0667beab2b7e66374d8930c3230fa6d","verdict":"applied"}
+  ok  create: applied
+{"block":349,"label":"activate","op":"activate","tx":"e47c602082f6fdfe55e8ecfa4cf72d55cefad9c60702a421d7bf71e3c89fd705","verdict":"applied"}
+  ok  activate: applied
+== 2. the room: Carol opens it, Bob joins with his own key
+{"epoch":0,"invite_topic":"/accord/1/ee35d9a2f45710d4c2142694705f8a47/proto","invites":3,"op":"room-open","topic":"/accord/1/4666d258447140e6d10aca4b022f94fb/proto"}
+{"epoch":0,"op":"room-join","topic":"/accord/1/4666d258447140e6d10aca4b022f94fb/proto"}
+  ok  Bob's room is Carol's room: 1b785111bc015370fe036a311a7d0e686ea741376133037a3a14f18e08d4b5cd
+== 3. Carol listens on her own Delivery node
+== 4. Alice proposes over her node; Bob approves over his
+{"action":{"calls":[{"accounts":["5tDbNr7v2dVY8w7pwZCVbsBwMtmjqZQFRKgS8Vccn7Kj [native]","7nqvY7rPg26HjukExHx7r4B1PbAHGytNKnPJ28WunhtH [native]"],"decoded":{"amount":"70","from":"5tDbNr7v2dVY8w7pwZCVbsBwMtmjqZQFRKgS8Vccn7Kj","instruction":"Transfer","program":"native token","to":"7nqvY7rPg26HjukExHx7r4B1PbAHGytNKnPJ28WunhtH"},"target":"11111111111111111111111111111111"}],"kind":"calls"},"digest":"284d0b3fd4609ab20c8736f53fad1f3a5fe76803a2c8a2f90a0cef66ad12b9c3","epoch":0,"expires_at":1791835072789,"op":"propose","package":"/var/folders/13/gjvsmjjx0slggwgptr2d6fhh0000gn/T/tmp.uvNJZNw6MH/pay.json"}
+{"bytes":1302,"op":"room-post","topic":"/accord/1/4666d258447140e6d10aca4b022f94fb/proto"}
+{"approvals":1,"digest":"284d0b3fd4609ab20c8736f53fad1f3a5fe76803a2c8a2f90a0cef66ad12b9c3","key":"0810618e43edac8de952c78d08c3c1eb80eb54c60e189cdeb32f8e47f4c0f6ad","op":"approve"}
+{"bytes":326,"op":"room-post","topic":"/accord/1/4666d258447140e6d10aca4b022f94fb/proto"}
+{"bytes":1521,"op":"room-post","topic":"/accord/1/4666d258447140e6d10aca4b022f94fb/proto"}
+{"approvals":0,"digest":"284d0b3fd4609ab20c8736f53fad1f3a5fe76803a2c8a2f90a0cef66ad12b9c3","from":"a5c2e178967588389951bc657d0fc7a1d5f59c0f71abbb602b835ae7255a29c8","op":"room-package","path":"/var/folders/13/gjvsmjjx0slggwgptr2d6fhh0000gn/T/tmp.uvNJZNw6MH/carol-inbox/284d0b3fd4609ab20c8736f53fad1f3a5fe76803a2c8a2f90a0cef66ad12b9c3.json"}
+{"from":"0810618e43edac8de952c78d08c3c1eb80eb54c60e189cdeb32f8e47f4c0f6ad","op":"room-chat","text":"checked the invoice, approving"}
+{"approvals":1,"digest":"284d0b3fd4609ab20c8736f53fad1f3a5fe76803a2c8a2f90a0cef66ad12b9c3","from":"0810618e43edac8de952c78d08c3c1eb80eb54c60e189cdeb32f8e47f4c0f6ad","op":"room-package","path":"/var/folders/13/gjvsmjjx0slggwgptr2d6fhh0000gn/T/tmp.uvNJZNw6MH/carol-inbox/284d0b3fd4609ab20c8736f53fad1f3a5fe76803a2c8a2f90a0cef66ad12b9c3.json"}
+  ok  Carol's node heard the package: yes
+  ok  Carol's node heard Bob's deliberation: 1
+  ok  the package Carol holds carries Alice's proposal and Bob's approval: 1 True
+== 5. Carol approves the package she received, queues and executes it
+{"approvals":2,"digest":"284d0b3fd4609ab20c8736f53fad1f3a5fe76803a2c8a2f90a0cef66ad12b9c3","key":"fc320498a25262ca4f40e6f1226a0b837d56f30bd00ad4173d3edf9b092ea779","op":"approve"}
+{"block":358,"label":"queue","op":"queue","tx":"7f0aff31d747ea84284db331ee696c1b9035f2eaf1f2a4139a404e0f4b9c899a","verdict":"applied"}
+  ok  queue: applied
+{"block":359,"label":"execute","op":"execute","tx":"5da52437f3cb8c66a0f7cdfab3db3c956cac287129ddd56fa25659fd2a8212e1","verdict":"applied"}
+  ok  execute: applied
+  ok  destination received 70: 70
+summary: 4 applied, 5 checks ok, failures=0
