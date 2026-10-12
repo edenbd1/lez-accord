@@ -1,0 +1,7 @@
+Apple M4 Pro
+14
+2026-10-12T16:55:05Z
+| M | signatures verified | user cycles | segments | prove (s, wall) | succinct receipt (bytes) |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 2 | 556046 | 1 | 71.0 | 224513 |
+| 3 | 4 | 1107971 | 2 | 108.0 | 225193 |

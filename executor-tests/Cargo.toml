@@ -20,6 +20,7 @@ token_core = { git = "https://github.com/logos-blockchain/logos-execution-zone.g
 programs   = { git = "https://github.com/logos-blockchain/logos-execution-zone.git", rev = "db66590ab821a4e142c211017a3866d007f6fa77", features = ["artifacts"] }
 borsh = { version = "1.5", features = ["derive"] }
 risc0-binfmt = "3.0"
+risc0-zkvm = { version = "=3.0.5", features = ["client"] }
 risc0-zkos-v1compat = "=2.2.2"
 
 [[bin]]
@@ -28,3 +29,7 @@ path = "src/measure.rs"
 [[bin]]
 name = "pack"
 path = "src/pack.rs"
+
+[[bin]]
+name = "prove"
+path = "src/prove.rs"
