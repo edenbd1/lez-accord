@@ -34,7 +34,7 @@ Item {
         return null
     }
     function label(key) {
-        const names = backend ? backend.names : ({})
+        const names = backend && backend.names ? backend.names : ({})
         return names[key] ? names[key] : abbrev(key)
     }
     function dur(ms_) {
