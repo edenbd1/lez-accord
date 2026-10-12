@@ -83,7 +83,8 @@ impl Chain {
     /// definition, balance). Every definition named is created too.
     #[must_use]
     pub fn new(native: &[(AccountId, u128)], tokens: &[(AccountId, AccountId, u128)]) -> Self {
-        let bin = std::fs::read(BIN).expect("build the guest first: artifacts/programs/v0.3/accord_multisig.bin");
+        let path = std::env::var("ACCORD_BIN").unwrap_or_else(|_| BIN.to_string());
+        let bin = std::fs::read(&path).expect("build the guest first: artifacts/programs/v0.3/accord_multisig.bin");
         let program = lee::program::Program::new(bin.clone().into()).expect("a RISC0 program binary");
         let program2 = lee::program::Program::new(bin.into()).expect("a RISC0 program binary");
         let token = programs::token_account_id();

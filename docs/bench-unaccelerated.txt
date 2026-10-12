@@ -1,0 +1,9 @@
+| op | cycles | share of the 10M gas cap |
+|---|---:|---:|
+| create + activate (3 members, M = 2) | over the cap: Execution exceeded its cycle budget of 9982348 cycles | |
+
+| M (approvals) | queue cycles | share of the cap | marginal per approval |
+|---:|---:|---:|---:|
+| 1 | over the cap | | Execution exceeded its cycle budget of 9970566 cycles |
+
+largest M whose queue fits one transaction: 0 (of at most 32 members)
