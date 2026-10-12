@@ -162,3 +162,210 @@
 }
 {"block":27,"label":"queue-steal","op":"queue","tx":"2ad0a3d3a3ff3c0e6ab4daddb278aef4ccff27a225becdc5a8c28714432875db","verdict":"applied"}
   ok  queue-steal: applied
+{"error":"TransactionBuildError(InvalidInput(\"Fee payer is a non-signing account of this transaction\"))","label":"execute-steal","op":"execute","verdict":"rejected"}
+  ok  execute-steal: rejected
+== 6. a configuration change invalidates pending approvals
+{
+  "calls": [
+    {
+      "accounts": [
+        "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW [native]",
+        "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm [native]"
+      ],
+      "decoded": {
+        "amount": "5",
+        "from": "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW",
+        "instruction": "Transfer",
+        "program": "native token",
+        "to": "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm"
+      },
+      "target": "11111111111111111111111111111111"
+    }
+  ],
+  "kind": "calls"
+}
+{
+  "calls": [
+    {
+      "accounts": [
+        "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW [native]",
+        "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm [native]"
+      ],
+      "decoded": {
+        "amount": "5",
+        "from": "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW",
+        "instruction": "Transfer",
+        "program": "native token",
+        "to": "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm"
+      },
+      "target": "11111111111111111111111111111111"
+    }
+  ],
+  "kind": "calls"
+}
+{
+  "kind": "configuration change",
+  "limits": [],
+  "members": [
+    {
+      "key": "05c9655b86834fe7a2dc41d5d592d8dddd231374014162e018cca6cd83caf88b",
+      "roles": [
+        "propose",
+        "approve"
+      ],
+      "weight": 1
+    },
+    {
+      "key": "07f87df4b8384004e2804a3f0995520a8775e0536b704cda0742fa474e3f9a59",
+      "roles": [
+        "approve",
+        "execute"
+      ],
+      "weight": 1
+    },
+    {
+      "key": "c59bb0022bce1e5e5c5736ab36ba4ccd8c2bd5058b04eb7f72bc2ac20399a084",
+      "roles": [
+        "approve"
+      ],
+      "weight": 1
+    }
+  ],
+  "threshold": 2,
+  "time_lock_ms": 45000
+}
+{"block":32,"label":"queue-config-one-approval","op":"queue","tx":"47be50fd6c96ec614ec1651e8da3dd645b353b286576dedc7e3caefbf7cd47e1","verdict":"reverted"}
+  ok  queue-config-one-approval: reverted
+{
+  "kind": "configuration change",
+  "limits": [],
+  "members": [
+    {
+      "key": "05c9655b86834fe7a2dc41d5d592d8dddd231374014162e018cca6cd83caf88b",
+      "roles": [
+        "propose",
+        "approve"
+      ],
+      "weight": 1
+    },
+    {
+      "key": "07f87df4b8384004e2804a3f0995520a8775e0536b704cda0742fa474e3f9a59",
+      "roles": [
+        "approve",
+        "execute"
+      ],
+      "weight": 1
+    },
+    {
+      "key": "c59bb0022bce1e5e5c5736ab36ba4ccd8c2bd5058b04eb7f72bc2ac20399a084",
+      "roles": [
+        "approve"
+      ],
+      "weight": 1
+    }
+  ],
+  "threshold": 2,
+  "time_lock_ms": 45000
+}
+{"block":33,"label":"queue-config","op":"queue","tx":"2a68638865d9af065ffab82491887564af55e72f8c5a32761f14947588254767","verdict":"applied"}
+  ok  queue-config: applied
+{"block":37,"label":"execute-config","op":"execute","tx":"0488933b776f157c04cacc074761d3eb0f0c7338f9e83fce0720ab3ac6e15b00","verdict":"applied"}
+  ok  execute-config: applied
+  ok  epoch moved: 1
+  ok  bob is no longer a member: 3
+{"block":38,"label":"queue-stale-approvals","op":"queue","tx":"7fa1c33687ba89933c09b397bb0bb4c4e934e9b4634e83994a6f16e2747718ce","verdict":"reverted"}
+  ok  queue-stale-approvals: reverted
+{
+  "calls": [
+    {
+      "accounts": [
+        "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW [native]",
+        "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm [native]"
+      ],
+      "decoded": {
+        "amount": "5",
+        "from": "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW",
+        "instruction": "Transfer",
+        "program": "native token",
+        "to": "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm"
+      },
+      "target": "11111111111111111111111111111111"
+    }
+  ],
+  "kind": "calls"
+}
+{
+  "calls": [
+    {
+      "accounts": [
+        "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW [native]",
+        "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm [native]"
+      ],
+      "decoded": {
+        "amount": "5",
+        "from": "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW",
+        "instruction": "Transfer",
+        "program": "native token",
+        "to": "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm"
+      },
+      "target": "11111111111111111111111111111111"
+    }
+  ],
+  "kind": "calls"
+}
+{"block":39,"label":"queue-removed-member","op":"queue","tx":"54a800ec8628f8b18b7d7448e7b8d13f7ff4daa9d9970c64fcb74b53f7255375","verdict":"reverted"}
+  ok  queue-removed-member: reverted
+== 7. veto: the new quorum cancels a queued action, skipping the time lock
+{
+  "calls": [
+    {
+      "accounts": [
+        "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW [native]",
+        "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm [native]"
+      ],
+      "decoded": {
+        "amount": "300",
+        "from": "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW",
+        "instruction": "Transfer",
+        "program": "native token",
+        "to": "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm"
+      },
+      "target": "11111111111111111111111111111111"
+    }
+  ],
+  "kind": "calls"
+}
+{
+  "calls": [
+    {
+      "accounts": [
+        "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW [native]",
+        "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm [native]"
+      ],
+      "decoded": {
+        "amount": "300",
+        "from": "H5uWPQwJ2KuxPgvjdKsq7vy8kyAaJ6tmnQVWC9N3qtmW",
+        "instruction": "Transfer",
+        "program": "native token",
+        "to": "GikouY6aBM2QiLpotJ7Sh5cbrB8wQknh79C7E9kyN4Fm"
+      },
+      "target": "11111111111111111111111111111111"
+    }
+  ],
+  "kind": "calls"
+}
+{"block":40,"label":"queue-big","op":"queue","tx":"b29ed0bb152d1cbe1117705fa6fd25da79d5916dcdd6e38ecd699e824d75dc84","verdict":"applied"}
+  ok  queue-big: applied
+{
+  "digest": "658bd0e95279f44b5a6591000f2d202657d0ab4c66fc724b8ee2f1fea7cbe033",
+  "kind": "veto a queued action"
+}
+{
+  "digest": "658bd0e95279f44b5a6591000f2d202657d0ab4c66fc724b8ee2f1fea7cbe033",
+  "kind": "veto a queued action"
+}
+{"block":41,"label":"queue-veto","op":"queue","tx":"5c9f74656fe42c4260c42b74e665449490c4dc53ba1362298e4798b6846ec48b","verdict":"applied"}
+  ok  queue-veto: applied
+{"block":42,"label":"execute-veto","op":"execute","tx":"b9fed8773f2b75200500c9888df8c504deb1bda210ea4fc630a7cd76c320dc18","verdict":"applied"}
+  ok  execute-veto: applied
+  ok  big transfer cancelled: cancelled

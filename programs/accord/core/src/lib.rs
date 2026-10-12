@@ -859,11 +859,13 @@ pub fn plan(input: &PlanInput, ix: Instruction) -> Plan {
             let [cfg, vault, destination] = rows::<3>(input);
             let config = config_account(&me, &multisig_id);
             expect_own(&cfg, &me, config, "the first row is the configuration PDA");
-            refuse_unless(
-                vault.account_id == vault_account(&me, &multisig_id) && vault.program_account_id == asset.shard_program(),
-                E_ACCOUNTS,
-                "the second row is the vault's shard of this asset",
-            );
+            // The vault is the public PDA `[multisig_id, "vault"]`, or a private
+            // PDA bound to this program and that seed. Either way the payout
+            // below is authorised only by the seed this program attaches, so a
+            // row that is neither cannot be debited; a row that signs is
+            // refused so no other authority reaches the payout.
+            refuse_unless(vault.program_account_id == asset.shard_program(), E_ACCOUNTS, "the second row is the vault's shard of this asset");
+            refuse_unless(!vault.is_authorized, E_FORBIDDEN_ACCOUNT, "the vault row must not sign");
             refuse_unless(destination.program_account_id == asset.shard_program(), E_ACCOUNTS, "the destination row selects the asset's shard");
             refuse_unless(!destination.is_authorized, E_FORBIDDEN_ACCOUNT, "a spend destination must not sign");
             refuse_unless(amount > 0, E_LIMIT_EXCEEDED, "a spend names a positive amount");

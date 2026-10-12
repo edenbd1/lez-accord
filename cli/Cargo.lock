@@ -16,6 +16,7 @@ dependencies = [
  "common",
  "hex",
  "k256 0.13.4",
+ "key_protocol",
  "lee",
  "lee_core",
  "libloading",

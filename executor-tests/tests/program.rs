@@ -638,3 +638,23 @@ fn the_queued_record_is_the_queued_pda_of_the_digest() {
     let d = w.digest(0, w.exp(), &a);
     assert_eq!(rows::queue(&MSIG, &ID, &d)[1].account_id, queued_account(&MSIG, &ID, &d));
 }
+
+#[test]
+fn a_spend_cannot_debit_an_account_that_is_not_the_vault() {
+    // The vault row is only authorised by the vault's seed; naming some other
+    // funded account in its place moves nothing.
+    let mut w = W::ready(0);
+    let other = Key::new(77);
+    w.c.state = std::mem::take(&mut w.c.state).with_public_accounts(vec![(other.id, lee::Account::funded(500))]);
+    let msg = spend_message(&w.cfg, 0, 0, &DEST, &Asset::Native, 10);
+    let ix = Instruction::Spend { multisig_id: ID, limit: 0, uses: 0, asset: Asset::Native, amount: 10, approvals: vec![w.k[1].sign(&msg)], at: w.c.now };
+    let rows = vec![
+        rows::activate(&MSIG, &ID)[0],
+        ProgramShardSelector::new(other.id, NATIVE_TOKEN_PROGRAM_ID),
+        ProgramShardSelector::new(DEST, NATIVE_TOKEN_PROGRAM_ID),
+    ];
+    let e = w.send(ix, rows).unwrap_err();
+    assert!(code(&e).is_none(), "refused by the runtime's authorisation, not by a program check: {e}");
+    assert_eq!(w.c.native(other.id), 500);
+    assert_eq!(w.c.native(DEST), 0);
+}

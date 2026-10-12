@@ -25,3 +25,15 @@ spend-over-limit	refused	reverted	25	9dd2e6ad32723465ff67759a6ae60fe26f282bb6e07
 spend-by-non-spender	refused	reverted	26	8a190f36323ab24e6f5f5ec555d2d3f631d0750bb87d03d033d2228ccdaff83c
 # check ok: spend paid 60 = 60
 queue-steal	applied	applied	27	2ad0a3d3a3ff3c0e6ab4daddb278aef4ccff27a225becdc5a8c28714432875db
+execute-steal	refused	rejected	None	-
+queue-config-one-approval	refused	reverted	32	47be50fd6c96ec614ec1651e8da3dd645b353b286576dedc7e3caefbf7cd47e1
+queue-config	applied	applied	33	2a68638865d9af065ffab82491887564af55e72f8c5a32761f14947588254767
+execute-config	applied	applied	37	0488933b776f157c04cacc074761d3eb0f0c7338f9e83fce0720ab3ac6e15b00
+# check ok: epoch moved = 1
+# check ok: bob is no longer a member = 3
+queue-stale-approvals	refused	reverted	38	7fa1c33687ba89933c09b397bb0bb4c4e934e9b4634e83994a6f16e2747718ce
+queue-removed-member	refused	reverted	39	54a800ec8628f8b18b7d7448e7b8d13f7ff4daa9d9970c64fcb74b53f7255375
+queue-big	applied	applied	40	b29ed0bb152d1cbe1117705fa6fd25da79d5916dcdd6e38ecd699e824d75dc84
+queue-veto	applied	applied	41	5c9f74656fe42c4260c42b74e665449490c4dc53ba1362298e4798b6846ec48b
+execute-veto	applied	applied	42	b9fed8773f2b75200500c9888df8c504deb1bda210ea4fc630a7cd76c320dc18
+# check ok: big transfer cancelled = cancelled

@@ -95,6 +95,10 @@ enum Cmd {
         header: Option<AccountId>,
         #[arg(long, requires = "header")]
         segment: Vec<AccountId>,
+        /// Make the header immutable: needed for a private vault, whose binding
+        /// to this program the privacy circuit checks against the header's mirror.
+        #[arg(long)]
+        immutable: bool,
     },
     /// Create a multisig. Members are `<key name or hex>:<roles>[:weight]`,
     /// roles a subset of `p` (propose), `a` (approve), `e` (execute).
@@ -176,6 +180,16 @@ enum Cmd {
         token: Option<AccountId>,
         #[arg(long = "key", required = true)]
         signers: Vec<String>,
+        /// Spend from the private vault whose keys the wallet group `<name>` holds,
+        /// in a privacy-preserving transaction proved locally.
+        #[arg(long)]
+        private_vault: Option<String>,
+    },
+    /// The private vault: a private PDA of this program under the vault seed,
+    /// keyed by a wallet group (Group Master Secret) the members share.
+    Vault {
+        #[command(subcommand)]
+        op: VaultCmd,
     },
     /// The coordination room over Logos Delivery (docs/ROOM.md).
     Room {
@@ -192,6 +206,37 @@ enum Cmd {
         /// The ImageID to record; read from the target's header if omitted.
         #[arg(long)]
         image_id: Option<String>,
+    },
+}
+
+#[derive(Subcommand)]
+enum VaultCmd {
+    /// The private vault's account id for a group.
+    Id {
+        multisig: String,
+        #[arg(long)]
+        group: String,
+    },
+    /// Fund the private vault from a public account (a privacy-preserving transfer).
+    Fund {
+        multisig: String,
+        #[arg(long)]
+        group: String,
+        #[arg(long)]
+        from: AccountId,
+        #[arg(long)]
+        amount: u128,
+    },
+    /// Try to move the private vault's funds directly with the native token
+    /// program, holding the group keys but without the multisig. Must fail.
+    Steal {
+        multisig: String,
+        #[arg(long)]
+        group: String,
+        #[arg(long)]
+        to: AccountId,
+        #[arg(long)]
+        amount: u128,
     },
 }
 
@@ -644,7 +689,7 @@ async fn main() -> Result<()> {
     let rpc = SequencerClientBuilder::default().build(&cli.rpc).with_context(|| format!("not a sequencer URL: {}", cli.rpc))?;
     let signs = matches!(
         cli.cmd,
-        Cmd::Deploy { .. } | Cmd::Create { .. } | Cmd::Queue { .. } | Cmd::Execute { .. } | Cmd::Activate { .. } | Cmd::Spend { .. } | Cmd::Register { .. }
+        Cmd::Vault { .. } | Cmd::Deploy { .. } | Cmd::Create { .. } | Cmd::Queue { .. } | Cmd::Execute { .. } | Cmd::Activate { .. } | Cmd::Spend { .. } | Cmd::Register { .. }
     );
     let wallet = if signs {
         Some(WalletCore::from_env().await.context("this command sends a transaction, so it needs a v0.3 wallet home (LEE_WALLET_HOME_DIR)")?)
@@ -687,7 +732,7 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
             }
             println!("{j}");
         }
-        Cmd::Deploy { payer, header, segment } => {
+        Cmd::Deploy { payer, header, segment, immutable } => {
             let bytecode = std::fs::read(elf).with_context(|| format!("reading {}", elf.display()))?;
             let program = Program::new(bytecode.clone().into())?;
             let user_elf = risc0_binfmt::ProgramBinary::decode(&bytecode).map_err(|e| anyhow!("{e}"))?.user_elf.len();
@@ -705,7 +750,7 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
                     (h, s)
                 }
             };
-            ProgramLoader(&*wallet).deploy(header, &segs, bytecode, false, Some(payer)).await?;
+            ProgramLoader(&*wallet).deploy(header, &segs, bytecode, immutable, Some(payer)).await?;
             println!("{}", serde_json::json!({"op": "deploy", "header": header.to_string(), "image_id": image_hex(&program), "segments": segs.iter().map(|s| s.to_string()).collect::<Vec<_>>()}));
         }
         Cmd::Create { multisig, members, threshold, time_lock, limits } => {
@@ -896,7 +941,8 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
             let cfg = config_account(&p, &id);
             ctx.send("activate", &Instruction::Activate { multisig_id: id, epoch: m.epoch, approvals }, rows::activate(&p, &id), &[], &[(cfg, p)]).await?;
         }
-        Cmd::Spend { multisig, limit, to, amount, token, signers } => {
+        Cmd::Vault { op } => vault_cmd(&ctx, op, elf).await?,
+        Cmd::Spend { multisig, limit, to, amount, token, signers, private_vault } => {
             let p = ctx.program()?;
             let id = id32(&multisig)?;
             let m = ctx.multisig(&id).await?;
@@ -906,7 +952,25 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
             let msg = spend_message(&cfg, limit, l.uses, &to, &asset, amount);
             let approvals = signers.iter().map(|k| ctx.sign(k, &msg)).collect::<Result<_>>()?;
             let ix = Instruction::Spend { multisig_id: id, limit, uses: l.uses, asset, amount, approvals, at: ctx.now().await? };
-            ctx.send("spend", &ix, rows::spend(&p, &id, &asset, to), &[], &[(cfg, p)]).await?;
+            match private_vault {
+                None => {
+                    ctx.send("spend", &ix, rows::spend(&p, &id, &asset, to), &[], &[(cfg, p)]).await?;
+                }
+                Some(group) => {
+                    let (vault, identity) = private_vault_identity(&ctx, &id, &group)?;
+                    let mentions = vec![
+                        AccountIdentity::PublicNoSign(cfg).select_program_shard(p),
+                        identity.select_program_shard(asset.shard_program()),
+                        AccountIdentity::PublicNoSign(to).select_program_shard(asset.shard_program()),
+                    ];
+                    let program = Program::new(std::fs::read(elf).with_context(|| format!("reading {}", elf.display()))?.into())?;
+                    let pwd = lee::privacy_preserving_transaction::circuit::ProgramWithDependencies::new(program, p, std::collections::HashMap::new());
+                    let before = ctx.shard(cfg, p).await?;
+                    eprintln!("proving the private-vault spend locally; this takes minutes");
+                    let sent = ctx.wallet().send_privacy_preserving_tx(mentions, Program::serialize_instruction(ix)?, &pwd).await.map(|(h, _)| h);
+                    report_private(&ctx, "spend-private", sent.map_err(|e| anyhow!("{e:?}")), cfg, p, before, vault).await?;
+                }
+            }
         }
         Cmd::Room { op } => room_cmd(&ctx, op).await?,
         Cmd::Register { target, idl, name, image_id } => {
@@ -1096,4 +1160,92 @@ async fn room_cmd(ctx: &Ctx, op: RoomCmd) -> Result<()> {
 extern "C" {
     #[link_name = "dup"]
     fn libc_dup(fd: i32) -> i32;
+}
+
+/// The private vault of `multisig_id` under the wallet group `group`: a
+/// private PDA of this program under the vault seed, with keys every holder
+/// of the group's Group Master Secret derives alike.
+fn private_vault_identity(ctx: &Ctx, multisig_id: &[u8; 32], group: &str) -> Result<(AccountId, AccountIdentity)> {
+    let p = ctx.program()?;
+    let holder = ctx
+        .wallet()
+        .storage()
+        .key_chain()
+        .group_key_holder(&wallet::account::Label::new(group))
+        .ok_or_else(|| anyhow!("no wallet group {group}: create it with `wallet group new {group}`, or join it"))?;
+    // The derivation input names this program instance; any 32 bytes serve.
+    let pid: [u32; 8] = std::array::from_fn(|i| u32::from_le_bytes(p.value()[i * 4..i * 4 + 4].try_into().unwrap()));
+    let seed = core::vault_seed(multisig_id);
+    let keys = holder.derive_keys_for_pda(&pid, &seed);
+    let (npk, vpk) = (keys.generate_nullifier_public_key(), keys.generate_viewing_public_key());
+    let identifier = lee_core::Identifier::ZERO;
+    let id = AccountId::for_private_pda(&p, &seed, &npk, &vpk, identifier);
+    Ok((id, AccountIdentity::PrivatePdaShared { authority: p, seed, nsk: keys.nullifier_secret_key(), vpk, identifier }))
+}
+
+async fn report_private(ctx: &Ctx, op: &str, sent: Result<common::HashType>, watch: AccountId, prog: AccountId, before: Vec<u8>, vault: AccountId) -> Result<()> {
+    let hash = match sent {
+        Ok(h) => h,
+        Err(e) => {
+            println!("{}", serde_json::json!({"op": op, "label": ctx.label, "verdict": "rejected", "error": e.to_string(), "vault": vault.to_string()}));
+            return Ok(());
+        }
+    };
+    let polled = tokio::time::timeout(Duration::from_secs(240), ctx.wallet().poll_transaction(hash)).await;
+    let block = match polled {
+        Ok(Ok((_, b))) => Some(b),
+        _ => None,
+    };
+    let after = ctx.shard(watch, prog).await?;
+    let verdict = match block {
+        None => "not-included",
+        Some(_) if after != before => "applied",
+        Some(_) => "reverted",
+    };
+    println!("{}", serde_json::json!({"op": op, "label": ctx.label, "tx": hash.to_string(), "block": block, "verdict": verdict, "vault": vault.to_string()}));
+    Ok(())
+}
+
+async fn vault_cmd(ctx: &Ctx, op: VaultCmd, _elf: &PathBuf) -> Result<()> {
+    match op {
+        VaultCmd::Id { multisig, group } => {
+            let (id, _) = private_vault_identity(ctx, &id32(&multisig)?, &group)?;
+            println!("{}", serde_json::json!({"private_vault": id.to_string()}));
+        }
+        VaultCmd::Fund { multisig, group, from, amount } => {
+            let (vault, identity) = private_vault_identity(ctx, &id32(&multisig)?, &group)?;
+            let mentions = vec![AccountIdentity::Public(from).balance(), identity.balance()];
+            let ix = Program::serialize_instruction(lee_core::native_token::Instruction::Transfer { amount })?;
+            eprintln!("proving the transfer into the private vault locally");
+            let sent = ctx
+                .wallet()
+                .send_privacy_preserving_tx(mentions, ix, &lee::privacy_preserving_transaction::circuit::ProgramWithDependencies::native())
+                .await
+                .map(|(h, _)| h);
+            let hash = sent.map_err(|e| anyhow!("{e:?}"))?;
+            let polled = tokio::time::timeout(Duration::from_secs(240), ctx.wallet().poll_transaction(hash)).await;
+            let block = polled.ok().and_then(|r| r.ok()).map(|(_, b)| b);
+            println!("{}", serde_json::json!({"op": "vault-fund", "label": ctx.label, "tx": hash.to_string(), "block": block, "verdict": if block.is_some() { "applied" } else { "not-included" }, "vault": vault.to_string()}));
+        }
+        VaultCmd::Steal { multisig, group, to, amount } => {
+            let (vault, identity) = private_vault_identity(ctx, &id32(&multisig)?, &group)?;
+            let mentions = vec![identity.balance(), AccountIdentity::PublicNoSign(to).balance()];
+            let ix = Program::serialize_instruction(lee_core::native_token::Instruction::Transfer { amount })?;
+            let sent = ctx
+                .wallet()
+                .send_privacy_preserving_tx(mentions, ix, &lee::privacy_preserving_transaction::circuit::ProgramWithDependencies::native())
+                .await
+                .map(|(h, _)| h);
+            let line = match sent {
+                Err(e) => serde_json::json!({"op": "vault-steal", "label": ctx.label, "verdict": "rejected", "error": format!("{e:?}"), "vault": vault.to_string()}),
+                Ok(h) => {
+                    let polled = tokio::time::timeout(Duration::from_secs(240), ctx.wallet().poll_transaction(h)).await;
+                    let block = polled.ok().and_then(|r| r.ok()).map(|(_, b)| b);
+                    serde_json::json!({"op": "vault-steal", "label": ctx.label, "tx": h.to_string(), "block": block, "verdict": if block.is_some() { "applied" } else { "not-included" }, "vault": vault.to_string()})
+                }
+            };
+            println!("{line}");
+        }
+    }
+    Ok(())
 }

@@ -781,6 +781,23 @@ fn spend_refuses_another_asset_or_a_signing_destination() {
 }
 
 #[test]
+fn spend_refuses_a_signing_vault_row() {
+    let mut fx = setup(0);
+    let msg = spend_message(&config_account(&ME, &ID), 0, 0, &DEST, &Asset::Native, 10);
+    let ix = Instruction::Spend {
+        multisig_id: ID,
+        limit: 0,
+        uses: 0,
+        asset: Asset::Native,
+        amount: 10,
+        approvals: vec![fx.keys[1].sign(&msg)],
+        at: T0,
+    };
+    let rows = vec![cfg_row(), meta(PAYER, NATIVE_TOKEN_PROGRAM_ID, true), meta(DEST, NATIVE_TOKEN_PROGRAM_ID, false)];
+    assert_eq!(fx.w.send(ix, rows), Err(E_FORBIDDEN_ACCOUNT));
+}
+
+#[test]
 fn registry_is_append_only() {
     let mut w = World::default();
     let prog = AccountId::new([3; 32]);
