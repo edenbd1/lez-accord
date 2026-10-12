@@ -1,0 +1,8 @@
+/Users/eden/data/ns.com/rfp-005/prototype/build/app/CMakeFiles/chain_test.dir
+/Users/eden/data/ns.com/rfp-005/prototype/build/app/CMakeFiles/qml_host.dir
+/Users/eden/data/ns.com/rfp-005/prototype/build/app/CMakeFiles/edit_cache.dir
+/Users/eden/data/ns.com/rfp-005/prototype/build/app/CMakeFiles/rebuild_cache.dir
+/Users/eden/data/ns.com/rfp-005/prototype/build/app/CMakeFiles/chain_test_autogen_timestamp_deps.dir
+/Users/eden/data/ns.com/rfp-005/prototype/build/app/CMakeFiles/chain_test_autogen.dir
+/Users/eden/data/ns.com/rfp-005/prototype/build/app/CMakeFiles/qml_host_autogen_timestamp_deps.dir
+/Users/eden/data/ns.com/rfp-005/prototype/build/app/CMakeFiles/qml_host_autogen.dir
