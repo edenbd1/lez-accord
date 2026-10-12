@@ -58,7 +58,7 @@ receipt. This is the receipt a member's client produces under the private
 posture, where the privacy-preserving circuit composes it. Raw output:
 [`bench-real-proving.txt`](bench-real-proving.txt).
 
-Machine: Apple M4 Pro, 14 cores, CPU proving.
+Machine: Apple M4 Pro, 14 cores, CPU proving. Measured on the build before the window was widened to ten minutes; the verification code is the same, and the cycle counts above (final binary) agree with these to within 2%.
 
 | M | signatures verified | user cycles | segments | prove (s, wall) | succinct receipt (bytes) |
 |---:|---:|---:|---:|---:|---:|
