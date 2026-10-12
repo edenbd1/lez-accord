@@ -1,36 +1,36 @@
 accord_multisig v0.3 against http://127.0.0.1:3040, from evidence/v03/local-e2e.tsv
-  ok   program header EZTHmUEMJNu5… names ImageID f82aabe82fef01e9…
-  ok   create: applied, in block 8
-  ok   queue-before-activation: reverted, in block 10
-  ok   spend-before-activation: reverted, in block 11
-  ok   activate-below-threshold: reverted, in block 12
-  ok   activate: applied, in block 13
-  ok   queue-one-approval: reverted, in block 14
-  ok   queue: applied, in block 15
-  ok   execute-in-time-lock: reverted, in block 16
-  ok   execute-by-non-executor: reverted, in block 17
-  ok   execute: applied, in block 21
-  ok   queue-again: reverted, in block 22
-  ok   execute-again: reverted, in block 23
-  ok   spend-60: applied, in block 24
-  ok   spend-over-limit: reverted, in block 25
-  ok   spend-by-non-spender: reverted, in block 26
-  ok   queue-steal: applied, in block 27
+  ok   program header FrMKbGNQtE5v… names ImageID 24d955ee85544249…
+  ok   create: applied, in block 267
+  ok   queue-before-activation: reverted, in block 269
+  ok   spend-before-activation: reverted, in block 270
+  ok   activate-below-threshold: reverted, in block 271
+  ok   activate: applied, in block 272
+  ok   queue-one-approval: reverted, in block 273
+  ok   queue: applied, in block 274
+  ok   execute-in-time-lock: reverted, in block 275
+  ok   execute-by-non-executor: reverted, in block 276
+  ok   spend-60: applied, in block 277
+  ok   spend-over-limit: reverted, in block 278
+  ok   spend-by-non-spender: reverted, in block 279
+  ok   queue-steal: applied, in block 280
+  ok   queue-config-one-approval: reverted, in block 281
+  ok   queue-config: applied, in block 282
+  ok   execute: applied, in block 327
+  ok   queue-again: reverted, in block 328
+  ok   execute-again: reverted, in block 329
   ok   execute-steal: rejected, never sent to a block
-  ok   queue-config-one-approval: reverted, in block 32
-  ok   queue-config: applied, in block 33
-  ok   execute-config: applied, in block 37
-  ok   queue-stale-approvals: reverted, in block 38
-  ok   queue-removed-member: reverted, in block 39
-  ok   queue-big: applied, in block 40
-  ok   queue-veto: applied, in block 41
-  ok   execute-veto: applied, in block 42
-  ok   execute-vetoed: reverted, in block 46
-  ok   register: applied, in block 47
-  ok   register-again: reverted, in block 48
-  ok   final state of AC6X91LjwGSp… shard EZTHmUEM… is as the run left it
-  ok   final state of H5uWPQwJ2Kux… shard 11111111… is as the run left it
-  ok   final state of D5bgAiwxpXKE… shard EZTHmUEM… is as the run left it
-  ok   final state of GaHPVuUx9PYM… shard EZTHmUEM… is as the run left it
+  ok   execute-config: applied, in block 330
+  ok   queue-stale-approvals: reverted, in block 331
+  ok   queue-removed-member: reverted, in block 332
+  ok   queue-big: applied, in block 333
+  ok   queue-veto: applied, in block 334
+  ok   execute-veto: applied, in block 335
+  ok   execute-vetoed: reverted, in block 336
+  ok   register: applied, in block 337
+  ok   register-again: reverted, in block 338
+  ok   final state of AitMMrLaZ68M… shard FrMKbGNQ… is as the run left it
+  ok   final state of 3TjagCzZchh3… shard 11111111… is as the run left it
+  ok   final state of 5aebbwEav5TW… shard FrMKbGNQ… is as the run left it
+  ok   final state of 4ZB7Zwg4Z9ry… shard FrMKbGNQ… is as the run left it
   ok   control: a random hash does not resolve
 34 checks pass, 0 fail (13 state checks recorded during the run)
