@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Basic
 import QtQuick.Layouts
 
 // Accord. The view holds no chain state of its own: it asks the backend,
@@ -71,21 +71,56 @@ Item {
         return { who: missing.map(m => label(m.key)).join(", "), cmd: "accord decode " + f + "\naccord approve " + f + " --key <your key>" }
     }
 
-    Connections {
-        target: backend
-        function onMultisigLoaded(json) {
-            const o = JSON.parse(json)
+    // Slots answer through `answered(token, json)`; each request names its own token.
+    property bool ready: false
+    property int nextToken: 1
+    property var waiting: ({})
+    function ask(slotCall, handler) {
+        const token = "t" + (nextToken++)
+        const w = waiting; w[token] = handler; waiting = w
+        logos.watch(slotCall(token), function (r) {
+            if (r && String(r).indexOf("error: ") === 0) { forget(token); handler({ ok: false, error: String(r).substring(7) }) }
+        }, function (err) { forget(token); handler({ ok: false, error: "The Accord backend did not answer: " + err }) })
+    }
+    function forget(token) { const w = waiting; delete w[token]; waiting = w }
+    function openMultisig(id) {
+        id = String(id).trim(); if (id === "" || !ready) return
+        root.error = ""; root.packages = []
+        ask(t => backend.loadMultisig(t, id), o => {
             if (!o.ok) { root.error = o.error; return }
             root.ms = o
-        }
-        function onPackageLoaded(json) {
-            const o = JSON.parse(json)
-            const list = root.packages.slice()
-            list.push(o)
-            list.sort((x, y) => x.index - y.index)
-            root.packages = list
+            msField.text = o.id_text
+            if (backend.initialPackages) for (const f of backend.initialPackages) openPackage(f)
+        })
+    }
+    function openPackage(src) {
+        src = String(src).trim(); if (src === "" || !ready || !ms.ok) return
+        const idx = nextToken
+        ask(t => backend.loadPackage(t, ms.id_text, src), o => {
+            if (!o.ok) { root.error = o.error; return }
+            o.index = idx
+            const list = root.packages.filter(x => !(x.digest === o.digest && x.action === o.action))
+            list.push(o); list.sort((x, y) => x.index - y.index); root.packages = list
+        })
+    }
+    Connections {
+        target: logos
+        ignoreUnknownSignals: true
+        function onViewModuleReadyChanged(name, isReady) { if (name === "accord") root.ready = isReady && root.backend !== null }
+    }
+    Connections {
+        target: root.backend
+        ignoreUnknownSignals: true
+        function onAnswered(token, json) {
+            const h = root.waiting[token]
+            if (!h) return
+            root.forget(token)
+            let o; try { o = JSON.parse(json) } catch (e) { o = { ok: false, error: "unreadable answer" } }
+            h(o)
         }
     }
+    Component.onCompleted: ready = backend !== null && logos.isViewModuleReady("accord")
+    onReadyChanged: if (ready && backend.initialMultisig) openMultisig(backend.initialMultisig)
 
     Rectangle { anchors.fill: parent; color: bg }
 
@@ -113,6 +148,30 @@ Item {
                     Text { id: netText; anchors.centerIn: parent; color: dim; font.pixelSize: 12
                         text: (backend ? backend.rpc : "") + (ms.clock ? "  ·  clock " + new Date(ms.clock).toISOString().slice(11, 19) + " UTC" : "") }
                 }
+            }
+        }
+        Rectangle { Layout.fillWidth: true; height: 1; color: line }
+
+        // inputs
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 52
+            color: bg
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 20
+                anchors.rightMargin: 20
+                spacing: 10
+                component Field: TextField {
+                    color: fg; font.pixelSize: 13; placeholderTextColor: dim; selectByMouse: true
+                    background: Rectangle { radius: 8; color: panel; border.color: parent.activeFocus ? accent : line }
+                }
+                Field { id: msField; Layout.preferredWidth: 220; placeholderText: "multisig id"; onAccepted: openMultisig(text) }
+                Button { text: "Open"; onClicked: openMultisig(msField.text) }
+                Field { id: pkgField; Layout.fillWidth: true; placeholderText: "approval package: a file path, or paste its JSON"; onAccepted: { openPackage(text); text = "" } }
+                Button { text: "Decode"; enabled: !!ms.ok; onClicked: { openPackage(pkgField.text); pkgField.text = "" } }
+                Field { id: progField; Layout.preferredWidth: 200; placeholderText: "program header (base58)"; text: backend ? backend.program : ""
+                        onAccepted: logos.watch(backend.saveSettings(backend.rpc, text), function (r) { if (r) root.error = r }, function (e) {}) }
             }
         }
         Rectangle { Layout.fillWidth: true; height: 1; color: line }

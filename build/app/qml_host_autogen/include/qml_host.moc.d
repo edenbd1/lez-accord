@@ -1265,9 +1265,9 @@
   /opt/homebrew/Cellar/qtbase/6.11.1/lib/QtNetwork.framework/Versions/A/Headers/qtnetworkglobal.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/include/QtQmlIntegration/qqmlintegration.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/QJSValue \
-  /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/QQmlApplicationEngine \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/QQmlComponent \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/QQmlContext \
+  /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/QQmlEngine \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qjsengine.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qjsmanagedvalue.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qjsnumbercoercion.h \
@@ -1275,7 +1275,6 @@
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qjsvalue.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qqml.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qqmlabstracturlinterceptor.h \
-  /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qqmlapplicationengine.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qqmlcomponent.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qqmlcontext.h \
   /opt/homebrew/Cellar/qtdeclarative/6.11.1/lib/QtQml.framework/Versions/A/Headers/qqmldebug.h \

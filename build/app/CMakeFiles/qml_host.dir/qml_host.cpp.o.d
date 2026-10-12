@@ -1246,6 +1246,14 @@ CMakeFiles/qml_host.dir/qml_host.cpp.o: \
   /opt/homebrew/opt/qt/lib/QtCore.framework/Headers/qsize.h \
   /opt/homebrew/opt/qt/lib/QtCore.framework/Headers/qmargins.h \
   /opt/homebrew/opt/qt/lib/QtGui.framework/Headers/qguiapplication_platform.h \
+  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/QJSValue \
+  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qjsvalue.h \
+  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qtqmlglobal.h \
+  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qtqml-config.h \
+  /opt/homebrew/opt/qt/lib/QtNetwork.framework/Headers/qtnetworkglobal.h \
+  /opt/homebrew/opt/qt/lib/QtNetwork.framework/Headers/qtnetwork-config.h \
+  /opt/homebrew/opt/qt/lib/QtNetwork.framework/Headers/qtnetworkexports.h \
+  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qtqmlexports.h \
   /opt/homebrew/opt/qt/lib/QtCore.framework/Headers/QJsonDocument \
   /opt/homebrew/opt/qt/lib/QtCore.framework/Headers/qjsondocument.h \
   /opt/homebrew/opt/qt/lib/QtCore.framework/Headers/qjsonparseerror.h \
@@ -1258,23 +1266,12 @@ CMakeFiles/qml_host.dir/qml_host.cpp.o: \
   /opt/homebrew/opt/qt/lib/QtCore.framework/Headers/qurl.h \
   /opt/homebrew/opt/qt/lib/QtCore.framework/Headers/quuid.h \
   /opt/homebrew/opt/qt/lib/QtCore.framework/Headers/qendian.h \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/QQmlApplicationEngine \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlapplicationengine.h \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlengine.h \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qjsengine.h \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qjsvalue.h \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qtqmlglobal.h \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qtqml-config.h \
-  /opt/homebrew/opt/qt/lib/QtNetwork.framework/Headers/qtnetworkglobal.h \
-  /opt/homebrew/opt/qt/lib/QtNetwork.framework/Headers/qtnetwork-config.h \
-  /opt/homebrew/opt/qt/lib/QtNetwork.framework/Headers/qtnetworkexports.h \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qtqmlexports.h \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qjsmanagedvalue.h \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qjsprimitivevalue.h \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qjsnumbercoercion.h \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmldebug.h \
+  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/QQmlComponent \
+  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlcomponent.h \
   /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqml.h \
   /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlprivate.h \
+  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qjsprimitivevalue.h \
+  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qjsnumbercoercion.h \
   /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmllist.h \
   /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlparserstatus.h \
   /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlpropertyvaluesource.h \
@@ -1287,11 +1284,14 @@ CMakeFiles/qml_host.dir/qml_host.cpp.o: \
   /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlregistration.h \
   /opt/homebrew/opt/qt/include/QtQmlIntegration/qqmlintegration.h \
   /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlerror.h \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlabstracturlinterceptor.h \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/QQmlComponent \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlcomponent.h \
   /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/QQmlContext \
   /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlcontext.h \
+  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/QQmlEngine \
+  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlengine.h \
+  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qjsengine.h \
+  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qjsmanagedvalue.h \
+  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmldebug.h \
+  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/qqmlabstracturlinterceptor.h \
   /opt/homebrew/opt/qt/lib/QtQuick.framework/Headers/QQuickItem \
   /opt/homebrew/opt/qt/lib/QtQuick.framework/Headers/qquickitem.h \
   /opt/homebrew/opt/qt/lib/QtQuick.framework/Headers/qtquickglobal.h \
@@ -1333,7 +1333,6 @@ CMakeFiles/qml_host.dir/qml_host.cpp.o: \
   /opt/homebrew/opt/qt/lib/QtGui.framework/Headers/qimage.h \
   /opt/homebrew/opt/qt/lib/QtGui.framework/Headers/qpaintdevice.h \
   /opt/homebrew/opt/qt/lib/QtGui.framework/Headers/qpixelformat.h \
-  /opt/homebrew/opt/qt/lib/QtQml.framework/Headers/QJSValue \
   /opt/homebrew/opt/qt/lib/QtQuick.framework/Headers/QQuickWindow \
   /opt/homebrew/opt/qt/lib/QtQuick.framework/Headers/qquickwindow.h \
   /opt/homebrew/opt/qt/lib/QtQuick.framework/Headers/qsgrendererinterface.h \

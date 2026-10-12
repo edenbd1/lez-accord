@@ -1,0 +1,30 @@
+{
+  "name": "accord",
+  "display_name": "Accord",
+  "version": "0.1.0",
+  "type": "ui_qml",
+  "interface": "universal",
+  "category": "defi",
+  "description": "See an Accord multisig on LEZ: its members, roles, threshold, time lock, vault and spending limits, and every approval package you open, decoded from the exact bytes its approvals sign, with who has approved, the time lock against the chain's clock, and the exact command for the next step. Read-only: it holds no keys and signs nothing.",
+  "author": "edenbd1",
+  "main": "accord_plugin",
+  "icon": "assets/icon.png",
+  "view": "qml/Main.qml",
+  "dependencies": [],
+  "codegen": {
+    "rep": "src/accord.rep"
+  },
+  "nix": {
+    "packages": {
+      "build": [],
+      "runtime": []
+    },
+    "external_libraries": [],
+    "cmake": {
+      "find_packages": [],
+      "extra_sources": [],
+      "extra_include_dirs": [],
+      "extra_link_libraries": []
+    }
+  }
+}

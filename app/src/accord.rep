@@ -1,0 +1,20 @@
+class Accord
+{
+    // Every read is asynchronous: the view passes a token of its own making
+    // and the answer arrives as `answered(token, json)` with the same token.
+    // Each slot returns "" at once, or "error: …" when the request was refused.
+    //
+    // A multisig by id (text of at most 32 bytes, or 64 hex digits).
+    // json: the configuration as decoded from chain, or {ok: false, error}.
+    SLOT(QString loadMultisig(QString token, QString multisigId))
+    // An approval package from a file path or pasted JSON: decoded from its
+    // action bytes, its digest recomputed, its queued record read from chain.
+    SLOT(QString loadPackage(QString token, QString multisigId, QString pathOrJson))
+    // Saved under the Basecamp user directory; an empty value restores the default.
+    SLOT(QString saveSettings(QString rpc, QString program))
+
+    PROP(QString appVersion="" READONLY)
+    PROP(QString rpc="" READONLY)
+    PROP(QString program="" READONLY)
+    SIGNAL(answered(QString token, QString json))
+}
