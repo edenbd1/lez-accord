@@ -29,6 +29,7 @@ protected:
 
 private:
     bool chatUp_ = false;
+    void refreshAddress(int tries);
     QString dataDir() const;
     void apply(const QString& rpc, const QString& program);
     void reply(const QString& token, const QJsonObject& json);

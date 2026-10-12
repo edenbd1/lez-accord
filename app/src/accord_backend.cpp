@@ -6,6 +6,7 @@
 #include <QFileInfo>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QTimer>
 #include <QStandardPaths>
 
 // Generated umbrella: LogosModules (behind modules()) from metadata.json's dependencies.
@@ -90,6 +91,20 @@ QString AccordBackend::saveSettings(QString rpc, QString program) {
 
 void AccordBackend::onContextReady() {}
 
+// The chat address, read outside the event callback that announced the node,
+// and retried while the module has not settled it yet.
+void AccordBackend::refreshAddress(int tries) {
+    const QString a = modules().chat_module.get_address();
+    if (a.isEmpty()) {
+        if (tries > 0) QTimer::singleShot(2000, this, [this, tries] { refreshAddress(tries - 1); });
+        return;
+    }
+    setChatAddress(a);
+    // Also on disk, so a member can hand it to the others from a script.
+    QFile f(dataDir() + QStringLiteral("/chat_address"));
+    if (f.open(QIODevice::WriteOnly)) f.write(a.toUtf8());
+}
+
 QString AccordBackend::chatStart() {
     if (chatUp_) return {};
     auto& chat = modules().chat_module;
@@ -101,12 +116,7 @@ QString AccordBackend::chatStart() {
     });
     chat.on(QStringLiteral("delivery_state_changed"), [this](const QVariantList& a) {
         setChatState(a.value(0).toString());
-        if (a.value(0).toString() == QLatin1String("online")) {
-            setChatAddress(modules().chat_module.get_address());
-            // Also on disk, so a member can hand it to the others from a script.
-            QFile f(dataDir() + QStringLiteral("/chat_address"));
-            if (f.open(QIODevice::WriteOnly)) f.write(chatAddress().toUtf8());
-        }
+        if (a.value(0).toString() == QLatin1String("online")) QTimer::singleShot(0, this, [this] { refreshAddress(5); });
     });
     ChatModule::ChatConfig config;
     config.delivery_preset = envOr("ACCORD_CHAT_PRESET", QStringLiteral("logos.test"));
@@ -115,7 +125,7 @@ QString AccordBackend::chatStart() {
     if (!res.success) return QStringLiteral("error: the chat module did not start: ") + res.getError<QString>();
     chatUp_ = true;
     setChatState(QStringLiteral("initialising"));
-    setChatAddress(chat.get_address());
+    QTimer::singleShot(1000, this, [this] { refreshAddress(30); });
     return {};
 }
 
