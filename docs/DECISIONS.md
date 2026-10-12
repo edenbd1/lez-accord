@@ -76,8 +76,12 @@ loses the veto window instead.
 **Context.** A plan cannot read state, so it cannot read a clock account.
 
 **Chosen.** Every instruction that names a time `at` sets the validity
-window `[at, at + 2 min)`, enforced by the sequencer for public and private
-transactions. `quorum_at`, the time lock, expiry and spending-limit periods
+window `[at, at + 10 min)`, enforced by the sequencer for public and private
+transactions. Ten minutes, because a private transaction is proved locally
+before it is sent (a 2-minute window lost a real private-vault spend to
+proving time). The time lock and the expiry are enforced pessimistically
+against the window: a non-zero lock counts from the window's end, and an
+instruction whose window reaches the expiry is refused. `quorum_at`, the time lock, expiry and spending-limit periods
 are all measured against times the chain accepted.
 
 ## D5. An action carries only the vault's authority

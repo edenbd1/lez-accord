@@ -197,7 +197,7 @@
           "type": "u64"
         }
       ],
-      "timestamp_window": "[at, at + 120000)",
+      "timestamp_window": "[at, at + 600000)",
       "effects": "verifies epoch, proposer role, approvals and threshold; writes the queued record once with quorum_at = at"
     },
     {
@@ -282,7 +282,7 @@
           "type": "u64"
         }
       ],
-      "timestamp_window": "[at, at + 120000)",
+      "timestamp_window": "[at, at + 600000)",
       "effects": "verifies the executor, time lock and expiry; marks the record executed; makes the action's calls with the vault seed, applies a configuration change, or cancels the target record"
     },
     {
@@ -372,7 +372,7 @@
           "type": "u64"
         }
       ],
-      "timestamp_window": "[at, at + 120000)",
+      "timestamp_window": "[at, at + 600000)",
       "effects": "checks the limit's spenders, sub-quorum, counter and allowance; pays from the vault"
     },
     {

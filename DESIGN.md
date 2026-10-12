@@ -28,8 +28,12 @@ So:
 - **Time comes from the block.** A plan cannot read a clock, but it can bound
   the block timestamp at which the transaction is valid, and the sequencer
   enforces the bound for public and private transactions alike. Every
-  instruction that names a time `at` is valid only in `[at, at + 2 min)`, so
-  a recorded time is never more than two minutes from the chain's own.
+  instruction that names a time `at` is valid only in `[at, at + 10 min)`
+  (ten minutes, because a private transaction is proved on the member's
+  machine first). Every time rule is enforced pessimistically against that
+  window: a non-zero time lock counts from the end of the queue's window, so
+  it is never shorter than configured, and an instruction whose window would
+  reach the expiry is refused, so nothing lands after it.
 - **There are no program-owned accounts.** An account carries shards keyed by
   program id; native balance is the shard at `[0; 32]`. The vault is a PDA of
   this program whose native and token shards hold the funds. Nobody has its
@@ -159,8 +163,8 @@ serialised: an `Action::Config` executes only if its epoch is still current,
 so two changes queued under one configuration cannot both apply.
 
 **Expiry (F.2).** `Queue` and `Execute` are refused at or after `expires_at`
-(7108); expiry is bounded by the chain's timestamp through the `[at, at + 2
-min)` window.
+(7108); expiry is bounded by the chain's timestamp: `Queue` and `Execute` are refused
+unless `at + 10 min <= expires_at`.
 
 **Time lock (F.7).** `time_lock_ms` is per multisig and changed only through
 `Action::Config`. The queued record snapshots it, so lowering the time lock
@@ -308,18 +312,26 @@ grant measures.
 
 ## 13. Requirement traceability (prototype)
 
-| Req. | Where | Test |
+Executor tests run the committed binary through `lee::V03State`
+(`executor-tests/tests/program.rs`); host tests run plan/apply directly
+(`programs/accord/core/src/tests.rs`); e2e steps are rows of
+`evidence/v03/local-e2e.tsv` and `local-private.tsv`.
+
+| Req. | Where | Executor test / e2e step |
 |---|---|---|
-| F.1 M-of-N, configurable at creation | `Create`, `Multisig` | `executor-tests`: `create_and_activate`, `below_threshold_refused` |
-| F.2 lifecycle, expiry, off-chain collection | `Queue`, `Execute`, CLI `propose`/`approve`/`queue` | `expired_refused`, `e2e` |
-| F.3 any program | `Action::Calls` | `executes_token_transfer`, `executes_native_transfer` |
-| F.4 registry | `Register` | `registry_append_only` |
-| F.5 config through M-of-N | `Action::Config` | `config_change_bumps_epoch` |
-| F.6 roles | `Member.roles` | `roles_are_independent` |
-| F.7 time lock | `time_lock_ms`, `Queued.time_lock_ms` | `time_lock_enforced` |
-| F.8 spending limit | `Spend` | `spend_within_limit`, `spend_replay_refused` |
-| R.1 distinct, current, exact | `verify_quorum` | `duplicate_approver_refused`, `wrong_digest_refused`, `non_member_refused` |
-| R.2 epoch cutoff | `epoch`, `Queue` | `stale_approvals_refused`, `queued_survives_change`, `cancel_queued_vetoes` |
-| S.7 no drain before initialised | `initialised` | `uninitialised_vault_refused` |
-| Pr.1 no member account in a tx | key design | `no_member_account_in_transactions` |
-| P.2 cost vs M | `executor-tests/src/measure.rs` | `docs/BENCHMARKS.md` |
+| F.1 M-of-N, configurable at creation | `Create`, `Activate` | `full_lifecycle_pays_native_and_tokens_from_the_vault`; e2e `create`, `activate` |
+| F.2 lifecycle, expiry, off-chain collection | `Queue`, `Execute`, approval packages | `proposals_expire`; e2e sections 3 and 6 |
+| F.3 any program | `Action::Calls` | `the_vault_can_be_the_authority_of_another_program`, token and native transfers |
+| F.4 registry | `Register` | `the_registry_is_append_only`; e2e `register`, `register-again` |
+| F.5 configuration through M-of-N | `Action::Config` | `a_configuration_change_invalidates_pending_approvals`, `configuration_changes_are_serialised` |
+| F.6 roles | `Member.roles` | `roles_are_enforced_independently`; e2e `execute-by-non-executor` |
+| F.7 time lock | `time_lock_ms`, `executable_at` | `the_time_lock_runs_on_the_chains_clock`; e2e `execute-in-time-lock` |
+| F.8 spending limit | `Spend` | `spending_limits_pay_small_amounts_without_the_quorum`, `a_spend_signature_is_good_once` |
+| F.10 private vault | private PDA under the vault seed | e2e-private: `steal-with-group-keys` refused, `spend-private`, `execute-private` |
+| R.1 distinct, current, exact | `approval_weight` | `approvals_are_bound_to_one_action`, `an_action_cannot_execute_below_threshold` |
+| R.2 epoch cutoff | `epoch`, `Queue` | `a_queued_action_survives_a_change_and_the_new_quorum_can_veto_it`, `a_queued_action_executes_after_a_change_when_not_vetoed`; e2e `queue-stale-approvals`, `execute-veto` |
+| S.7 no drain before initialised | `initialised` | `a_vault_cannot_be_drained_before_it_is_fully_initialised`; e2e section 2 |
+| Pr.1 no member account in a tx | key design | `no_member_account_appears_in_any_transaction`; e2e `signers across the run` |
+| D5 only the vault's authority | `action_calls` | `an_action_carries_only_the_vaults_authority`, `a_spend_cannot_debit_an_account_that_is_not_the_vault` |
+| every refusal code | `errors.rs` | `every_refusal_code_fires_on_chain` |
+| P.2 cost vs M | `executor-tests/src/measure.rs`, `prove.rs` | `docs/BENCHMARKS.md` |

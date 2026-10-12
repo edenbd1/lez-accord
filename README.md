@@ -39,7 +39,8 @@ encrypted coordination room over Logos Delivery. Prototype for RFP-005
 | `programs/accord/core` host tests | `plan` and `apply` directly, every rule | 28 |
 | `executor-tests` | the committed binary through `lee::V03State`, the state machine the sequencer applies, real native and token programs, real timestamp windows, the 10M gas cap | 20 |
 | `cli` unit tests | room invites and frames: sealing, signatures, epoch separation | 2 |
-| `scripts/e2e.sh` | the whole lifecycle on a local v0.3 sequencer through the CLI, with a manifest | see `evidence/v03/` |
+| `scripts/e2e.sh` | the whole public lifecycle on a local v0.3 sequencer through the CLI, with a manifest | `evidence/v03/local-e2e.tsv` |
+| `scripts/e2e-private.sh` | the private vault: funded privately, refused to a holder of the group keys, spent and executed through the program in privacy-preserving transactions | `evidence/v03/local-private.tsv` |
 | `scripts/verify-onchain.sh` | re-checks a manifest against the chain: every transaction in its block, every refusal unresolved or reverted, final state hashes, the program header's ImageID | |
 | `scripts/check-idl.py` | decodes borsh vectors of every instruction, account and event with the IDL alone | 15 vectors |
 
