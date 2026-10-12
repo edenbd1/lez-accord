@@ -125,6 +125,10 @@ enum Cmd {
         /// `<to>:<amount>[:<token definition>]`, a transfer out of the vault. Repeatable.
         #[arg(long)]
         transfer: Vec<String>,
+        /// Transfer out of this account instead of the public vault: the private
+        /// vault's id (`accord vault id`).
+        #[arg(long)]
+        from: Option<AccountId>,
         /// A JSON file of calls: `[{"program": .., "accounts": [[account, shard program], ..], "data": hex}]`.
         #[arg(long)]
         calls: Option<PathBuf>,
@@ -160,6 +164,10 @@ enum Cmd {
         package: PathBuf,
         #[arg(long)]
         key: String,
+        /// The action moves the private vault of this wallet group: send a
+        /// privacy-preserving transaction, proved locally.
+        #[arg(long)]
+        private_vault: Option<String>,
     },
     /// Activate a multisig with approvals of its configuration (all keys local).
     Activate {
@@ -211,6 +219,13 @@ enum Cmd {
 
 #[derive(Subcommand)]
 enum VaultCmd {
+    /// Register the private vault in the wallet, so a sync follows its state
+    /// (each member's wallet does this once, after joining the group).
+    Track {
+        multisig: String,
+        #[arg(long)]
+        group: String,
+    },
     /// The private vault's account id for a group.
     Id {
         multisig: String,
@@ -677,7 +692,7 @@ fn queued_json(q: &Queued) -> serde_json::Value {
     };
     serde_json::json!({
         "digest": hex::encode(q.digest), "kind": q.kind, "epoch": q.epoch, "status": status,
-        "quorum_at": q.quorum_at, "executable_at": q.quorum_at + q.time_lock_ms, "expires_at": q.expires_at,
+        "quorum_at": q.quorum_at, "executable_at": core::executable_at(q), "expires_at": q.expires_at,
         "proposer": hex::encode(q.proposer), "approvers": q.approvers.iter().map(hex::encode).collect::<Vec<_>>(),
         "executed_at": q.executed_at,
     })
@@ -784,7 +799,7 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
             ensure!(!bytes.is_empty(), "nothing is queued at digest {digest}");
             println!("{}", queued_json(&borsh::from_slice(&bytes)?));
         }
-        Cmd::Propose { multisig, transfer, calls, config, cancel, expires, key, description, out } => {
+        Cmd::Propose { multisig, transfer, from, calls, config, cancel, expires, key, description, out } => {
             let p = ctx.program()?;
             let id = id32(&multisig)?;
             let m = ctx.multisig(&id).await?;
@@ -800,7 +815,11 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
                         Some(d) => Asset::Token { definition_id: acc(d)? },
                         None => Asset::Native,
                     };
-                    cs.push(vault_transfer(&p, &id, &asset, acc(parts[0])?, parts[1].parse()?));
+                    let mut c = vault_transfer(&p, &id, &asset, acc(parts[0])?, parts[1].parse()?);
+                    if let Some(f) = from {
+                        c.accounts[0].account = f;
+                    }
+                    cs.push(c);
                 }
                 action = Some(Action::Calls(cs));
             }
@@ -907,7 +926,7 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
             let q = queued_account(&p, &id, &d);
             ctx.send("queue", &ix, rows::queue(&p, &id, &d), &[], &[(q, p)]).await?;
         }
-        Cmd::Execute { package, key } => {
+        Cmd::Execute { package, key, private_vault } => {
             let pkg = Package::read(&package)?;
             let d = pkg.checked_digest()?;
             let p = ctx.program()?;
@@ -920,7 +939,7 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
                 let qd: Queued = borsh::from_slice(&bytes)?;
                 let now = ctx.now().await?;
                 ensure!(qd.status == core::STATUS_QUEUED, "{}", errors::advice(errors::E_NOT_QUEUED));
-                ensure!(action.kind() == core::KIND_CANCEL || now >= qd.quorum_at + qd.time_lock_ms, "{} (executable at {})", errors::advice(errors::E_TIME_LOCKED), qd.quorum_at + qd.time_lock_ms);
+                ensure!(action.kind() == core::KIND_CANCEL || now >= core::executable_at(&qd), "{} (executable at {})", errors::advice(errors::E_TIME_LOCKED), core::executable_at(&qd));
             }
             let ix = Instruction::Execute {
                 multisig_id: id,
@@ -930,7 +949,30 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
                 executor: ctx.sign(&key, &execute_message(&d))?,
                 at: ctx.now().await?,
             };
-            ctx.send("execute", &ix, rows::execute(&p, &id, &d, &action), &[], &[(q, p)]).await?;
+            match private_vault {
+                None => {
+                    ctx.send("execute", &ix, rows::execute(&p, &id, &d, &action), &[], &[(q, p)]).await?;
+                }
+                Some(group) => {
+                    let (vault, identity) = private_vault_identity(&ctx, &id, &group)?;
+                    let mentions: Vec<AccountMention> = rows::execute(&p, &id, &d, &action)
+                        .into_iter()
+                        .map(|r| {
+                            if r.account_id == vault {
+                                identity.clone().select_program_shard(r.program_account_id)
+                            } else {
+                                AccountIdentity::PublicNoSign(r.account_id).select_program_shard(r.program_account_id)
+                            }
+                        })
+                        .collect();
+                    let program = Program::new(std::fs::read(elf).with_context(|| format!("reading {}", elf.display()))?.into())?;
+                    let pwd = lee::privacy_preserving_transaction::circuit::ProgramWithDependencies::new(program, p, std::collections::HashMap::new());
+                    let before = ctx.shard(q, p).await?;
+                    eprintln!("proving the private-vault execution locally; this takes minutes");
+                    let sent = ctx.wallet().send_privacy_preserving_tx(mentions, Program::serialize_instruction(ix)?, &pwd).await.map(|(h, _)| h);
+                    report_private(&ctx, "execute-private", sent.map_err(|e| anyhow!("{e:?}")), q, p, before, vault).await?;
+                }
+            }
         }
         Cmd::Activate { multisig, signers } => {
             let p = ctx.program()?;
@@ -941,7 +983,7 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
             let cfg = config_account(&p, &id);
             ctx.send("activate", &Instruction::Activate { multisig_id: id, epoch: m.epoch, approvals }, rows::activate(&p, &id), &[], &[(cfg, p)]).await?;
         }
-        Cmd::Vault { op } => vault_cmd(&ctx, op, elf).await?,
+        Cmd::Vault { op } => vault_cmd(&mut ctx, op, elf).await?,
         Cmd::Spend { multisig, limit, to, amount, token, signers, private_vault } => {
             let p = ctx.program()?;
             let id = id32(&multisig)?;
@@ -1206,8 +1248,31 @@ async fn report_private(ctx: &Ctx, op: &str, sent: Result<common::HashType>, wat
     Ok(())
 }
 
-async fn vault_cmd(ctx: &Ctx, op: VaultCmd, _elf: &PathBuf) -> Result<()> {
+async fn vault_cmd(ctx: &mut Ctx, op: VaultCmd, _elf: &PathBuf) -> Result<()> {
     match op {
+        VaultCmd::Track { multisig, group } => {
+            let id = id32(&multisig)?;
+            let (vault, _) = private_vault_identity(ctx, &id, &group)?;
+            let p = ctx.program()?;
+            let pid: [u32; 8] = std::array::from_fn(|i| u32::from_le_bytes(p.value()[i * 4..i * 4 + 4].try_into().unwrap()));
+            let w = ctx.wallet.as_mut().expect("vault opens the wallet");
+            if w.storage().key_chain().shared_private_account(vault).is_none() {
+                w.storage_mut().key_chain_mut().insert_shared_private_account(
+                    vault,
+                    wallet::storage::key_chain::SharedAccountEntry {
+                        group_label: wallet::account::Label::new(&group),
+                        identifier: lee_core::Identifier::ZERO,
+                        pda_seed: Some(core::vault_seed(&id)),
+                        authority_program_id: Some(pid),
+                        account: lee::Account::default(),
+                    },
+                );
+            }
+            w.sync_to_latest_block().await?;
+            w.store_persistent_data()?;
+            let bal = w.storage().key_chain().shared_private_account(vault).map(|e| e.account.data.native_balance().unwrap_or(0)).unwrap_or(0);
+            println!("{}", serde_json::json!({"op": "vault-track", "private_vault": vault.to_string(), "balance_seen_by_this_member": bal.to_string()}));
+        }
         VaultCmd::Id { multisig, group } => {
             let (id, _) = private_vault_identity(ctx, &id32(&multisig)?, &group)?;
             println!("{}", serde_json::json!({"private_vault": id.to_string()}));

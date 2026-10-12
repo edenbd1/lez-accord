@@ -7,7 +7,7 @@ use accord_core::{
     self as core, action_digest, activate_message, approve_message, config_account, errors::*, execute_message,
     propose_message, queued_account, rows, spend_message, vault_account, vault_transfer, Action, Asset, Call,
     CallAccount, Config, Instruction, LimitSpec, Member, Sig, ROLE_APPROVE, ROLE_EXECUTE, ROLE_PROPOSE,
-    STATUS_CANCELLED, STATUS_EXECUTED, STATUS_QUEUED,
+    STATUS_CANCELLED, STATUS_EXECUTED, STATUS_QUEUED, WINDOW_MS,
 };
 use accord_executor_tests::{code, Chain, Key, MSIG, MSIG2};
 use lee::{AccountId, ProgramShardSelector};
@@ -354,7 +354,8 @@ fn the_time_lock_runs_on_the_chains_clock() {
     let exp = w.exp();
     let a = pay(7);
     w.queue(exp, &a, &[0, 1]).unwrap();
-    w.c.now += 9 * 60_000;
+    // the lock counts from the end of the queue's window, so it is never short
+    w.c.now += WINDOW_MS + 9 * 60_000;
     refused(w.execute(exp, &a, 2), E_TIME_LOCKED);
     // naming a later time than the block's is refused by the sequencer's
     // window check, before the program runs
@@ -376,11 +377,13 @@ fn the_time_lock_runs_on_the_chains_clock() {
 
 #[test]
 fn proposals_expire() {
+    // Nothing lands at or after the expiry: an instruction whose window
+    // would reach past it is refused.
     let mut w = W::ready(0);
-    let exp = w.c.now + 60_000;
+    let exp = w.c.now + WINDOW_MS + 60_000;
     let a = pay(1);
     w.queue(exp, &a, &[0, 1]).unwrap();
-    w.c.now = exp;
+    w.c.now += 60_001;
     refused(w.execute(exp, &a, 2), E_EXPIRED);
     refused(w.queue(exp, &pay(2), &[0, 1]), E_EXPIRED);
 }
@@ -447,7 +450,7 @@ fn a_queued_action_survives_a_change_and_the_new_quorum_can_veto_it() {
     // k[1], an approver of `a`, is removed during `a`'s delay
     let change = Action::Config(rotated(&w, 2, lock));
     w.queue(exp, &change, &[0, 2]).unwrap();
-    w.c.now += lock;
+    w.c.now += WINDOW_MS + lock;
     w.execute(exp, &change, 2).unwrap();
     // the cutoff is the queue: `a` keeps its quorum...
     assert_eq!(w.c.queued(&ID, &da).status, STATUS_QUEUED);
@@ -601,9 +604,8 @@ fn every_refusal_code_fires_on_chain() {
     }]);
     w.queue(exp, &steal, &[0, 1]).unwrap();
     hit(w.execute(exp, &steal, 2));
-    // 7108: expired
-    let soon = w.c.now + 1;
-    w.c.now = soon;
+    // 7108: the window would reach past the expiry
+    let soon = w.c.now + WINDOW_MS - 1;
     hit(w.queue(soon, &pay(2), &[0, 1]).map(|_| ()));
     // 7112, 7113: spending limit
     hit(w.spend(Asset::Native, 101, &[1]));

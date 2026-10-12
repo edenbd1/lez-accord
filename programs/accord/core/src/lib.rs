@@ -32,8 +32,13 @@ use token_core::{TokenDescriptor, TokenKind};
 pub mod errors;
 use errors::*;
 
-/// How far past the time it names an instruction may still land.
-pub const WINDOW_MS: u64 = 120_000;
+/// How far past the time it names an instruction may still land. Ten
+/// minutes, because a privacy-preserving transaction is proved on the
+/// member's machine before it is sent. Every rule that depends on time is
+/// enforced pessimistically against it: an action is never executable before
+/// its time lock has fully elapsed and never lands at or after its expiry,
+/// whichever end of the window the chain's clock is at.
+pub const WINDOW_MS: u64 = 600_000;
 pub const MAX_MEMBERS: usize = 32;
 pub const MAX_LIMITS: usize = 8;
 /// `lee_core::program::MAX_NUMBER_CHAINED_CALLS`.
@@ -926,6 +931,16 @@ pub fn plan(input: &PlanInput, ix: Instruction) -> Plan {
 
 // ------------------------------------------------------------------- apply
 
+/// The earliest `at` an `execute` of `q` may name.
+#[must_use]
+pub fn executable_at(q: &Queued) -> u64 {
+    if q.time_lock_ms == 0 {
+        q.quorum_at
+    } else {
+        q.quorum_at.saturating_add(WINDOW_MS).saturating_add(q.time_lock_ms)
+    }
+}
+
 /// Decode a stored configuration, refusing an empty shard (7100).
 #[must_use]
 pub fn load(pre: &[u8]) -> Multisig {
@@ -977,7 +992,7 @@ pub fn apply(effect: Effect, pre: &[u8]) -> Option<Vec<u8>> {
             refuse_unless(m.initialised != 0, E_NOT_INITIALISED, "the multisig is not active");
             refuse_unless(epoch == m.epoch, E_WRONG_EPOCH, "the approvals were made under another configuration");
             refuse_unless(time_lock_ms == m.time_lock_ms, E_WRONG_EPOCH, "the time lock named is not the configuration's");
-            refuse_unless(at < expires_at, E_EXPIRED, "the proposal has expired");
+            refuse_unless(at.saturating_add(WINDOW_MS) <= expires_at, E_EXPIRED, "the proposal expires before this transaction's window closes");
             approval_weight(&m, ROLE_PROPOSE, &propose_message(&digest), core::slice::from_ref(&proposer));
             let w = approval_weight(&m, ROLE_APPROVE, &approve_message(&digest), &approvals);
             refuse_unless(w >= m.threshold, E_BELOW_THRESHOLD, "approvals are below the threshold");
@@ -1018,9 +1033,11 @@ pub fn apply(effect: Effect, pre: &[u8]) -> Option<Vec<u8>> {
         } => {
             let mut q = load_queued(pre);
             refuse_unless(q.digest == digest && q.status == STATUS_QUEUED, E_NOT_QUEUED, "the action is not pending");
-            refuse_unless(at < q.expires_at, E_EXPIRED, "the proposal has expired");
+            refuse_unless(at.saturating_add(WINDOW_MS) <= q.expires_at, E_EXPIRED, "the proposal expires before this transaction's window closes");
+            // `quorum_at` may be up to one window earlier than the block that
+            // queued it, so a non-zero time lock is counted from the window's end.
             refuse_unless(
-                exempt_time_lock || at >= q.quorum_at.saturating_add(q.time_lock_ms),
+                exempt_time_lock || q.time_lock_ms == 0 || at >= executable_at(&q),
                 E_TIME_LOCKED,
                 "the time lock has not elapsed",
             );

@@ -489,10 +489,12 @@ fn roles_are_independent() {
 fn expired_proposals_are_refused() {
     let mut fx = setup(0);
     let a = pay(DEST, 1);
-    assert_eq!(fx.queue(0, T0, &a, &[0, 1], T0), Err(E_EXPIRED));
-    fx.queue(0, T0 + 10, &a, &[0, 1], T0).unwrap();
-    assert_eq!(fx.execute(0, T0 + 10, &a, 2, T0 + 10, vault_rows()), Err(E_EXPIRED));
-    fx.execute(0, T0 + 10, &a, 2, T0 + 9, vault_rows()).unwrap();
+    let exp = T0 + WINDOW_MS + 10;
+    // the window must close before the expiry
+    assert_eq!(fx.queue(0, exp, &a, &[0, 1], T0 + 11), Err(E_EXPIRED));
+    fx.queue(0, exp, &a, &[0, 1], T0).unwrap();
+    assert_eq!(fx.execute(0, exp, &a, 2, T0 + 11, vault_rows()), Err(E_EXPIRED));
+    fx.execute(0, exp, &a, 2, T0 + 10, vault_rows()).unwrap();
 }
 
 #[test]
@@ -513,8 +515,9 @@ fn time_lock_is_enforced_and_snapshotted() {
     };
     assert_eq!(fx.w.send(ix, vec![cfg_row(), meta(queued_account(&ME, &ID, &d), ME, false)]), Err(E_WRONG_EPOCH));
     fx.queue(0, EXP, &a, &[0, 1], T0).unwrap();
-    assert_eq!(fx.execute(0, EXP, &a, 2, T0 + 59_999, vault_rows()), Err(E_TIME_LOCKED));
-    fx.execute(0, EXP, &a, 2, T0 + 60_000, vault_rows()).unwrap();
+    // counted from the end of the queue's window: never less than the lock
+    assert_eq!(fx.execute(0, EXP, &a, 2, T0 + WINDOW_MS + 59_999, vault_rows()), Err(E_TIME_LOCKED));
+    fx.execute(0, EXP, &a, 2, T0 + WINDOW_MS + 60_000, vault_rows()).unwrap();
 }
 
 fn new_config(fx: &Fx, threshold: u64, time_lock_ms: u64) -> Config {
@@ -595,17 +598,18 @@ fn a_queued_action_survives_a_change_and_can_be_vetoed() {
     // key 1, an approver of `a`, is removed while `a` sits in its delay
     let change = Action::Config(new_config(&fx, 2, 600_000));
     fx.queue(0, EXP, &change, &[0, 2], T0).unwrap();
-    fx.execute(0, EXP, &change, 2, T0 + 600_000, vec![]).unwrap();
+    fx.execute(0, EXP, &change, 2, T0 + WINDOW_MS + 600_000, vec![]).unwrap();
     assert_eq!(fx.w.ms().epoch, 1);
     // the cutoff is the queue: `a` reached quorum before the change, so it stays executable...
     assert_eq!(fx.w.queued(&queued).status, STATUS_QUEUED);
     // ...unless the new configuration vetoes it, which skips the time lock
     let veto = Action::CancelQueued { digest: queued };
-    fx.queue(1, EXP, &veto, &[0, 3], T0 + 600_001).unwrap();
-    fx.execute(1, EXP, &veto, 2, T0 + 600_001, vec![meta(queued_account(&ME, &ID, &queued), ME, false)])
+    let later = T0 + WINDOW_MS + 600_001;
+    fx.queue(1, EXP, &veto, &[0, 3], later).unwrap();
+    fx.execute(1, EXP, &veto, 2, later, vec![meta(queued_account(&ME, &ID, &queued), ME, false)])
         .unwrap();
     assert_eq!(fx.w.queued(&queued).status, STATUS_CANCELLED);
-    assert_eq!(fx.execute(0, EXP, &a, 2, T0 + 700_000, vault_rows()), Err(E_NOT_QUEUED));
+    assert_eq!(fx.execute(0, EXP, &a, 2, later + 1, vault_rows()), Err(E_NOT_QUEUED));
 }
 
 #[test]

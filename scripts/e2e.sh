@@ -27,7 +27,7 @@ CLI="${CLI:-cli/target/release/accord}"
 OUT="${OUT:-evidence/v03/local-e2e.tsv}"
 TAG="${TAG:-e2e}"
 LOCK="${LOCK:-45s}"
-LOCK_S="${LOCK_S:-50}"
+LOCK_S="${LOCK_S:-665}"
 export ACCORD_ELF="${ACCORD_ELF:-artifacts/programs/v0.3/accord_multisig.bin}"
 export ACCORD_KEYS="${ACCORD_KEYS:-$(mktemp -d)/keys}"
 PK="$(mktemp -d)"
@@ -107,7 +107,7 @@ step activate-below-threshold refused -- "${P[@]}" activate "$MS" --key alice
 step activate applied -- "${P[@]}" activate "$MS" --key alice --key carol
 check "vault untouched" "$(bal "$VAULT")" 1000
 
-echo "== 3. propose, approve off-chain, queue, time lock, execute"
+echo "== 3. propose, approve off-chain, queue; the time lock holds"
 off propose "$MS" --transfer "$DEST:40" --key alice --description "pay the auditor's deposit" --out "$PK/pay40.json" >/dev/null
 check "the package decodes from its bytes" "$(jget "$(off decode "$PK/pay40.json")" action.calls.0.decoded.amount)" 40
 off approve "$PK/pay40.json" --key bob >/dev/null
@@ -118,13 +118,6 @@ step queue applied -- "${P[@]}" queue "$PK/pay40.json"
 FINAL+=("$(jget "$("$CLI" ids "$MS" --digest "$D40")" queued) $ACCORD_PROGRAM")
 step execute-in-time-lock refused -- "${P[@]}" --force execute "$PK/pay40.json" --key carol
 step execute-by-non-executor refused -- "${P[@]}" --force execute "$PK/pay40.json" --key alice
-echo "  waiting ${LOCK_S}s for the time lock"; sleep "$LOCK_S"
-step execute applied -- "${P[@]}" execute "$PK/pay40.json" --key carol
-check "destination received 40" "$(bal "$DEST")" 40
-check "vault paid 40" "$(bal "$VAULT")" 960
-check "queued record executed" "$(jget "$(off queued "$MS" "$D40")" status)" executed
-step queue-again refused -- "${P[@]}" --force queue "$PK/pay40.json"
-step execute-again refused -- "${P[@]}" --force execute "$PK/pay40.json" --key carol
 
 echo "== 4. spending limit: small transfers without the quorum"
 step spend-60 applied -- "${P[@]}" spend "$MS" --to "$DEST2" --amount 60 --key bob
@@ -132,7 +125,7 @@ step spend-over-limit refused -- "${P[@]}" spend "$MS" --to "$DEST2" --amount 50
 step spend-by-non-spender refused -- "${P[@]}" spend "$MS" --to "$DEST2" --amount 1 --key alice
 check "spend paid 60" "$(bal "$DEST2")" 60
 
-echo "== 5. an action carries only the vault's authority"
+echo "== 5. an action naming the fee payer is queued (it will be refused at execution)"
 python3 - "$PAYER" "$DEST" > "$PK/steal-calls.json" <<'PY'
 import json, sys
 # native Transfer { amount: 5 } from the fee payer: borsh = variant 0, u128 LE
@@ -143,10 +136,8 @@ PY
 off propose "$MS" --calls "$PK/steal-calls.json" --key alice --out "$PK/steal.json" >/dev/null
 off approve "$PK/steal.json" --key bob >/dev/null; off approve "$PK/steal.json" --key carol >/dev/null
 step queue-steal applied -- "${P[@]}" queue "$PK/steal.json"
-sleep "$LOCK_S"
-step execute-steal refused -- "${P[@]}" --force execute "$PK/steal.json" --key carol
 
-echo "== 6. a configuration change invalidates pending approvals"
+echo "== 6. a configuration change, queued; then the wait, the executions, and its effect"
 # a package approved under epoch 0, held back
 off propose "$MS" --transfer "$DEST:5" --key alice --out "$PK/stale.json" >/dev/null
 off approve "$PK/stale.json" --key bob >/dev/null; off approve "$PK/stale.json" --key carol >/dev/null
@@ -158,7 +149,17 @@ off approve "$PK/rotate-pkg.json" --key alice >/dev/null
 step queue-config-one-approval refused -- "${P[@]}" --force queue "$PK/rotate-pkg.json"
 off approve "$PK/rotate-pkg.json" --key carol >/dev/null
 step queue-config applied -- "${P[@]}" queue "$PK/rotate-pkg.json"
-sleep "$LOCK_S"
+
+# One wait covers the three queued actions above. The lock counts from the
+# end of the queue's window (DESIGN.md §5), so it is never shorter than set.
+echo "  waiting ${LOCK_S}s for the time lock"; sleep "$LOCK_S"
+step execute applied -- "${P[@]}" execute "$PK/pay40.json" --key carol
+check "destination received 40" "$(bal "$DEST")" 40
+check "vault paid 60 (spend) and 40" "$(bal "$VAULT")" 900
+check "queued record executed" "$(jget "$(off queued "$MS" "$D40")" status)" executed
+step queue-again refused -- "${P[@]}" --force queue "$PK/pay40.json"
+step execute-again refused -- "${P[@]}" --force execute "$PK/pay40.json" --key carol
+step execute-steal refused -- "${P[@]}" --force execute "$PK/steal.json" --key carol
 step execute-config applied -- "${P[@]}" execute "$PK/rotate-pkg.json" --key carol
 check "epoch moved" "$(jget "$(show)" epoch)" 1
 check "bob is no longer a member" "$(show | python3 -c 'import json,sys;print(len(json.load(sys.stdin)["members"]))')" 3
@@ -177,7 +178,6 @@ off approve "$PK/veto.json" --key alice >/dev/null; off approve "$PK/veto.json" 
 step queue-veto applied -- "${P[@]}" queue "$PK/veto.json"
 step execute-veto applied -- "${P[@]}" execute "$PK/veto.json" --key carol
 check "big transfer cancelled" "$(jget "$(off queued "$MS" "$DBIG")" status)" cancelled
-sleep "$LOCK_S"
 step execute-vetoed refused -- "${P[@]}" --force execute "$PK/big.json" --key carol
 check "vault after everything" "$(bal "$VAULT")" 900
 
