@@ -51,29 +51,27 @@ possible at all on LEZ v0.3 (D2).
 
 ### Real proving (P.1: never development mode)
 
-`RISC0_DEV_MODE=0 cargo run --release --bin prove -- 1 3 5 7 10 16` proves the
+`RISC0_DEV_MODE=0 cargo run --release --bin prove -- 1 5 10 16` proves the
 guest's `apply` of `VerifyQueue`, the step that verifies the approvals, with
 the RISC Zero prover (`r0vm` 3.0.5) on this machine, and reports the succinct
 receipt. This is the receipt a member's client produces under the private
 posture, where the privacy-preserving circuit composes it. Raw output:
 [`bench-real-proving.txt`](bench-real-proving.txt).
 
-Machine: Apple M4 Pro, 14 cores, CPU proving. Measured on the build before the window was widened to ten minutes; the verification code is the same, and the cycle counts above (final binary) agree with these to within 2%.
+Machine: Apple M4 Pro, 14 cores, CPU proving, final binary (`24d955ee…`),
+no other heavy work running.
 
 | M | signatures verified | user cycles | segments | prove (s, wall) | succinct receipt (bytes) |
 |---:|---:|---:|---:|---:|---:|
-| 1 | 2 | 556,046 | 1 | 71.0 | 224,513 |
-| 3 | 4 | 1,107,971 | 2 | 108.0 | 225,193 |
-| 5 | 6 | 1,644,837 | 2 | 290.6 | 225,873 |
-| 7 | 8 | 2,192,650 | 3 | 378.7 | 226,553 |
-| 10 | 11 | 2,995,783 | 4 | 256.0 | 227,573 |
-| 16 | 17 | 4,655,878 | 5 | 554.7 | 229,613 |
+| 1 | 2 | 557,423 | 1 | 69.5 | 224,513 |
+| 5 | 6 | 1,643,444 | 2 | 155.6 | 225,873 |
+| 10 | 11 | 3,006,840 | 4 | 340.9 | 227,573 |
+| 16 | 17 | 4,655,349 | 5 | 505.8 | 229,613 |
 
 The succinct receipt is nearly constant in M (about +340 bytes per approval, the
-signatures themselves in the journal). Proving time grows with segments. The
-M = 5 and M = 7 runs overlapped a full LEZ build on the same machine; the
-figures are wall clock as measured, and a quiet rerun is the first item of
-the grant's benchmark milestone.
+signatures themselves in the journal). Proving time grows with the number of segments, about 30 s per
+approval on this machine; every M up to 16 proves in under nine minutes, inside the
+ten-minute window a private transaction has to land in.
 
 ### Transaction size
 
