@@ -1,0 +1,73 @@
+name: CI
+on:
+  push:
+  pull_request:
+jobs:
+  core:
+    name: Program logic (host tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test --manifest-path programs/accord/Cargo.toml -p accord-core
+      - name: The IDL describes the program
+        run: python3 scripts/check-idl.py
+  executor:
+    name: The committed binary through lee::V03State
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test --release --manifest-path executor-tests/Cargo.toml
+      - name: Cycle table is reproducible
+        run: cargo run --release --manifest-path executor-tests/Cargo.toml --bin measure | tee measure.txt
+  reproduce:
+    name: A clean rebuild is the committed binary
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo install cargo-risczero --version 3.0.5 --locked
+      - run: |
+          cp artifacts/programs/v0.3/accord_multisig.bin /tmp/committed.bin
+          DOCKER=1 scripts/build-guest.sh
+          cmp /tmp/committed.bin artifacts/programs/v0.3/accord_multisig.bin
+  cli:
+    name: CLI builds, room crypto tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: sudo apt-get update && sudo apt-get install -y libpcsclite-dev pkg-config libclang-dev
+      - run: cargo test --release --manifest-path cli/Cargo.toml
+  e2e:
+    name: Full lifecycle on a standalone v0.3 sequencer
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: sudo apt-get update && sudo apt-get install -y libpcsclite-dev pkg-config libclang-dev
+      - name: LEZ v0.3.0 sequencer and wallet
+        run: |
+          git clone https://github.com/logos-blockchain/logos-execution-zone /tmp/lez
+          cd /tmp/lez && git checkout db66590ab821a4e142c211017a3866d007f6fa77
+          cargo build --release --features standalone -p sequencer_service -p wallet
+          echo /tmp/lez/target/release >> "$GITHUB_PATH"
+      - run: cargo build --release --manifest-path cli/Cargo.toml
+      - name: Start the sequencer and a wallet
+        run: |
+          mkdir -p /tmp/seq && cp /tmp/lez/lez/sequencer/service/configs/debug/sequencer_config.json /tmp/seq/
+          (cd /tmp/seq && sequencer_service sequencer_config.json --listen-address 127.0.0.1 > seq.log 2>&1 &)
+          sleep 10
+          export LEE_WALLET_HOME_DIR=/tmp/wallet
+          wallet check-health || true
+          sed -i -e 's|https://testnet.lez.logos.co/|http://127.0.0.1:3040/|' -e 's/"gas_limit": 2000000/"gas_limit": 10000000/' /tmp/wallet/wallet_config.json
+          wallet account import public --private-key 10a26a9aec7d34b82364eeae45c5294dbb0a764b000b94eeb9b58511dc487c4d
+      - name: e2e and verify
+        env:
+          LEE_WALLET_HOME_DIR: /tmp/wallet
+          SUPPRESS_VERBOSE_PRINTS: "1"
+        run: |
+          DEPLOY=1 PAYER=6iArKUXxhUJqS7kCaPNhwMWt3ro71PDyBj7jwAyE2VQV OUT=/tmp/ci-e2e.tsv ./scripts/e2e.sh
+          ./scripts/verify-onchain.sh --manifest /tmp/ci-e2e.tsv --rpc http://127.0.0.1:3040
