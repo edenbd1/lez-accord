@@ -18,6 +18,12 @@ the call the v0.3 sequencer's settlement makes, with the 10,000,000-cycle
 budget of one transaction (gas is cycles one for one). Raw output:
 [`bench-accelerated.txt`](bench-accelerated.txt).
 
+The keys are fixed, but each BIP-340 signature draws fresh auxiliary
+randomness, so a rerun moves every row slightly: a rerun on 2026-10-13
+([`bench-accelerated-rerun-2026-10-13.txt`](bench-accelerated-rerun-2026-10-13.txt))
+differs from the table below by at most 1.32% on any of its 36 rows, and by at
+most 0.5 points of the cap. Expect that spread when you reproduce it.
+
 | op | cycles | share of the 10M gas cap |
 |---|---:|---:|
 | create (3 members) | 124,073 | 1.2% |
