@@ -1,0 +1,19 @@
+baseline: the unmutated host tests pass
+killed   threshold: queue accepts one weight short  <- below_threshold_is_refused config_change_goes_through_the_quorum_and_bumps_the_epoch 
+killed   threshold: activation accepts one weight short  <- activation_needs_the_threshold 
+killed   threshold: spend accepts one signer short  <- spend_signatures_are_good_once_and_only_from_spenders 
+killed   replay: a digest can be queued twice  <- queue_then_execute_pays_from_the_vault 
+killed   replay: an executed action can execute again  <- a_queued_action_survives_a_change_and_can_be_vetoed queue_then_execute_pays_from_the_vault 
+killed   replay: a spend signature is accepted at any counter  <- spend_signatures_are_good_once_and_only_from_spenders 
+killed   replay: the spend counter does not advance  <- spend_signatures_are_good_once_and_only_from_spenders spending_limit_allows_small_transfers_without_the_quorum 
+killed   replay: approvals from another epoch count  <- approvals_under_the_old_epoch_do_not_count_after_a_change 
+killed   expiry: queue ignores the window's end  <- expired_proposals_are_refused 
+killed   expiry: execute ignores expiry  <- expired_proposals_are_refused 
+killed   expiry: time lock not enforced  <- time_lock_is_enforced_and_snapshotted 
+killed   expiry: time lock counted from the window's start  <- time_lock_is_enforced_and_snapshotted 
+killed   membership: a non-member's signature counts  <- config_change_goes_through_the_quorum_and_bumps_the_epoch non_member_and_wrong_digest_are_refused 
+killed   membership: the role bit is not checked  <- roles_are_independent 
+killed   membership: one member's two signatures count twice  <- activation_needs_the_threshold duplicate_approver_counts_once 
+killed   membership: a non-spender's signature counts  <- spend_signatures_are_good_once_and_only_from_spenders 
+killed   signature: an invalid signature counts  <- activation_needs_the_threshold approvals_under_the_old_epoch_do_not_count_after_a_change approve_signature_cannot_stand_in_for_propose_or_execute non_member_and_wrong_digest_are_refused 
+summary: 17 killed, 0 survived, 0 skipped

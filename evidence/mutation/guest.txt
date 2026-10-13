@@ -1,0 +1,8 @@
+killed   threshold: queue accepts one weight short  <- an_action_cannot_execute_below_threshold a_configuration_change_invalidates_pending_approvals 
+killed   replay: an executed action can execute again  <- a_queued_action_survives_a_change_and_the_new_quorum_can_veto_it 
+killed   replay: a spend signature is accepted at any counter  <- a_spend_signature_is_good_once 
+killed   expiry: queue ignores the window's end  <- proposals_expire every_refusal_code_fires_on_chain 
+killed   membership: a non-member's signature counts  <- approvals_are_bound_to_one_action a_configuration_change_invalidates_pending_approvals every_refusal_code_fires_on_chain 
+killed   membership: one member's two signatures count twice  <- an_action_cannot_execute_below_threshold 
+restored: the rebuilt guest is the committed binary again
+baseline after restore: test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.21s
