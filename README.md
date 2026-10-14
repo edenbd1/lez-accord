@@ -47,6 +47,15 @@ encrypted coordination room over Logos Delivery. Prototype for RFP-005
 One executor test, `every_refusal_code_fires_on_chain`, fires each of the 17
 refusal codes through the real binary and fails if any code is missing.
 
+**The tests are themselves tested.** `scripts/mutation-test.sh` breaks each
+guard the program's safety rests on (threshold, replay and counters, epoch,
+expiry and time lock, membership, roles, duplicate signers, signature
+validity), one at a time, and requires a host test to fail: 17 of 17 mutants
+are killed, each by a named test ([`evidence/mutation/host.txt`](evidence/mutation/host.txt)).
+`scripts/mutation-test-guest.sh` builds 6 of them into the real guest and
+runs the executor tests against it: 6 of 6 killed, and the rebuilt guest is
+the committed binary again afterwards ([`evidence/mutation/guest.txt`](evidence/mutation/guest.txt)).
+
 ## Quick start (local sequencer)
 
 ```bash
