@@ -119,7 +119,7 @@ QString AccordBackend::chatStart() {
         if (a.value(0).toString() == QLatin1String("online")) QTimer::singleShot(0, this, [this] { refreshAddress(5); });
     });
     ChatModule::ChatConfig config;
-    config.delivery_preset = envOr("ACCORD_CHAT_PRESET", QStringLiteral("logos.test"));
+    config.delivery_preset = envOr("ACCORD_CHAT_PRESET", QStringLiteral("logos.dev"));
     config.log_level = QStringLiteral("warn");
     const LogosResult res = chat.init(config);
     if (!res.success) return QStringLiteral("error: the chat module did not start: ") + res.getError<QString>();
