@@ -27,9 +27,16 @@ def block_of(tx):
         return str(res[1] if not isinstance(res[1], dict) else res[1].get("height"))
     return None
 
+lines = [l.rstrip("\n") for l in open(manifest)]
+# `# attempts <label> <hash>...`: every attempt the CLI sent for that step.
+attempts = {}
+for l in lines:
+    if l.startswith("# attempts "):
+        _, _, label, *hs = l.split()
+        attempts[label] = hs
+
 out, notes = [], []
-for line in open(manifest):
-    line = line.rstrip("\n")
+for line in lines:
     cols = line.split("\t")
     if line.startswith("#") or len(cols) < 5 or cols[4] in ("", "-"):
         out.append(line)
@@ -39,8 +46,12 @@ for line in open(manifest):
     if verdict in ("applied", "reverted") and now and now != block:
         notes.append(f"# moved {label}: recorded in block {block}, in block {now} at the end of the run")
         cols[3] = now
-    elif verdict == "not-included" and now:
-        notes.append(f"# late {label}: not included while the run waited, in block {now} at the end of the run")
+    elif verdict == "not-included":
+        for h in [tx] + [h for h in attempts.get(label, []) if h != tx]:
+            at = now if h == tx else block_of(h)
+            if at:
+                notes.append(f"# late {label}: not included while the run waited; attempt {h} is in block {at} at the end of the run")
+                break
     out.append("\t".join(cols))
 
 with open(manifest, "w") as f:

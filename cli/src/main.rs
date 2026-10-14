@@ -520,7 +520,7 @@ impl Ctx {
                 Err(e) => eprintln!("{op}: attempt {attempt} not sent: {e:?}"),
             }
             for (i, h) in sent_hashes.iter().enumerate() {
-                let wait = if i + 1 == sent_hashes.len() { 180 } else { 5 };
+                let wait = if i + 1 == sent_hashes.len() { 300 } else { 5 };
                 if let Ok(Ok((_, b))) = tokio::time::timeout(Duration::from_secs(wait), self.wallet().poll_transaction(*h)).await {
                     found = Some((*h, b));
                     break;
@@ -544,7 +544,11 @@ impl Ctx {
             Some(_) if after != before => "applied",
             Some(_) => "reverted",
         };
-        let line = serde_json::json!({"op": op, "label": self.label, "tx": hash.to_string(), "block": block, "verdict": verdict});
+        let mut line = serde_json::json!({"op": op, "label": self.label, "tx": hash.to_string(), "block": block, "verdict": verdict});
+        if sent_hashes.len() > 1 {
+            // Every attempt, so a late one can still be found after the run.
+            line["attempts"] = sent_hashes.iter().map(|h| h.to_string()).collect();
+        }
         println!("{line}");
         Ok(line)
     }
@@ -1315,7 +1319,7 @@ async fn report_private(ctx: &Ctx, op: &str, sent: Result<common::HashType>, wat
             return Ok(());
         }
     };
-    let polled = tokio::time::timeout(Duration::from_secs(240), ctx.wallet().poll_transaction(hash)).await;
+    let polled = tokio::time::timeout(Duration::from_secs(900), ctx.wallet().poll_transaction(hash)).await;
     let block = match polled {
         Ok(Ok((_, b))) => Some(b),
         _ => None,
@@ -1370,7 +1374,7 @@ async fn vault_cmd(ctx: &mut Ctx, op: VaultCmd, _elf: &PathBuf) -> Result<()> {
                 .await
                 .map(|(h, _)| h);
             let hash = sent.map_err(|e| anyhow!("{e:?}"))?;
-            let polled = tokio::time::timeout(Duration::from_secs(240), ctx.wallet().poll_transaction(hash)).await;
+            let polled = tokio::time::timeout(Duration::from_secs(900), ctx.wallet().poll_transaction(hash)).await;
             let block = polled.ok().and_then(|r| r.ok()).map(|(_, b)| b);
             println!("{}", serde_json::json!({"op": "vault-fund", "label": ctx.label, "tx": hash.to_string(), "block": block, "verdict": if block.is_some() { "applied" } else { "not-included" }, "vault": vault.to_string()}));
         }
@@ -1386,7 +1390,7 @@ async fn vault_cmd(ctx: &mut Ctx, op: VaultCmd, _elf: &PathBuf) -> Result<()> {
             let line = match sent {
                 Err(e) => serde_json::json!({"op": "vault-steal", "label": ctx.label, "verdict": "rejected", "error": format!("{e:?}"), "vault": vault.to_string()}),
                 Ok(h) => {
-                    let polled = tokio::time::timeout(Duration::from_secs(240), ctx.wallet().poll_transaction(h)).await;
+                    let polled = tokio::time::timeout(Duration::from_secs(900), ctx.wallet().poll_transaction(h)).await;
                     let block = polled.ok().and_then(|r| r.ok()).map(|(_, b)| b);
                     serde_json::json!({"op": "vault-steal", "label": ctx.label, "tx": h.to_string(), "block": block, "verdict": if block.is_some() { "applied" } else { "not-included" }, "vault": vault.to_string()})
                 }

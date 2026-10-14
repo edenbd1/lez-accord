@@ -75,6 +75,7 @@ step() {
   verdict="$(jget "$line" verdict)"; block="$(python3 -c 'import json,sys;print(json.loads(sys.argv[1]).get("block"))' "$line")"
   tx="$(python3 -c 'import json,sys;print(json.loads(sys.argv[1]).get("tx","-"))' "$line")"
   printf '%s\t%s\t%s\t%s\t%s\n' "$label" "$expect" "$verdict" "$block" "$tx" >> "$OUT"
+  python3 -c 'import json,sys;a=json.loads(sys.argv[1]).get("attempts");a and print("# attempts",sys.argv[2]," ".join(a))' "$line" "$label" >> "$OUT"
   case "$expect:$verdict" in
     applied:applied|refused:reverted|refused:rejected|refused:not-included) echo "  ok  $label: $verdict" ;;
     *) echo "  FAIL $label: $verdict, expected $expect"; fail=1 ;;
