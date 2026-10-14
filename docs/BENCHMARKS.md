@@ -57,26 +57,27 @@ possible at all on LEZ v0.3 (D2).
 
 ### Real proving (P.1: never development mode)
 
-`RISC0_DEV_MODE=0 cargo run --release --bin prove -- 1 5 10 16` proves the
+`RISC0_DEV_MODE=0 cargo run --release --bin prove -- 1 3 5 10 16` proves the
 guest's `apply` of `VerifyQueue`, the step that verifies the approvals, with
 the RISC Zero prover (`r0vm` 3.0.5) on this machine, and reports the succinct
 receipt. This is the receipt a member's client produces under the private
 posture, where the privacy-preserving circuit composes it. Raw output:
 [`bench-real-proving.txt`](bench-real-proving.txt).
 
-Machine: Apple M4 Pro, 14 cores, CPU proving, final binary (`24d955ee…`),
+Machine: Apple M4 Pro, 14 cores, CPU proving, final binary (`24a69044…`, the reproducible build),
 no other heavy work running.
 
 | M | signatures verified | user cycles | segments | prove (s, wall) | succinct receipt (bytes) |
 |---:|---:|---:|---:|---:|---:|
-| 1 | 2 | 557,423 | 1 | 69.5 | 224,513 |
-| 5 | 6 | 1,643,444 | 2 | 155.6 | 225,873 |
-| 10 | 11 | 3,006,840 | 4 | 340.9 | 227,573 |
-| 16 | 17 | 4,655,349 | 5 | 505.8 | 229,613 |
+| 1 | 2 | 559,965 | 1 | 71.5 | 224,513 |
+| 3 | 4 | 1,108,793 | 2 | 93.4 | 225,193 |
+| 5 | 6 | 1,653,649 | 2 | 151.8 | 225,873 |
+| 10 | 11 | 3,017,893 | 4 | 251.7 | 227,573 |
+| 16 | 17 | 4,656,025 | 5 | 380.6 | 229,613 |
 
 The succinct receipt is nearly constant in M (about +340 bytes per approval, the
-signatures themselves in the journal). Proving time grows with the number of segments, about 30 s per
-approval on this machine; every M up to 16 proves in under nine minutes, inside the
+signatures themselves in the journal). Proving time grows with the number of segments, about 20 s per
+approval on this machine; every M up to 16 proves in under seven minutes, inside the
 ten-minute window a private transaction has to land in.
 
 ### Transaction size
