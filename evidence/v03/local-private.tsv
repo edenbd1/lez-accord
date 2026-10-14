@@ -1,17 +1,17 @@
-# run against http://127.0.0.1:3040, 2026-10-12T18:26:02Z
-# program CMT8HTUYPGVpTQwtZQ3DJurN2aKDEanB4i3HsqdRCNsz 24d955ee85544249ebe79f3c9bab5482158898ef1753c655ebd59d030e27762a
-create	applied	applied	225	2466464b6525f18b534c271c11faf3d3b5ea7cf3d993c14c2701f6908d1c0eb7
-activate	applied	applied	226	dff5c65c2b2899d648c01f6857db594663e21e2248f3e15dc785b6f07f3e81d3
-# payer 6iArKUXxhUJqS7kCaPNhwMWt3ro71PDyBj7jwAyE2VQV dest HWvzhpxNvVg3ABBttDLXYfKSF52ryvSD9kmjUZ22Un2K multisig priv4 private-vault 2GqXMMNUJQjSnbYKd5wQgHzAJ35JZjDjxWFYCQ6qLn3Q group accord-priv4-1791829466
-fund-private-vault	applied	applied	235	ece737775445a353848be65ebb53620e1519cfdc80a3afce042cbea26b06c238
+# run against http://127.0.0.1:3042, 2026-10-14T16:14:42Z
+# program FLGdaxceDrx1S67vT78jqyjsexqcqRUxWKKmX7CZjeRf 24a69044e34c2604e1a277dc1958855f0a2d95d65d4b0735052b34a51d323cd9
+create	applied	applied	1111	2b34881c7ac5b6c201edfe97a7cd9c1755971a10caf175388abd12c7b2293471
+activate	applied	applied	1112	45b52169e097059ce8af041a32ff44de1cd5b1cb478782c2d735a9c04bc7cc0b
+# payer 6iArKUXxhUJqS7kCaPNhwMWt3ro71PDyBj7jwAyE2VQV dest ERvrsT8vW75DN9NN6gqiZGVz9r8WKLFd2agVrhLuzSkR multisig local-r1-priv private-vault FfcYL7g7z48hgA5TDt5CyAckXS9epFVQhZEDCumYUGBB group accord-local-r1-priv-1791994482
+fund-private-vault	applied	applied	1121	cf658880ec6eae18edeca6a5802d9a75d4a3e42fa450e266eabba9c4837ec530
 # check ok: the group's member sees the private vault's balance = 500
 # check ok: the vault's balance is not public = 0
 steal-with-group-keys	refused	rejected	None	-
 # check ok: nothing moved = 0
-spend-private	applied	applied	246	42484ede7a8445c4f9e86dafd9e546fdb0c8e8017e6018ce2968965c4dac6e31
+spend-private	applied	applied	1134	96ee14a9a569144b3fb06b2283572908eb1d7093c51df3620434537b7bfe1d63
 # check ok: destination received 60 = 60
-queue	applied	applied	247	17ca3619cae2047309b7de70a6748bfe0181ee09af5bea000b31bb13f89b369e
-execute-private	applied	applied	259	44e513d0df8d9b46c52f28a802597ce4829ba242255cc74e08c06897ac247461
+queue	applied	applied	1135	5f4520dd5b50897cbf40d8b9880fb404d3526b7f3cf05b5f606701f0e4ca6636
+execute-private	applied	applied	1149	64255d79fd93c6bca3288d6e43374b9aad43d2e21a2620f060b6cbd46352ee9d
 # check ok: destination received 100 more = 160
 # check ok: the members' view of the vault = 340
 # check ok: and still nothing public about it = 0

@@ -31,6 +31,15 @@ Core-mode node on the `logos.dev` preset, relay subscribe and send, and the
 `onMessageReceived` listener. Built from `logos-co/logos-delivery` (the
 library target, `make liblogosdelivery`).
 
+`scripts/e2e-room.sh` drives this transport end to end; its record,
+[`evidence/v03/local-room.tsv`](../evidence/v03/local-room.tsv), dates from
+2026-10-12 and the earlier, non-reproducible build of the guest. On 2026-10-14
+the `liblogosdelivery` build at hand (August 2026) no longer delivered to the
+listening node on `logos.dev`, so that run was not repeated on the current
+binary; the room on the Logos chat module (below,
+[`evidence/v03/local-chat.tsv`](../evidence/v03/local-chat.tsv)) is the path
+run end to end on it.
+
 ## Commands
 
 ```bash

@@ -1,20 +1,20 @@
-# run against http://127.0.0.1:3041, room on chat_module (logos.dev), 2026-10-14T09:32:20Z
-# program BM6T6FccScXttdNvqGR73xbrEYYmrMJ83m8fNrZn1VhB 24d955ee85544249ebe79f3c9bab5482158898ef1753c655ebd59d030e27762a
-# payer 6iArKUXxhUJqS7kCaPNhwMWt3ro71PDyBj7jwAyE2VQV dest GUi6F7fM97RAzd58E2fs8gLvCQUMhYJPdBAguzubhMaC multisig chat-1791970340 alice 2732c5b9008f4d2a8b521b0daf2384332016a906f39cba794f7fbf64473e6cee bob 40c97456be9e71a4701332ad0e6c5d1fe985df6a86217282e162f87ce165fe94 carol 4069f9e5c439985e13777e065fbb5ff5c7845a5bb0f2236fdaf6ffa62c81fab5
-create	applied	applied	3790	d4f77be0929f106118eded899febd8fee5da7a59333ab17c5d7c0d13eebb4970
-activate	applied	applied	3792	80a78897578195785483f0a58d8fb02d3a627d15529a327426284f1b25281c9e
+# run against http://127.0.0.1:3042, room on chat_module (logos.dev), 2026-10-14T16:25:58Z
+# program FLGdaxceDrx1S67vT78jqyjsexqcqRUxWKKmX7CZjeRf 24a69044e34c2604e1a277dc1958855f0a2d95d65d4b0735052b34a51d323cd9
+# payer 6iArKUXxhUJqS7kCaPNhwMWt3ro71PDyBj7jwAyE2VQV dest GTczphRgNd9FfScJfmcZRoVU1wvFPoBLtSKJKFAN3ihF multisig local-r1-chat alice 4fc6f3a89eb8db98b2303fb7b747f14c88928c2800bc29a83aba152beb635378 bob a2a793e8066907f79909e3ab888341f0c6f3aea0b6111cf845a5083ed36bc1b1 carol 26df9c2ce9b177844fd8436c1f335193fc766420f69548de610ba6dd7cf22c36
+create	applied	applied	1156	0f8be6c1c8d51b1c3e0aa783635a4d4a7cf393a2038035e4cb053772284dc41e
+activate	applied	applied	1158	5b697685b2bc3cfec7c20af8403c72da972656f2922e06e84567f18203507b72
 # logosctl logosctl version 0.3.2
 # check ok: alice installed chat_module from the catalog = yes
 # check ok: bob installed chat_module from the catalog = yes
 # check ok: carol installed chat_module from the catalog = yes
 # chat_module 
 # check ok: alice's chat node is online = "delivery_state":"online"
-# chat address alice eeb033f9d4427b1afb3661b576a7e0b8b1be1ce52153afe67c9de7858b3ef014
+# chat address alice 40fcb9dd1899cd8193dc7b664ccceb5dbc8156fc7b5413db38b4e6afb9e152fe
 # check ok: bob's chat node is online = "delivery_state":"online"
-# chat address bob 325519668909c007f616509a8cc354efbf1fee81f8fd1eca60789b13890b1ddf
+# chat address bob a25fdccabaf3a4a5cb1cb78cb6768738310567a0aec86645f41417d19e0c1f92
 # check ok: carol's chat node is online = "delivery_state":"online"
-# chat address carol dc0ff8096524fba127b80254c2fa22a68b4eb331ab68280537bd974a0d72bd39
-# chat group 2071ed345b
+# chat address carol cc10423ed618dc9bede46d00e4ecb34f80affe10fd218f5ffc1d1342ae81dd2c
+# chat group 1c3100d4f6
 # check ok: bob joined the room = yes
 # check ok: carol joined the room = yes
 # check ok: bob heard Alice's package = yes
@@ -27,21 +27,21 @@ activate	applied	applied	3792	80a78897578195785483f0a58d8fb02d3a627d15529a327426
 # check ok: Alice heard Bob's deliberation = checked the invoice, approving
 # check ok: the forged approval is dropped = 0
 # check ok: the two real approvals merge = 2
-queue	applied	applied	3810	f3e0e20533f6cc7e3df5823e2a749b9c80ca77d73e9821b9e441905cfcc7db93
-execute	applied	applied	3811	01d2c3b7ba117eda2c6e8b3d6869dc2bf0e798a01c4e05193abfa474de1a990b
+queue	applied	applied	1190	ab9649a96fef6d6ae3e2bb38155bfc2133cf933b126da786a6674062b3f2ef45
+execute	applied	applied	1191	f79bebbc15d0bfc6cb42a49a210c050f75e9bc86d914d7364dc4de4142d91745
 # check ok: destination received 70 = 70
-# room:   alice sees         package 508d67c3867a… approvals 0
-# room:   alice sees  bob    package 508d67c3867a… approvals 1
-# room:   alice sees  carol  package 508d67c3867a… approvals 1
+# room:   alice sees         package e63070ad1bf2… approvals 0
+# room:   alice sees  bob    package e63070ad1bf2… approvals 1
+# room:   alice sees  carol  package e63070ad1bf2… approvals 1
 # room:   alice sees  bob    checked the invoice, approving
-# room:   alice sees  bob    package 508d67c3867a… approvals 1
-# room:   bob sees  alice  package 508d67c3867a… approvals 0
-# room:   bob sees         package 508d67c3867a… approvals 1
-# room:   bob sees  carol  package 508d67c3867a… approvals 1
+# room:   alice sees  bob    package e63070ad1bf2… approvals 1
+# room:   bob sees  alice  package e63070ad1bf2… approvals 0
+# room:   bob sees         package e63070ad1bf2… approvals 1
 # room:   bob sees         checked the invoice, approving
-# room:   bob sees         package 508d67c3867a… approvals 1
-# room:   carol sees  alice  package 508d67c3867a… approvals 0
-# room:   carol sees  bob    package 508d67c3867a… approvals 1
-# room:   carol sees         package 508d67c3867a… approvals 1
+# room:   bob sees  carol  package e63070ad1bf2… approvals 1
+# room:   bob sees         package e63070ad1bf2… approvals 1
+# room:   carol sees  alice  package e63070ad1bf2… approvals 0
+# room:   carol sees  bob    package e63070ad1bf2… approvals 1
+# room:   carol sees         package e63070ad1bf2… approvals 1
 # room:   carol sees  bob    checked the invoice, approving
-# room:   carol sees  bob    package 508d67c3867a… approvals 1
+# room:   carol sees  bob    package e63070ad1bf2… approvals 1

@@ -1,27 +1,26 @@
-{"header":"CMT8HTUYPGVpTQwtZQ3DJurN2aKDEanB4i3HsqdRCNsz","image_id":"24d955ee85544249ebe79f3c9bab5482158898ef1753c655ebd59d030e27762a","op":"deploy","segments":["CWm84CZ3QcJEqCmHtxh7GedCZvAFxBXpcPXWV4pndBRV","Ct2J6srQECKfwM8tZyt95Gmc9qkgp8urxgYQiWiqMHZV","5pnpCi2HMjPQSQM2GoPaH81kXfF77Ztw648Xfj9uJyu1","J4K3V53BvcVX3uX82sFeqxrj2NNUTerLobuU11o3zyoc","wpn9PY5mKedfbSLRF8GTrGrFireArDRtEayGZLd4u3C"]}
-# run against http://127.0.0.1:3040, 2026-10-12T18:26:02Z
-# program CMT8HTUYPGVpTQwtZQ3DJurN2aKDEanB4i3HsqdRCNsz 24d955ee85544249ebe79f3c9bab5482158898ef1753c655ebd59d030e27762a
+# run against http://127.0.0.1:3042, 2026-10-14T16:14:42Z
+# program FLGdaxceDrx1S67vT78jqyjsexqcqRUxWKKmX7CZjeRf 24a69044e34c2604e1a277dc1958855f0a2d95d65d4b0735052b34a51d323cd9
 == 1. a 2-of-3 whose vault is private
-{"block":225,"label":"create","op":"create","tx":"2466464b6525f18b534c271c11faf3d3b5ea7cf3d993c14c2701f6908d1c0eb7","verdict":"applied"}
+{"block":1111,"label":"create","op":"create","tx":"2b34881c7ac5b6c201edfe97a7cd9c1755971a10caf175388abd12c7b2293471","verdict":"applied"}
   ok  create: applied
-{"block":226,"label":"activate","op":"activate","tx":"dff5c65c2b2899d648c01f6857db594663e21e2248f3e15dc785b6f07f3e81d3","verdict":"applied"}
+{"block":1112,"label":"activate","op":"activate","tx":"45b52169e097059ce8af041a32ff44de1cd5b1cb478782c2d735a9c04bc7cc0b","verdict":"applied"}
   ok  activate: applied
-{"block":235,"label":"fund-private-vault","op":"vault-fund","tx":"ece737775445a353848be65ebb53620e1519cfdc80a3afce042cbea26b06c238","vault":"2GqXMMNUJQjSnbYKd5wQgHzAJ35JZjDjxWFYCQ6qLn3Q","verdict":"applied"}
+{"block":1121,"label":"fund-private-vault","op":"vault-fund","tx":"cf658880ec6eae18edeca6a5802d9a75d4a3e42fa450e266eabba9c4837ec530","vault":"FfcYL7g7z48hgA5TDt5CyAckXS9epFVQhZEDCumYUGBB","verdict":"applied"}
   ok  fund-private-vault: applied
   ok  the group's member sees the private vault's balance: 500
   ok  the vault's balance is not public: 0
 == 2. the group keys alone cannot spend it
-{"error":"TransactionBuildError(InvalidProgramBehavior(NativeTransferFailed(UnauthorizedSender { account_id: 2GqXMMNUJQjSnbYKd5wQgHzAJ35JZjDjxWFYCQ6qLn3Q })))","label":"steal-with-group-keys","op":"vault-steal","vault":"2GqXMMNUJQjSnbYKd5wQgHzAJ35JZjDjxWFYCQ6qLn3Q","verdict":"rejected"}
+{"error":"TransactionBuildError(InvalidProgramBehavior(NativeTransferFailed(UnauthorizedSender { account_id: FfcYL7g7z48hgA5TDt5CyAckXS9epFVQhZEDCumYUGBB })))","label":"steal-with-group-keys","op":"vault-steal","vault":"FfcYL7g7z48hgA5TDt5CyAckXS9epFVQhZEDCumYUGBB","verdict":"rejected"}
   ok  steal-with-group-keys: rejected
   ok  nothing moved: 0
 == 3. a spend within the limit, through the program, proved locally
-{"block":246,"label":"spend-private","op":"spend-private","tx":"42484ede7a8445c4f9e86dafd9e546fdb0c8e8017e6018ce2968965c4dac6e31","vault":"2GqXMMNUJQjSnbYKd5wQgHzAJ35JZjDjxWFYCQ6qLn3Q","verdict":"applied"}
+{"block":1134,"label":"spend-private","op":"spend-private","tx":"96ee14a9a569144b3fb06b2283572908eb1d7093c51df3620434537b7bfe1d63","vault":"FfcYL7g7z48hgA5TDt5CyAckXS9epFVQhZEDCumYUGBB","verdict":"applied"}
   ok  spend-private: applied
   ok  destination received 60: 60
 == 4. an M-of-N action on the private vault
-{"block":247,"label":"queue","op":"queue","tx":"17ca3619cae2047309b7de70a6748bfe0181ee09af5bea000b31bb13f89b369e","verdict":"applied"}
+{"block":1135,"label":"queue","op":"queue","tx":"5f4520dd5b50897cbf40d8b9880fb404d3526b7f3cf05b5f606701f0e4ca6636","verdict":"applied"}
   ok  queue: applied
-{"block":259,"label":"execute-private","op":"execute-private","tx":"44e513d0df8d9b46c52f28a802597ce4829ba242255cc74e08c06897ac247461","vault":"2GqXMMNUJQjSnbYKd5wQgHzAJ35JZjDjxWFYCQ6qLn3Q","verdict":"applied"}
+{"block":1149,"label":"execute-private","op":"execute-private","tx":"64255d79fd93c6bca3288d6e43374b9aad43d2e21a2620f060b6cbd46352ee9d","vault":"FfcYL7g7z48hgA5TDt5CyAckXS9epFVQhZEDCumYUGBB","verdict":"applied"}
   ok  execute-private: applied
   ok  destination received 100 more: 160
   ok  the members' view of the vault: 340

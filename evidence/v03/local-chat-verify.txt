@@ -1,8 +1,8 @@
-accord_multisig v0.3 against http://127.0.0.1:3041, from evidence/v03/local-chat.tsv
-  ok   program header BM6T6FccScXt… names ImageID 24d955ee85544249…
-  ok   create: applied, in block 3790
-  ok   activate: applied, in block 3792
-  ok   queue: applied, in block 3810
-  ok   execute: applied, in block 3811
+accord_multisig v0.3 against http://127.0.0.1:3042, from evidence/v03/local-chat.tsv
+  ok   program header FLGdaxceDrx1… names ImageID 24a69044e34c2604…
+  ok   create: applied, in block 1156
+  ok   activate: applied, in block 1158
+  ok   queue: applied, in block 1190
+  ok   execute: applied, in block 1191
   ok   control: a random hash does not resolve
 6 checks pass, 0 fail (19 state checks recorded during the run)

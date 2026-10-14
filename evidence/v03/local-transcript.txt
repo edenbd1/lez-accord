@@ -1,10 +1,22 @@
-{"header":"FrMKbGNQtE5vbFHCbYLvpDdfJZdQKJVqadfGYoFBWtXi","image_id":"24d955ee85544249ebe79f3c9bab5482158898ef1753c655ebd59d030e27762a","op":"deploy","segments":["DCCyo9u5xf6RhQiBxWiJAb3VfnTp8uwyZQZGT6YoFZ1m","CkZ3QjzSjXWvhBuPUtCFJES2u6Re9yDCxkRec84CS5oh","BjQXPKPJWENzgoEXjSVFtdkCYXxxMRVGnZezPSVnwGht","HKrEJtUA4hqRjo2UrvJnc3hRLa5YfuWpdeGgHMgM2ieD","FPanZSpvnEr57bqDGjqxrFwauya7Akyv771tE77izLdW"]}
-# run against http://127.0.0.1:3040, 2026-10-12T18:36:32Z
-# program FrMKbGNQtE5vbFHCbYLvpDdfJZdQKJVqadfGYoFBWtXi 24d955ee85544249ebe79f3c9bab5482158898ef1753c655ebd59d030e27762a
+{"header":"FLGdaxceDrx1S67vT78jqyjsexqcqRUxWKKmX7CZjeRf","op":"deploy-plan","segments":["DKEDR6XBoP28ajTgtUVezJ5JJGv1GMoueYkwao2vW92N","HbNyZTmZCYHUKo1vH4Uep9WECgD4b6rGCqaG8CbVSpsW","G35juDXg8HUtaft7uJajyeoKazmhjY1hbD73sX1nYNVb","5BxtgNGwmFRoZVMAEPukuazhUqVj5uM3yagqXk7wpufw","AKTR6hVPpzRPzkV4Ez8yLUzNJjuYWBFWMqRRgPNA9Fgo"]}
+segment 4: sent 8dea5a590e50c5b319b53a50a8ed133d67271d85ad25d894e77664be83456380 (try 1)
+segment 4: on chain
+segment 3: sent 893c91fb88427b1b76f9874accb9cbe3c5c5669e0f61580a45befa05a4f07432 (try 1)
+segment 3: on chain
+segment 2: sent 4b3f8affcd88dc3c399719f734126ba45aff13460364b2cecbda167dd89a9758 (try 1)
+segment 2: on chain
+segment 1: sent 6eb651f7a3195208ee49a13f0feecb259b01c5789a8828d59e836bcff6079b77 (try 1)
+segment 1: on chain
+segment 0: sent 6259f45dd56191a27dc090c0005b46e11fd36718512eb5d762e6ac5dff005a6d (try 1)
+segment 0: on chain
+header: sent 0bc7ec3f794414c77d1ea0af7abef06964bd346624ded32074a55e298157823a (try 1)
+{"header":"FLGdaxceDrx1S67vT78jqyjsexqcqRUxWKKmX7CZjeRf","image_id":"24a69044e34c2604e1a277dc1958855f0a2d95d65d4b0735052b34a51d323cd9","op":"deploy","segments":["DKEDR6XBoP28ajTgtUVezJ5JJGv1GMoueYkwao2vW92N","HbNyZTmZCYHUKo1vH4Uep9WECgD4b6rGCqaG8CbVSpsW","G35juDXg8HUtaft7uJajyeoKazmhjY1hbD73sX1nYNVb","5BxtgNGwmFRoZVMAEPukuazhUqVj5uM3yagqXk7wpufw","AKTR6hVPpzRPzkV4Ez8yLUzNJjuYWBFWMqRRgPNA9Fgo"]}
+# run against http://127.0.0.1:3042, 2026-10-14T15:56:32Z
+# program FLGdaxceDrx1S67vT78jqyjsexqcqRUxWKKmX7CZjeRf 24a69044e34c2604e1a277dc1958855f0a2d95d65d4b0735052b34a51d323cd9
 == 1. create a 2-of-3 with a 45s time lock and a spending limit; fund its vault
-{"block":267,"label":"create","op":"create","tx":"c37aaad99a542f5e6382986ba6aee86a6add10d7e7347e1d0673ac6557722043","verdict":"applied"}
+{"block":1039,"label":"create","op":"create","tx":"178693120ab8ce9e6013258997a07de15d1c51adc6e3e27840702041c001bf0b","verdict":"applied"}
   ok  create: applied
-  fund vault: Transaction hash is d29604f7b30c5684c9af4f3010e60785341b171709243783bfc48e674f095c76
+  fund vault (attempt 1): Transaction hash is 280d04ea5d02685c578a43ae5b0c2d174ca4bbc7763e32b92b9da6b105d78c86
   ok  vault funded before activation: 1000
   ok  not initialised yet: False
 == 2. a vault cannot be drained before it is fully initialised
@@ -12,15 +24,15 @@
   "calls": [
     {
       "accounts": [
-        "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet [native]",
-        "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K [native]"
+        "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW [native]",
+        "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR [native]"
       ],
       "decoded": {
         "amount": "10",
-        "from": "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet",
+        "from": "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW",
         "instruction": "Transfer",
         "program": "native token",
-        "to": "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K"
+        "to": "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR"
       },
       "target": "11111111111111111111111111111111"
     }
@@ -31,28 +43,28 @@
   "calls": [
     {
       "accounts": [
-        "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet [native]",
-        "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K [native]"
+        "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW [native]",
+        "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR [native]"
       ],
       "decoded": {
         "amount": "10",
-        "from": "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet",
+        "from": "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW",
         "instruction": "Transfer",
         "program": "native token",
-        "to": "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K"
+        "to": "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR"
       },
       "target": "11111111111111111111111111111111"
     }
   ],
   "kind": "calls"
 }
-{"block":269,"label":"queue-before-activation","op":"queue","tx":"481cff6762bbb31bac80b3aa726a9e808683b4bf952a5347f5123b3b9316b38f","verdict":"reverted"}
+{"block":1041,"label":"queue-before-activation","op":"queue","tx":"be278fb96ec944d37256522476f1419a14103c4d63d501ed614ec5239c3944c0","verdict":"reverted"}
   ok  queue-before-activation: reverted
-{"block":270,"label":"spend-before-activation","op":"spend","tx":"5201b0d14c8c668c81e22dbe4c234bb6cfc922222dc4238ffa3f48ab649bedb5","verdict":"reverted"}
+{"block":1042,"label":"spend-before-activation","op":"spend","tx":"4ee1f232fd522e1cade6f1f8f63fb777312dd3697fd363e588ec9e03d583ddf7","verdict":"reverted"}
   ok  spend-before-activation: reverted
-{"block":271,"label":"activate-below-threshold","op":"activate","tx":"52b3af51f71309f217f51b0526dfe96fde5c3f925617482123191d707b3b4836","verdict":"reverted"}
+{"block":1043,"label":"activate-below-threshold","op":"activate","tx":"a577a5388e53cc0e7c019d7c43c6ddd618f136e13d0012452c2eb5a533a26b59","verdict":"reverted"}
   ok  activate-below-threshold: reverted
-{"block":272,"label":"activate","op":"activate","tx":"8ca23fc081012ed9de5caf1108a549fd92185601e8225de2a71d4ac0795470c5","verdict":"applied"}
+{"block":1044,"label":"activate","op":"activate","tx":"24e6c25b86dd20711f3b45d1b0f68aef6613921dd55065d8f9b427bd111bc406","verdict":"applied"}
   ok  activate: applied
   ok  vault untouched: 1000
 == 3. propose, approve off-chain, queue; the time lock holds
@@ -61,54 +73,54 @@
   "calls": [
     {
       "accounts": [
-        "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet [native]",
-        "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K [native]"
+        "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW [native]",
+        "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR [native]"
       ],
       "decoded": {
         "amount": "40",
-        "from": "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet",
+        "from": "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW",
         "instruction": "Transfer",
         "program": "native token",
-        "to": "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K"
+        "to": "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR"
       },
       "target": "11111111111111111111111111111111"
     }
   ],
   "kind": "calls"
 }
-{"block":273,"label":"queue-one-approval","op":"queue","tx":"1fc16393c0e9a55fc928db1b88852c39a35064ea4ef2ef06ecfe4ab590d8c554","verdict":"reverted"}
+{"block":1045,"label":"queue-one-approval","op":"queue","tx":"3fbcc7a919c81677feac0b9e31f8a2f256dac5d55755949941aab2952097a7cf","verdict":"reverted"}
   ok  queue-one-approval: reverted
 {
   "calls": [
     {
       "accounts": [
-        "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet [native]",
-        "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K [native]"
+        "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW [native]",
+        "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR [native]"
       ],
       "decoded": {
         "amount": "40",
-        "from": "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet",
+        "from": "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW",
         "instruction": "Transfer",
         "program": "native token",
-        "to": "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K"
+        "to": "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR"
       },
       "target": "11111111111111111111111111111111"
     }
   ],
   "kind": "calls"
 }
-{"block":274,"label":"queue","op":"queue","tx":"07d8bff275fc0cbe184c1d3eaa5644860fc2284cfe136ecc548063b099192417","verdict":"applied"}
+{"block":1046,"label":"queue","op":"queue","tx":"201dd06dd713a030f4c4cdc6a61447d9e2e3ce4920cbd3c178e26b85efd68f83","verdict":"applied"}
   ok  queue: applied
-{"block":275,"label":"execute-in-time-lock","op":"execute","tx":"54852b8efd8d2ac5684ce1df777b88dcf0ab31f3863772fb503e97e4ac0398e3","verdict":"reverted"}
+{"block":1047,"label":"execute-in-time-lock","op":"execute","tx":"33e60c7d194dcdd1c84decac7c07812a0d499a06d378c4ce8ee3dea2ebc4e4c3","verdict":"reverted"}
   ok  execute-in-time-lock: reverted
-{"block":276,"label":"execute-by-non-executor","op":"execute","tx":"28e395ba9198bc3ad77f16203e2e52750ce048868a2d8171017d4b12a1cb1545","verdict":"reverted"}
+{"block":1048,"label":"execute-by-non-executor","op":"execute","tx":"28a96c0758e76b5277a17c023859a831159633a671c8b2b4e556eb367ed75342","verdict":"reverted"}
   ok  execute-by-non-executor: reverted
 == 4. spending limit: small transfers without the quorum
-{"block":277,"label":"spend-60","op":"spend","tx":"3997f28251dc7e1167a4e82b72006ea00e3041479231f55ae788d7e670446700","verdict":"applied"}
+{"block":1049,"label":"spend-60","op":"spend","tx":"83cd36e3d144240821d21f2b5e08d431eb1cd167d425104e01ac77c7ef902c32","verdict":"applied"}
   ok  spend-60: applied
-{"block":278,"label":"spend-over-limit","op":"spend","tx":"f47750e5c3b0b336ca06fdc29ee8b8bc01fd4bfbd672b1e83517a39d6f45a8fb","verdict":"reverted"}
+{"block":1050,"label":"spend-over-limit","op":"spend","tx":"756f08c0f0156d762f34e61a3ec8a528955e5576bed435da0f463102a763ccbf","verdict":"reverted"}
   ok  spend-over-limit: reverted
-{"block":279,"label":"spend-by-non-spender","op":"spend","tx":"d709a054df607acc4ffd11442754c64b4f289614b29b6f41df4efb314a3af9d2","verdict":"reverted"}
+{"block":1051,"label":"spend-by-non-spender","op":"spend","tx":"e8b1a20ae22280a445733f07b497fc0f541d85aef68b4b2e6e2c26ff11d9c48d","verdict":"reverted"}
   ok  spend-by-non-spender: reverted
   ok  spend paid 60: 60
 == 5. an action naming the fee payer is queued (it will be refused at execution)
@@ -117,14 +129,14 @@
     {
       "accounts": [
         "6iArKUXxhUJqS7kCaPNhwMWt3ro71PDyBj7jwAyE2VQV [native]",
-        "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K [native]"
+        "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR [native]"
       ],
       "decoded": {
         "amount": "5",
         "from": "6iArKUXxhUJqS7kCaPNhwMWt3ro71PDyBj7jwAyE2VQV",
         "instruction": "Transfer",
         "program": "native token",
-        "to": "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K"
+        "to": "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR"
       },
       "target": "11111111111111111111111111111111"
     }
@@ -136,36 +148,36 @@
     {
       "accounts": [
         "6iArKUXxhUJqS7kCaPNhwMWt3ro71PDyBj7jwAyE2VQV [native]",
-        "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K [native]"
+        "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR [native]"
       ],
       "decoded": {
         "amount": "5",
         "from": "6iArKUXxhUJqS7kCaPNhwMWt3ro71PDyBj7jwAyE2VQV",
         "instruction": "Transfer",
         "program": "native token",
-        "to": "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K"
+        "to": "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR"
       },
       "target": "11111111111111111111111111111111"
     }
   ],
   "kind": "calls"
 }
-{"block":280,"label":"queue-steal","op":"queue","tx":"9d5059300ed5142a8686c3c3ff442132917c4370e4b8e44786e522980796116f","verdict":"applied"}
+{"block":1052,"label":"queue-steal","op":"queue","tx":"1dd705bd696dad2c70a406447084a8c1e03e66718a56569c479a04ffb8c87444","verdict":"applied"}
   ok  queue-steal: applied
 == 6. a configuration change, queued; then the wait, the executions, and its effect
 {
   "calls": [
     {
       "accounts": [
-        "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet [native]",
-        "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K [native]"
+        "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW [native]",
+        "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR [native]"
       ],
       "decoded": {
         "amount": "5",
-        "from": "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet",
+        "from": "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW",
         "instruction": "Transfer",
         "program": "native token",
-        "to": "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K"
+        "to": "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR"
       },
       "target": "11111111111111111111111111111111"
     }
@@ -176,15 +188,15 @@
   "calls": [
     {
       "accounts": [
-        "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet [native]",
-        "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K [native]"
+        "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW [native]",
+        "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR [native]"
       ],
       "decoded": {
         "amount": "5",
-        "from": "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet",
+        "from": "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW",
         "instruction": "Transfer",
         "program": "native token",
-        "to": "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K"
+        "to": "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR"
       },
       "target": "11111111111111111111111111111111"
     }
@@ -196,7 +208,7 @@
   "limits": [],
   "members": [
     {
-      "key": "2040b4b4798fd25ed4124c1ffa15a3d796aff06ada6ad2f237471b2cbd05366e",
+      "key": "b9e8cf000412aa241d95275900fc23778d76351c625a4e487ca06f27919b371b",
       "roles": [
         "propose",
         "approve"
@@ -204,7 +216,7 @@
       "weight": 1
     },
     {
-      "key": "621b15b840097e4f109b34d7ebdf908fdfafd51b3de370e12bfddf6fd82a966a",
+      "key": "8ebfee6960a808894ad0f1135f6c94774da1d8b6788c6d91c002c555e328e818",
       "roles": [
         "approve",
         "execute"
@@ -212,7 +224,7 @@
       "weight": 1
     },
     {
-      "key": "3aaf5733baf7d5e97c718e43b8fd87928b5f7cba21464decdf4848eb035c4134",
+      "key": "cd47b413c899f61de1cbea511a0196f0d5ca57aa5cdd979ee3187eb90e6b3153",
       "roles": [
         "approve"
       ],
@@ -222,14 +234,14 @@
   "threshold": 2,
   "time_lock_ms": 45000
 }
-{"block":281,"label":"queue-config-one-approval","op":"queue","tx":"3d140dc3075ab3b39c7a79099ed9166617e81ce7f11838421bd862a78a2641b9","verdict":"reverted"}
+{"block":1053,"label":"queue-config-one-approval","op":"queue","tx":"0406c582f52f9726061c8796356ca628ed824b96ba54db1f69fc6fba1878a825","verdict":"reverted"}
   ok  queue-config-one-approval: reverted
 {
   "kind": "configuration change",
   "limits": [],
   "members": [
     {
-      "key": "2040b4b4798fd25ed4124c1ffa15a3d796aff06ada6ad2f237471b2cbd05366e",
+      "key": "b9e8cf000412aa241d95275900fc23778d76351c625a4e487ca06f27919b371b",
       "roles": [
         "propose",
         "approve"
@@ -237,7 +249,7 @@
       "weight": 1
     },
     {
-      "key": "621b15b840097e4f109b34d7ebdf908fdfafd51b3de370e12bfddf6fd82a966a",
+      "key": "8ebfee6960a808894ad0f1135f6c94774da1d8b6788c6d91c002c555e328e818",
       "roles": [
         "approve",
         "execute"
@@ -245,7 +257,7 @@
       "weight": 1
     },
     {
-      "key": "3aaf5733baf7d5e97c718e43b8fd87928b5f7cba21464decdf4848eb035c4134",
+      "key": "cd47b413c899f61de1cbea511a0196f0d5ca57aa5cdd979ee3187eb90e6b3153",
       "roles": [
         "approve"
       ],
@@ -255,39 +267,39 @@
   "threshold": 2,
   "time_lock_ms": 45000
 }
-{"block":282,"label":"queue-config","op":"queue","tx":"a7151be3fc22cc330163aef03521b24fbbf21e3f75f21651584d67ee516cd20b","verdict":"applied"}
+{"block":1054,"label":"queue-config","op":"queue","tx":"05df67612b7c3b41989c24270df730a8151b0f95f28c9fecf5a70031246d45b1","verdict":"applied"}
   ok  queue-config: applied
   waiting 665s for the time lock
-{"block":327,"label":"execute","op":"execute","tx":"d3ab73675232cba84c83b6ec6d153ea73353ce37231e8449f3b9a289b7ca8768","verdict":"applied"}
+{"block":1099,"label":"execute","op":"execute","tx":"65795b6f9c254950f77cdde8986b72691c0d8acdb2771114c723624e91407617","verdict":"applied"}
   ok  execute: applied
   ok  destination received 40: 40
   ok  vault paid 60 (spend) and 40: 900
   ok  queued record executed: executed
-{"block":328,"label":"queue-again","op":"queue","tx":"a45451cf7441cb2d701fc3ab9eb1c7af5c9441343b3231a0d620032ba3c19751","verdict":"reverted"}
+{"block":1100,"label":"queue-again","op":"queue","tx":"03e8f6a714174baa253b6a8f522928284f06c3720f2565a4a71b20ea70df45a2","verdict":"reverted"}
   ok  queue-again: reverted
-{"block":329,"label":"execute-again","op":"execute","tx":"bd76a5e1add510a4b6b956a9d162b7c9955d6f8e3f0f0ef77a3ec6372ec56f5d","verdict":"reverted"}
+{"block":1101,"label":"execute-again","op":"execute","tx":"c5d2a48a4fb4a611117d35088568fda200935baa0c23867de23ba96cf18ebf94","verdict":"reverted"}
   ok  execute-again: reverted
 {"error":"TransactionBuildError(InvalidInput(\"Fee payer is a non-signing account of this transaction\"))","label":"execute-steal","op":"execute","verdict":"rejected"}
   ok  execute-steal: rejected
-{"block":330,"label":"execute-config","op":"execute","tx":"f287142988bcdd700a2e1f1d72ae54c2e9f267fd0060c50d0e5acdff737b5a60","verdict":"applied"}
+{"block":1102,"label":"execute-config","op":"execute","tx":"cb9ac7de050cb8009dec40b0f95ed943d48b76598211412943fc8ccd60c3ba12","verdict":"applied"}
   ok  execute-config: applied
   ok  epoch moved: 1
   ok  bob is no longer a member: 3
-{"block":331,"label":"queue-stale-approvals","op":"queue","tx":"ad3c2c2c82484eef36ccfec31c7690e8eb55e1869e0a1548237b8542c27046cd","verdict":"reverted"}
+{"block":1103,"label":"queue-stale-approvals","op":"queue","tx":"af633f161a041f042e67c172050a528c1d58a8e10e5efeebadd615c630591730","verdict":"reverted"}
   ok  queue-stale-approvals: reverted
 {
   "calls": [
     {
       "accounts": [
-        "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet [native]",
-        "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K [native]"
+        "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW [native]",
+        "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR [native]"
       ],
       "decoded": {
         "amount": "5",
-        "from": "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet",
+        "from": "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW",
         "instruction": "Transfer",
         "program": "native token",
-        "to": "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K"
+        "to": "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR"
       },
       "target": "11111111111111111111111111111111"
     }
@@ -298,37 +310,37 @@
   "calls": [
     {
       "accounts": [
-        "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet [native]",
-        "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K [native]"
+        "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW [native]",
+        "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR [native]"
       ],
       "decoded": {
         "amount": "5",
-        "from": "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet",
+        "from": "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW",
         "instruction": "Transfer",
         "program": "native token",
-        "to": "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K"
+        "to": "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR"
       },
       "target": "11111111111111111111111111111111"
     }
   ],
   "kind": "calls"
 }
-{"block":332,"label":"queue-removed-member","op":"queue","tx":"de68447154c507bb73543104bd3bd79bc5f98612217ae3ac749bddc7b4494dfc","verdict":"reverted"}
+{"block":1104,"label":"queue-removed-member","op":"queue","tx":"408fddd1081e281028302fb863b5a8b6d80cc6035b254db82d52d135ce0f95b2","verdict":"reverted"}
   ok  queue-removed-member: reverted
 == 7. veto: the new quorum cancels a queued action, skipping the time lock
 {
   "calls": [
     {
       "accounts": [
-        "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet [native]",
-        "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K [native]"
+        "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW [native]",
+        "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR [native]"
       ],
       "decoded": {
         "amount": "300",
-        "from": "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet",
+        "from": "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW",
         "instruction": "Transfer",
         "program": "native token",
-        "to": "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K"
+        "to": "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR"
       },
       "target": "11111111111111111111111111111111"
     }
@@ -339,43 +351,43 @@
   "calls": [
     {
       "accounts": [
-        "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet [native]",
-        "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K [native]"
+        "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW [native]",
+        "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR [native]"
       ],
       "decoded": {
         "amount": "300",
-        "from": "3TjagCzZchh35ukmHw2PCQwjgGxBbaBeJwLZNMP4nUet",
+        "from": "Baf7wbAoSTdmvTaE8bQLfbjoHXh49Ly6sLMcwvG1x4qW",
         "instruction": "Transfer",
         "program": "native token",
-        "to": "6NsYrfAfiQ9NGGsUwNPsn8jHo7gxC9Hvqi5HqEnJGh6K"
+        "to": "F57qwpBw71b796s4N265pV1c4u6PTCTui83DZ7FxdTSR"
       },
       "target": "11111111111111111111111111111111"
     }
   ],
   "kind": "calls"
 }
-{"block":333,"label":"queue-big","op":"queue","tx":"a1774170d89fcefb176f51abe59b3b1ee0ce43157271cadcf6a0b33b2abbad7f","verdict":"applied"}
+{"block":1105,"label":"queue-big","op":"queue","tx":"e8a32e11a7c86aa0d492a46a3e7caf7d3fdc43ff10af25a30fac4641cd3099f5","verdict":"applied"}
   ok  queue-big: applied
 {
-  "digest": "5e9bab6dabd69e79490ce999c174e42800b9ea7defa7cfba95b008082230d01a",
+  "digest": "b649e1847743d87ae854595210f2ea7ddafd8143e48dc9fe6294c6689888a2f6",
   "kind": "veto a queued action"
 }
 {
-  "digest": "5e9bab6dabd69e79490ce999c174e42800b9ea7defa7cfba95b008082230d01a",
+  "digest": "b649e1847743d87ae854595210f2ea7ddafd8143e48dc9fe6294c6689888a2f6",
   "kind": "veto a queued action"
 }
-{"block":334,"label":"queue-veto","op":"queue","tx":"1e113586883413b432ae84eebca53c108c9cb6716771c7936e25709d39cd20d6","verdict":"applied"}
+{"block":1106,"label":"queue-veto","op":"queue","tx":"16b7c5ef52c74c67d0a38dfd8f666dc999cb03caa7a57b1c8473c457c44ef951","verdict":"applied"}
   ok  queue-veto: applied
-{"block":335,"label":"execute-veto","op":"execute","tx":"f163678e030830b6d8e24df7741bf3a3406778504081875b739118206c7186f6","verdict":"applied"}
+{"block":1107,"label":"execute-veto","op":"execute","tx":"8320e52709ba9eeb2592d48936d42a449fd2170bcdb06d155a5f9e5c2ebe236a","verdict":"applied"}
   ok  execute-veto: applied
   ok  big transfer cancelled: cancelled
-{"block":336,"label":"execute-vetoed","op":"execute","tx":"cc9f21295cfbdbbf4bf61f20b12acc225030c73ff1c7b056f132f0da29bfd50c","verdict":"reverted"}
+{"block":1108,"label":"execute-vetoed","op":"execute","tx":"84ce07c170d9c8abeb78ae0269dcaaaa14fd3007a37ddcd1afcfd882dbc3b8f2","verdict":"reverted"}
   ok  execute-vetoed: reverted
   ok  vault after everything: 900
 == 8. registry: append-only
-{"block":337,"label":"register","op":"register","tx":"a452b91c4df11dfeee66d5cbf022ad07c953511d70d8b3e6ab1ad407e3896ac7","verdict":"applied"}
+{"block":1109,"label":"register","op":"register","tx":"a75c3597cb0fdaf41d0fcb254fa15263c305e0700ad158441a12f716890ce64a","verdict":"applied"}
   ok  register: applied
-{"block":338,"label":"register-again","op":"register","tx":"7f9a0437672cbc8a8cf571508413dab47c32286fda6b056d7949cfcd733591d9","verdict":"reverted"}
+{"block":1110,"label":"register-again","op":"register","tx":"7af30fd69e14edd06ef34fa00e8c36b11724242fbd8512f62d287e1eb088e4be","verdict":"reverted"}
   ok  register-again: reverted
 == 9. Pr.1: no transaction of this run was signed by anyone but the fee payer
   ok  signers across the run: 6iArKUXxhUJqS7kCaPNhwMWt3ro71PDyBj7jwAyE2VQV
