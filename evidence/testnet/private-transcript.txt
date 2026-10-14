@@ -1,0 +1,28 @@
+# run against https://testnet.lez.logos.co, 2026-10-14T14:04:33Z
+# program 9RgveUGvnm91JPJM8a8mPkScxenQrDNmjzagj8EMv6vr 24d955ee85544249ebe79f3c9bab5482158898ef1753c655ebd59d030e27762a
+== 1. a 2-of-3 whose vault is private
+{"block":10434,"label":"create","op":"create","tx":"a9f2a34b6a6f14d729e75693ec57049f1d0ab0f80cbd485e386e61d59d68ed78","verdict":"applied"}
+  ok  create: applied
+{"block":10441,"label":"activate","op":"activate","tx":"3367e64f4a74130fe6341e431935a538e90e848d5416b004b4e77113983f5a3f","verdict":"applied"}
+  ok  activate: applied
+{"block":10465,"label":"fund-private-vault","op":"vault-fund","tx":"727f8318fdaa82f2d370d000bdbe345c58d5c88569fa04268e071f0de838e20c","vault":"B3RBqwxjYUCtse7Vhps1UE71eCnq7S6pvStKtEzfvhzV","verdict":"applied"}
+  ok  fund-private-vault: applied
+  ok  the group's member sees the private vault's balance: 500
+  ok  the vault's balance is not public: 0
+== 2. the group keys alone cannot spend it
+{"error":"TransactionBuildError(InvalidProgramBehavior(NativeTransferFailed(UnauthorizedSender { account_id: B3RBqwxjYUCtse7Vhps1UE71eCnq7S6pvStKtEzfvhzV })))","label":"steal-with-group-keys","op":"vault-steal","vault":"B3RBqwxjYUCtse7Vhps1UE71eCnq7S6pvStKtEzfvhzV","verdict":"rejected"}
+  ok  steal-with-group-keys: rejected
+  ok  nothing moved: 0
+== 3. a spend within the limit, through the program, proved locally
+{"block":10479,"label":"spend-private","op":"spend-private","tx":"b699f403ac42e3b94d77664f33895a9dd6c756b301597b2e778228e8284e0c53","vault":"B3RBqwxjYUCtse7Vhps1UE71eCnq7S6pvStKtEzfvhzV","verdict":"applied"}
+  ok  spend-private: applied
+  ok  destination received 60: 60
+== 4. an M-of-N action on the private vault
+{"block":10481,"label":"queue","op":"queue","tx":"2289d5c6f62c403706bc0766e7bae1886ede8391dbcb8a3de2bd69db9cd05dbe","verdict":"applied"}
+  ok  queue: applied
+{"block":10491,"label":"execute-private","op":"execute-private","tx":"9bdd33ee0d6caaaba8a8eabbb7d5569e101a704ac7e5881463e959569b8580ac","vault":"B3RBqwxjYUCtse7Vhps1UE71eCnq7S6pvStKtEzfvhzV","verdict":"applied"}
+  ok  execute-private: applied
+  ok  destination received 100 more: 160
+  ok  the members' view of the vault: 340
+  ok  and still nothing public about it: 0
+summary: 6 applied, 1 refused as expected, 7 state checks ok, failures=0

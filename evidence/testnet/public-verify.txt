@@ -1,0 +1,36 @@
+accord_multisig v0.3 against https://testnet.lez.logos.co, from evidence/testnet/public.tsv
+  ok   program header 9RgveUGvnm91… names ImageID 24d955ee85544249…
+  ok   create: applied, in block 10078
+  ok   queue-before-activation: reverted, in block 10090
+  ok   spend-before-activation: reverted, in block 10091
+  ok   activate-below-threshold: reverted, in block 10097
+  ok   activate: applied, in block 10098
+  ok   queue-one-approval: reverted, in block 10101
+  ok   queue: applied, in block 10102
+  ok   execute-in-time-lock: reverted, in block 10108
+  ok   execute-by-non-executor: reverted, in block 10111
+  ok   spend-60: applied, in block 10112
+  ok   spend-over-limit: reverted, in block 10113
+  ok   spend-by-non-spender: reverted, in block 10114
+  ok   queue-steal: applied, in block 10120
+  ok   queue-config-one-approval: reverted, in block 10133
+  ok   queue-config: applied, in block 10145
+  ok   execute: applied, in block 10186
+  ok   queue-again: reverted, in block 10226
+  ok   execute-again: reverted, in block 10237
+  ok   execute-steal: rejected, never sent to a block
+  ok   execute-config: applied, in block 10249
+  ok   queue-stale-approvals: reverted, in block 10262
+  ok   queue-removed-member: reverted, in block 10274
+  ok   queue-big: applied, in block 10281
+  ok   queue-veto: applied, in block 10293
+  ok   execute-veto: applied, in block 10306
+  ok   execute-vetoed: reverted, in block 10326
+  ok   register: applied, in block 10327
+  ok   register-again: reverted, in block 10333
+  ok   final state of 8qEJwt1Fj6Cd… shard 9RgveUGv… is as the run left it
+  ok   final state of AZ7Hbm5F1wij… shard 11111111… is as the run left it
+  ok   final state of 3mDvunNZ8ATK… shard 9RgveUGv… is as the run left it
+  ok   final state of 5FAA67rDcy38… shard 9RgveUGv… is as the run left it
+  ok   control: a random hash does not resolve
+34 checks pass, 0 fail (13 state checks recorded during the run)
