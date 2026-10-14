@@ -18,6 +18,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+      - name: RISC0
+        run: |
+          curl -L https://risczero.com/install | bash
+          echo "$HOME/.risc0/bin" >> "$GITHUB_PATH"
+      # The executor runs the guest in r0vm. rzup asks api.github.com for
+      # release metadata; anonymous calls from a shared runner hit the rate
+      # limit, so authenticate and retry.
+      - name: r0vm
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          for i in 1 2 3; do rzup install r0vm 3.0.5 && exit 0; sleep $((i * 20)); done
+          exit 1
       - run: cargo test --release --manifest-path executor-tests/Cargo.toml
       - name: Cycle table is reproducible
         run: cargo run --release --manifest-path executor-tests/Cargo.toml --bin measure | tee measure.txt
@@ -27,7 +40,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo install cargo-risczero --version 3.0.5 --locked
+      - name: RISC0
+        run: |
+          curl -L https://risczero.com/install | bash
+          echo "$HOME/.risc0/bin" >> "$GITHUB_PATH"
+      # The build runs in the pinned Docker image; cargo-risczero still refuses
+      # to start without a host guest toolchain installed.
+      - name: cargo-risczero 3.0.5
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          for i in 1 2 3; do
+            rzup install cargo-risczero 3.0.5 && rzup install rust && exit 0
+            sleep $((i * 20))
+          done
+          exit 1
       - run: |
           cp artifacts/programs/v0.3/accord_multisig.bin /tmp/committed.bin
           DOCKER=1 scripts/build-guest.sh
@@ -63,7 +90,14 @@ jobs:
         run: |
           mkdir -p /tmp/seq && cp /tmp/lez/lez/sequencer/service/configs/debug/sequencer_config.json /tmp/seq/
           (cd /tmp/seq && sequencer_service sequencer_config.json --listen-address 127.0.0.1 > seq.log 2>&1 &)
-          sleep 10
+          for i in $(seq 60); do
+            curl -s -m 5 http://127.0.0.1:3040 -H 'Content-Type: application/json' \
+              -d '{"jsonrpc":"2.0","id":1,"method":"getLastBlockId","params":[]}' | grep -q '"result"' && break
+            sleep 5
+          done
+          curl -s -m 5 http://127.0.0.1:3040 -H 'Content-Type: application/json' \
+            -d '{"jsonrpc":"2.0","id":1,"method":"getLastBlockId","params":[]}' | grep -q '"result"' \
+            || { echo "the sequencer did not answer"; tail -50 /tmp/seq/seq.log; exit 1; }
           export LEE_WALLET_HOME_DIR=/tmp/wallet
           wallet check-health || true
           sed -i -e 's|https://testnet.lez.logos.co/|http://127.0.0.1:3040/|' -e 's/"gas_limit": 2000000/"gas_limit": 10000000/' /tmp/wallet/wallet_config.json
