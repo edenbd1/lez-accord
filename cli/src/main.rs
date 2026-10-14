@@ -157,6 +157,14 @@ enum Cmd {
         #[arg(long)]
         key: String,
     },
+    /// Merge the valid approvals of packages for the same action into one
+    /// (created if absent): each signature is checked against the digest the
+    /// package's own bytes hash to, and a key counts once.
+    Merge {
+        into: PathBuf,
+        #[arg(required = true)]
+        packages: Vec<PathBuf>,
+    },
     /// Submit a package's approvals: the action becomes queued.
     Queue { package: PathBuf },
     /// Execute a queued package, authorised by an executing key.
@@ -899,6 +907,14 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
             pkg.approvals.push((&s).into());
             pkg.write(&package)?;
             println!("{}", serde_json::json!({"op": "approve", "digest": hex::encode(d), "key": hex::encode(s.key), "approvals": pkg.approvals.len()}));
+        }
+        Cmd::Merge { into, packages } => {
+            let mut n = 0;
+            for p in &packages {
+                n = merge_package(&into, &Package::read(p)?)?;
+            }
+            let d = Package::read(&into)?.checked_digest()?;
+            println!("{}", serde_json::json!({"op": "merge", "digest": hex::encode(d), "approvals": n, "package": into}));
         }
         Cmd::Queue { package } => {
             let pkg = Package::read(&package)?;

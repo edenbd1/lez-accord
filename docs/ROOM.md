@@ -55,12 +55,52 @@ accord queue inbox/<digest>.json
 | show different members different packages | a member may sign a digest the others did not see | each client decodes the exact bytes it signs (`accord decode`) |
 | a non-member posting | none | frames whose sender is not in the configuration are dropped |
 
+## On the Logos chat module
+
+`scripts/e2e-chat.sh` runs the room on the chat module itself: each of three
+members runs its own headless Logos Core (`logosctl` 0.3.2, its own session
+directory) with `chat_module` 0.3.0 and its `delivery_module` installed from
+the official module catalog, and its own approval key in its own key
+directory. Alice opens a group conversation for the multisig's epoch
+(`create_group_conversation`) and adds Bob and Carol (`add_group_member`);
+the package then travels only through that MLS group:
+
+1. Alice proposes a transfer and posts the package to the group.
+2. Bob and Carol each take it from the group, decode it from its bytes
+   (`accord decode`: the digest is recomputed from what they will sign),
+   approve it and post it back. Bob also posts a line of deliberation, and a
+   copy carrying a forged approval.
+3. Alice merges what she heard (`accord merge`): the forged approval is
+   dropped because its signature does not verify against the digest the
+   package's own bytes hash to, the two real ones merge, and she queues and
+   executes it on chain.
+
+The run on a local v0.3 sequencer with the logos.dev Delivery fleet:
+[`evidence/v03/local-chat-transcript.txt`](../evidence/v03/local-chat-transcript.txt),
+19 checks, 0 failures; its manifest
+[`evidence/v03/local-chat.tsv`](../evidence/v03/local-chat.tsv) re-checked by
+`scripts/verify-onchain.sh` ([output](../evidence/v03/local-chat-verify.txt)).
+The same run with the logos.test preset never delivered the group welcome
+within ten minutes (the logos.test fleet has been unreliable since the
+testnet v0.3 switch), so the script defaults to logos.dev.
+
+The Basecamp mini-app's backend (`app/src/accord_backend.cpp`) starts the
+same chat module and decodes packages posted to a group next to the
+proposal list; that path has not yet been run end to end with three members
+the way the script above is.
+
 ## Prototype limits, stated
 
-The RFP names the Logos chat module (MLS group conversations) as the room's
-substrate (S.2). This prototype carries the same packages over the Delivery
-layer the chat module itself runs on, with its own sealing; moving the
-frames into a chat-module group conversation per epoch, with
-`add_group_member` driven by the configuration, is grant work. Room history
-is relay-only here: a member who is offline misses frames until someone
-re-posts; Delivery's Store queries close that.
+- The group is opened and grown by hand (`create_group_conversation`,
+  `add_group_member`), not yet driven by the configuration: a configuration
+  change does not yet open the next epoch's group or leave out a removed
+  member. That, and the binding statement tying a chat identity to an
+  approval key, is grant work (M3).
+- Chat-module identities are per install, and nothing yet proves to the
+  others that a chat address belongs to a given member; the program does
+  not need it (it verifies every approval), but the room's view of who said
+  what does.
+- History: a member who joins later sees what the group carries from then
+  on; Store-backed history for offline members is grant work.
+- `accord room` (above) remains as the transport-agnostic fallback over
+  Delivery with its own sealing.

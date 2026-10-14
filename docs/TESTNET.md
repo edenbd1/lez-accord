@@ -22,3 +22,17 @@ committed guest runs there as built. What changed and matters here:
 The run: `LEE_WALLET_HOME_DIR=<prototype wallet home> PAYER=<funded account> scripts/testnet.sh`,
 with run-unique tags (`acc-pub-MMDDHHMM`, `acc-priv-MMDDHHMM`), writing
 `evidence/testnet/`.
+
+Two wallet settings matter on the public testnet (`wallet_config.json` of the
+wallet home):
+
+- **`gas_limit`: 2,000,000.** Before execution the payer must hold
+  `gas_limit × base fee` (8 at the floor) as a reserve, and the unspent part
+  is refunded after. The run's multisigs have a threshold of 2, and a queue
+  carrying three signatures uses about 0.9M cycles (`docs/BENCHMARKS.md`),
+  so 2M leaves room and keeps the reserve at 16M instead of the 80M a 10M
+  limit asks for. A larger M needs a larger limit: about 275,000 per approval.
+- **Polling**: `seq_poll_timeout` 60s, `seq_tx_poll_max_blocks` 40,
+  `seq_poll_max_retries` 30. Testnet blocks come every 15 to 60 s, and the
+  defaults (12 s, 5 blocks) give up on a deploy segment that is still on its
+  way.

@@ -1,0 +1,68 @@
+# run against http://127.0.0.1:3041, room on chat_module (logos.dev), 2026-10-14T09:32:20Z
+# program BM6T6FccScXttdNvqGR73xbrEYYmrMJ83m8fNrZn1VhB 24d955ee85544249ebe79f3c9bab5482158898ef1753c655ebd59d030e27762a
+== 1. a 2-of-3 on chain: Alice proposes and executes, Bob and Carol approve
+{"block":3790,"label":"create","op":"create","tx":"d4f77be0929f106118eded899febd8fee5da7a59333ab17c5d7c0d13eebb4970","verdict":"applied"}
+  ok  create: applied
+{"block":3792,"label":"activate","op":"activate","tx":"80a78897578195785483f0a58d8fb02d3a627d15529a327426284f1b25281c9e","verdict":"applied"}
+  ok  activate: applied
+== 2. three chat_module instances, one per member
+  alice:   install    delivery_module 0.3.2
+  alice:   install    chat_module 0.3.0
+  ok  alice installed chat_module from the catalog: yes
+  bob:   install    delivery_module 0.3.2
+  bob:   install    chat_module 0.3.0
+  ok  bob installed chat_module from the catalog: yes
+  carol:   install    delivery_module 0.3.2
+  carol:   install    chat_module 0.3.0
+  ok  carol installed chat_module from the catalog: yes
+  ok  alice's chat node is online: "delivery_state":"online"
+  ok  bob's chat node is online: "delivery_state":"online"
+  ok  carol's chat node is online: "delivery_state":"online"
+== 3. Alice opens the room for epoch 0 and invites Bob and Carol
+  room 2071ed345b
+  ok  bob joined the room: yes
+  ok  carol joined the room: yes
+== 4. Alice proposes in the room
+{"action":{"calls":[{"accounts":["CP6iaCjwyyjg6FbjRzHSmfk8e7qHbzt7E1AeeKra8qSQ [native]","GUi6F7fM97RAzd58E2fs8gLvCQUMhYJPdBAguzubhMaC [native]"],"decoded":{"amount":"70","from":"CP6iaCjwyyjg6FbjRzHSmfk8e7qHbzt7E1AeeKra8qSQ","instruction":"Transfer","program":"native token","to":"GUi6F7fM97RAzd58E2fs8gLvCQUMhYJPdBAguzubhMaC"},"target":"11111111111111111111111111111111"}],"kind":"calls"},"digest":"508d67c3867a2474144b0ca33136632a4c492146455cbacc1e05b55bac0a89e4","epoch":0,"expires_at":1791974231187,"op":"propose","package":"/var/folders/13/gjvsmjjx0slggwgptr2d6fhh0000gn/T/tmp.zkNO0KNixV/pay.json"}
+  sent by alice: 978 bytes
+== 5. Bob and Carol each take the package from the room, decode it, approve it, post it back
+  ok  bob heard Alice's package: yes
+  ok  bob decodes it, digest matches its bytes: True
+{"approvals":1,"digest":"508d67c3867a2474144b0ca33136632a4c492146455cbacc1e05b55bac0a89e4","key":"40c97456be9e71a4701332ad0e6c5d1fe985df6a86217282e162f87ce165fe94","op":"approve"}
+  sent by bob: 1274 bytes
+  ok  carol heard Alice's package: yes
+  ok  carol decodes it, digest matches its bytes: True
+{"approvals":1,"digest":"508d67c3867a2474144b0ca33136632a4c492146455cbacc1e05b55bac0a89e4","key":"4069f9e5c439985e13777e065fbb5ff5c7845a5bb0f2236fdaf6ffa62c81fab5","op":"approve"}
+  sent by carol: 1274 bytes
+  sent by bob: 30 bytes
+  sent by bob: 1189 bytes
+== 6. Alice merges what she heard and queues it
+  ok  Alice heard Bob's approval: yes
+  ok  Alice heard Carol's approval: yes
+  ok  Alice heard the forged copy: yes
+  ok  Alice heard Bob's deliberation: checked the invoice, approving
+  ok  the forged approval is dropped: 0
+  ok  the two real approvals merge: 2
+{"block":3810,"label":"queue","op":"queue","tx":"f3e0e20533f6cc7e3df5823e2a749b9c80ca77d73e9821b9e441905cfcc7db93","verdict":"applied"}
+  ok  queue: applied
+{"block":3811,"label":"execute","op":"execute","tx":"01d2c3b7ba117eda2c6e8b3d6869dc2bf0e798a01c4e05193abfa474de1a990b","verdict":"applied"}
+  ok  execute: applied
+  ok  destination received 70: 70
+== 7. the room as each member sees it
+  alice sees         package 508d67c3867a… approvals 0
+  alice sees  bob    package 508d67c3867a… approvals 1
+  alice sees  carol  package 508d67c3867a… approvals 1
+  alice sees  bob    checked the invoice, approving
+  alice sees  bob    package 508d67c3867a… approvals 1
+  bob sees  alice  package 508d67c3867a… approvals 0
+  bob sees         package 508d67c3867a… approvals 1
+  bob sees  carol  package 508d67c3867a… approvals 1
+  bob sees         checked the invoice, approving
+  bob sees         package 508d67c3867a… approvals 1
+  carol sees  alice  package 508d67c3867a… approvals 0
+  carol sees  bob    package 508d67c3867a… approvals 1
+  carol sees         package 508d67c3867a… approvals 1
+  carol sees  bob    checked the invoice, approving
+  carol sees  bob    package 508d67c3867a… approvals 1
+summary: 4 applied, 19 checks ok, failures=0
+rc=0
