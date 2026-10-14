@@ -758,8 +758,8 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
         Cmd::Deploy { payer, header, segment, immutable } => {
             let bytecode = std::fs::read(elf).with_context(|| format!("reading {}", elf.display()))?;
             let program = Program::new(bytecode.clone().into())?;
-            let user_elf = risc0_binfmt::ProgramBinary::decode(&bytecode).map_err(|e| anyhow!("{e}"))?.user_elf.len();
-            let segments = user_elf.div_ceil(program_loader_core::MAX_SEGMENT_DATA_LEN);
+            let user_elf = risc0_binfmt::ProgramBinary::decode(&bytecode).map_err(|e| anyhow!("{e}"))?.user_elf.to_vec();
+            let segments = user_elf.len().div_ceil(program_loader_core::MAX_SEGMENT_DATA_LEN);
             let wallet = ctx.wallet.as_mut().expect("deploy opens the wallet");
             let (header, segs) = match header {
                 Some(h) => {
@@ -773,7 +773,39 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
                     (h, s)
                 }
             };
-            ProgramLoader(&*wallet).deploy(header, &segs, bytecode, immutable, Some(payer)).await?;
+            // Printed before anything is sent: with these ids, `deploy --header --segment`
+            // resumes a deploy that stopped half way.
+            eprintln!("{}", serde_json::json!({"op": "deploy-plan", "header": header.to_string(), "segments": segs.iter().map(|s| s.to_string()).collect::<Vec<_>>()}));
+            let _ = bytecode;
+            let loader = ProgramLoader(ctx.wallet());
+            let loader_id = lee_core::program::PROGRAM_LOADER_ACCOUNT_ID;
+            let chunks: Vec<&[u8]> = user_elf.chunks(program_loader_core::MAX_SEGMENT_DATA_LEN).collect();
+            // Segments last to first (each names the next), then the header. A step already on
+            // chain is skipped, and a transaction the sequencer drops is sent again.
+            for i in (0..segs.len()).rev() {
+                let next = segs.get(i + 1).copied();
+                let mut tries = 0;
+                while ctx.shard(segs[i], loader_id).await?.is_empty() {
+                    tries += 1;
+                    ensure!(tries <= 12, "segment {i} ({}) is not on chain after 12 sends", segs[i]);
+                    match loader.write_segment(segs[i], chunks[i].to_vec(), next, Some(payer)).await {
+                        Ok(h) => eprintln!("segment {i}: sent {h} (try {tries})"),
+                        Err(e) => eprintln!("segment {i}: send failed (try {tries}): {e:?}"),
+                    }
+                    wait_for(|| async { Ok(!ctx.shard(segs[i], loader_id).await?.is_empty()) }, Duration::from_secs(600)).await?;
+                }
+                eprintln!("segment {i}: on chain");
+            }
+            let mut tries = 0;
+            while ctx.shard(header, loader_id).await?.is_empty() {
+                tries += 1;
+                ensure!(tries <= 12, "the header {header} is not on chain after 12 sends");
+                match loader.create_header(header, segs[0], &segs, immutable, Some(payer)).await {
+                    Ok(h) => eprintln!("header: sent {h} (try {tries})"),
+                    Err(e) => eprintln!("header: send failed (try {tries}): {e:?}"),
+                }
+                wait_for(|| async { Ok(!ctx.shard(header, loader_id).await?.is_empty()) }, Duration::from_secs(600)).await?;
+            }
             println!("{}", serde_json::json!({"op": "deploy", "header": header.to_string(), "image_id": image_hex(&program), "segments": segs.iter().map(|s| s.to_string()).collect::<Vec<_>>()}));
         }
         Cmd::Create { multisig, members, threshold, time_lock, limits } => {
@@ -1341,6 +1373,23 @@ async fn vault_cmd(ctx: &mut Ctx, op: VaultCmd, _elf: &PathBuf) -> Result<()> {
             };
             println!("{line}");
         }
+    }
+    Ok(())
+}
+
+/// Polls `done` every 10 s until it holds or `limit` passes; a timeout is not an error, the
+/// caller decides whether to send again.
+async fn wait_for<F, Fut>(done: F, limit: Duration) -> Result<()>
+where
+    F: Fn() -> Fut,
+    Fut: std::future::Future<Output = Result<bool>>,
+{
+    let start = std::time::Instant::now();
+    while start.elapsed() < limit {
+        if done().await.unwrap_or(false) {
+            return Ok(());
+        }
+        tokio::time::sleep(Duration::from_secs(10)).await;
     }
     Ok(())
 }
