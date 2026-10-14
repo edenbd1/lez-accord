@@ -11,7 +11,7 @@
 # balance gate and the explorer links.
 set -uo pipefail
 cd "$(dirname "$0")/.."
-: "${LEE_WALLET_HOME_DIR:?the prototype's own wallet home}"; : "${PAYER:?a funded account in it}"
+: "${LEE_WALLET_HOME_DIR:?the wallet home of this prototype}"; : "${PAYER:?a funded account in it}"
 # The wallet must be a v0.3 build: an older `wallet` on PATH fails on v0.3 accounts.
 : "${WALLET:?the v0.3 wallet binary (LEZ v0.3.0 db66590a: target/release/wallet)}"
 export WALLET RPC=https://testnet.lez.logos.co SUPPRESS_VERBOSE_PRINTS=1
