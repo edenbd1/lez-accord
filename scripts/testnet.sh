@@ -18,7 +18,8 @@ export WALLET RPC=https://testnet.lez.logos.co SUPPRESS_VERBOSE_PRINTS=1
 STAMP="$(date -u +%m%d%H%M)"
 mkdir -p evidence/testnet
 fail=0
-DEPLOY=1 TAG="acc-pub-$STAMP" OUT=evidence/testnet/public.tsv ./scripts/e2e.sh 2>&1 | tee evidence/testnet/public-transcript.txt || fail=1
+DEPLOY="${ACCORD_PROGRAM:+0}"; DEPLOY="${DEPLOY:-1}"   # ACCORD_PROGRAM set: reuse that deployment
+DEPLOY=$DEPLOY TAG="acc-pub-$STAMP" OUT=evidence/testnet/public.tsv ./scripts/e2e.sh 2>&1 | tee evidence/testnet/public-transcript.txt || fail=1
 ./scripts/verify-onchain.sh --manifest evidence/testnet/public.tsv --rpc "$RPC" 2>&1 | tee evidence/testnet/public-verify.txt || fail=1
 TAG="acc-priv-$STAMP" OUT=evidence/testnet/private.tsv ./scripts/e2e-private.sh 2>&1 | grep -v -E "^(INF|DBG|WRN|TRC|NTC|ERR) " | tee evidence/testnet/private-transcript.txt || fail=1
 ./scripts/verify-onchain.sh --manifest evidence/testnet/private.tsv --rpc "$RPC" 2>&1 | tee evidence/testnet/private-verify.txt || fail=1

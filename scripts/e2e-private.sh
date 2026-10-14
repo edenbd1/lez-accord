@@ -25,8 +25,11 @@ export ACCORD_KEYS="${ACCORD_KEYS:-$(mktemp -d)/keys}"
 PK="$(mktemp -d)"; mkdir -p "$(dirname "$OUT")"
 GROUP="accord-$TAG-$(date +%s)"
 
-line="$("$CLI" deploy --payer "$PAYER" --immutable 2>/dev/null | grep '^{' | tail -1)"; echo "$line"
-ACCORD_PROGRAM="$(printf '%s' "$line" | python3 -c 'import json,sys;print(json.load(sys.stdin)["header"])')"
+# An ACCORD_PROGRAM already deployed (same ImageID) is reused; otherwise deploy.
+if [ -z "${ACCORD_PROGRAM:-}" ]; then
+  line="$("$CLI" deploy --payer "$PAYER" --immutable 2>/dev/null | grep '^{' | tail -1)"; echo "$line"
+  ACCORD_PROGRAM="$(printf '%s' "$line" | python3 -c 'import json,sys;print(json.load(sys.stdin)["header"])')"
+fi
 export ACCORD_PROGRAM
 echo "# run against $RPC, $(date -u +%Y-%m-%dT%H:%M:%SZ)" | tee "$OUT"
 echo "# program $ACCORD_PROGRAM $("$CLI" image-id)" | tee -a "$OUT"
