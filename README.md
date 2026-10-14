@@ -26,7 +26,7 @@ encrypted coordination room over Logos Delivery. Prototype for RFP-005
 | --- | --- |
 | LEZ | program and CLI built on v0.3.0 (`db66590a`); run against v0.3.1 (`1a003bfb`), as the public testnet is, with v0.3.1's block format patched into the CLI (`cli/vendor/lez-common`) |
 | Program | `programs/accord`, guest `accord_multisig`, written against `lee_core` |
-| Public testnet | header `9RgveUGvnm91JPJM8a8mPkScxenQrDNmjzagj8EMv6vr`; the public lifecycle and the private vault run there, 34 and 9 checks, 0 failures ([`evidence/testnet/`](evidence/testnet/README.md)) |
+| Public testnet | header `CehtqLan7giiHfVV5qDD9dtXvVi2h7GMdXM87HD2bbQF`; the public lifecycle and the private vault run there, 34 and 9 checks, 0 failures ([`evidence/testnet/`](evidence/testnet/README.md)) |
 | Binary | `artifacts/programs/v0.3/accord_multisig.bin` |
 | IDL | `idl/accord_multisig.idl.json` (SPEL's shape, drift-checked) |
 | CLI | `cli/`, binary `accord` |

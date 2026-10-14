@@ -1,0 +1,11 @@
+accord_multisig v0.3 against https://testnet.lez.logos.co, from evidence/testnet/private.tsv
+  ok   program header 9RgveUGvnm91… names ImageID 24d955ee85544249…
+  ok   create: applied, in block 10434
+  ok   activate: applied, in block 10441
+  ok   fund-private-vault: applied, in block 10465
+  ok   steal-with-group-keys: rejected, never sent to a block
+  ok   spend-private: applied, in block 10479
+  ok   queue: applied, in block 10481
+  ok   execute-private: applied, in block 10491
+  ok   control: a random hash does not resolve
+9 checks pass, 0 fail (7 state checks recorded during the run)

@@ -15,8 +15,8 @@ proposer's.
 `cargo run --release --bin measure` in `executor-tests/` runs each
 instruction through `lee::V03State` (`ValidatedStateDiff::from_public_transaction_with_cycle_budget`),
 the call the v0.3 sequencer's settlement makes, with the 10,000,000-cycle
-budget of one transaction (gas is cycles one for one). Raw output:
-[`bench-accelerated.txt`](bench-accelerated.txt).
+budget of one transaction (gas is cycles one for one). Raw output, on the
+committed binary (`24a69044…`): [`bench-accelerated.txt`](bench-accelerated.txt).
 
 The keys are fixed, but each BIP-340 signature draws fresh auxiliary
 randomness, so a rerun moves every row slightly: a rerun on 2026-10-13
@@ -26,21 +26,21 @@ most 0.5 points of the cap. Expect that spread when you reproduce it.
 
 | op | cycles | share of the 10M gas cap |
 |---|---:|---:|
-| create (3 members) | 124,073 | 1.2% |
-| queue, M = 2 (3 signatures) | 874,920 | 8.7% |
-| execute, native transfer (1 signature) | 329,908 | 3.3% |
-| spend within a limit (1 signature) | 312,005 | 3.1% |
+| create (3 members) | 124,125 | 1.2% |
+| queue, M = 2 (3 signatures) | 880,503 | 8.8% |
+| execute, native transfer (1 signature) | 329,044 | 3.3% |
+| spend within a limit (1 signature) | 311,751 | 3.1% |
 
 | M | queue cycles | share of the cap |
 |---:|---:|---:|
-| 1 | 589,776 | 5.9% |
-| 3 | 1,148,731 | 11.5% |
-| 5 | 1,701,981 | 17.0% |
-| 7 | 2,248,843 | 22.5% |
-| 10 | 3,077,940 | 30.8% |
-| 16 | 4,735,052 | 47.4% |
-| 24 | 6,937,289 | 69.4% |
-| 32 | 9,177,864 | 91.8% |
+| 1 | 601,700 | 6.0% |
+| 3 | 1,148,829 | 11.5% |
+| 5 | 1,704,538 | 17.0% |
+| 7 | 2,271,522 | 22.7% |
+| 10 | 3,103,377 | 31.0% |
+| 16 | 4,755,001 | 47.6% |
+| 24 | 6,970,611 | 69.7% |
+| 32 | 9,181,398 | 91.8% |
 
 About **275,000 cycles per approval**, linear in M. **M = 32**, the most
 members a configuration may hold, fits one transaction. The RFP's line,

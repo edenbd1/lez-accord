@@ -2,50 +2,50 @@
 
 ## `evidence/testnet/public.tsv`
 
-Program header: [`9RgveUGvnm91JPJM8a8mPkScxenQrDNmjzagj8EMv6vr`](https://explorer.testnet.lez.logos.co/account/9RgveUGvnm91JPJM8a8mPkScxenQrDNmjzagj8EMv6vr), ImageID `24d955ee85544249ebe79f3c9bab5482158898ef1753c655ebd59d030e27762a`
+Program header: [`CehtqLan7giiHfVV5qDD9dtXvVi2h7GMdXM87HD2bbQF`](https://explorer.testnet.lez.logos.co/account/CehtqLan7giiHfVV5qDD9dtXvVi2h7GMdXM87HD2bbQF), ImageID `24a69044e34c2604e1a277dc1958855f0a2d95d65d4b0735052b34a51d323cd9`
 
 | step | expected | verdict | block | transaction |
 |---|---|---|---:|---|
-| create | applied | applied | 10078 | [`0a3b0fc33619050e…`](https://explorer.testnet.lez.logos.co/transaction/0a3b0fc33619050ebbf2e5220ea34aae3f02736fad92e685e9acb00d95249c1c) |
-| queue-before-activation | refused | reverted | 10090 | [`085808126c136be9…`](https://explorer.testnet.lez.logos.co/transaction/085808126c136be9865180c6783fb27903a4a0b8cf83088f21a8863cc2bf107a) |
-| spend-before-activation | refused | reverted | 10091 | [`3ae9d067e857b148…`](https://explorer.testnet.lez.logos.co/transaction/3ae9d067e857b148b7f92f3b12b2524d093582f4cb92afeccec9d677535965f1) |
-| activate-below-threshold | refused | reverted | 10097 | [`c1b66fe107c73314…`](https://explorer.testnet.lez.logos.co/transaction/c1b66fe107c73314ca4d859387cf859ea67fb772ecd13f02db46844eea5e085c) |
-| activate | applied | applied | 10098 | [`967252b5c62d63ea…`](https://explorer.testnet.lez.logos.co/transaction/967252b5c62d63ea221d869aac3c5ac6d8ac288e9f40726cb239459433393c0e) |
-| queue-one-approval | refused | reverted | 10101 | [`8766c85cd6adf448…`](https://explorer.testnet.lez.logos.co/transaction/8766c85cd6adf4486f66492c35b7ead4ae618e2b62c514c4fff3cc6b87851d52) |
-| queue | applied | applied | 10102 | [`00e8c14b51803f18…`](https://explorer.testnet.lez.logos.co/transaction/00e8c14b51803f18504fa0d7082582d094cb80a27591d916e5f32831edf117d9) |
-| execute-in-time-lock | refused | reverted | 10108 | [`8f6df7a4dce8756a…`](https://explorer.testnet.lez.logos.co/transaction/8f6df7a4dce8756ab7a6eb4f4b42d3c1ffd854b8fefe46c2f883d4857faa49b7) |
-| execute-by-non-executor | refused | reverted | 10111 | [`359cc3f899aec0f0…`](https://explorer.testnet.lez.logos.co/transaction/359cc3f899aec0f0fd1f29e8a156bd232eb4968a9cd19134098f0f2f85755538) |
-| spend-60 | applied | applied | 10112 | [`90f8dedeae43f42d…`](https://explorer.testnet.lez.logos.co/transaction/90f8dedeae43f42d66d377456114d502368224a041d233aead4fee1ef6ffd63e) |
-| spend-over-limit | refused | reverted | 10113 | [`b8f752e05b52cbc0…`](https://explorer.testnet.lez.logos.co/transaction/b8f752e05b52cbc0d804eea6f615eaaff1af714645164357414cfb3125a3b289) |
-| spend-by-non-spender | refused | reverted | 10114 | [`56443f1155dc397f…`](https://explorer.testnet.lez.logos.co/transaction/56443f1155dc397f86d7085fa21e20cf02ecd3aac2e41789f9ec21c4fa110039) |
-| queue-steal | applied | applied | 10120 | [`cd1f667a6e360103…`](https://explorer.testnet.lez.logos.co/transaction/cd1f667a6e360103a006bf87432fae22578defc2fe604f2de6aaaff5b37a561d) |
-| queue-config-one-approval | refused | reverted | 10133 | [`059cd564b0a6d107…`](https://explorer.testnet.lez.logos.co/transaction/059cd564b0a6d1074ced1bd4d28003e2991cfddecef49f3e1e460fd4133ea42e) |
-| queue-config | applied | applied | 10145 | [`7cbedbe6508e7ab2…`](https://explorer.testnet.lez.logos.co/transaction/7cbedbe6508e7ab25d3c7685aa2d9b8013a6281470612124c9e69841a164ec22) |
-| execute | applied | applied | 10186 | [`1d58995c6f83e13e…`](https://explorer.testnet.lez.logos.co/transaction/1d58995c6f83e13ee9cf865f62ef8882ece54b834bf46085b58a3f00f82a4d0e) |
-| queue-again | refused | reverted | 10226 | [`a127803d1fba4bfd…`](https://explorer.testnet.lez.logos.co/transaction/a127803d1fba4bfd1430a24fe38592b072c8a262d4967ba2be1aa902d5a91f7b) |
-| execute-again | refused | reverted | 10237 | [`49816c71509e82b0…`](https://explorer.testnet.lez.logos.co/transaction/49816c71509e82b0b505e6046092acfe3f70dd51eef3534ea684f0b322b8968f) |
+| create | applied | applied | 10878 | [`7cc35216de661547…`](https://explorer.testnet.lez.logos.co/transaction/7cc35216de66154734778fa42f698aca8927965383853046e5ac573c5ffc0e54) |
+| queue-before-activation | refused | reverted | 10901 | [`c6d08abbf825c6e3…`](https://explorer.testnet.lez.logos.co/transaction/c6d08abbf825c6e329e994988e4a55875be6d7a78ac86eaf0cdab9aae7575fe8) |
+| spend-before-activation | refused | reverted | 10901 | [`75f8ac23aa986ea9…`](https://explorer.testnet.lez.logos.co/transaction/75f8ac23aa986ea96004658316a2c47798a4aae5c3630451cdedc49f091ed432) |
+| activate-below-threshold | refused | reverted | 10901 | [`9e3a90ccb2b20a5b…`](https://explorer.testnet.lez.logos.co/transaction/9e3a90ccb2b20a5b297d72604c72ff87abf1498c5ee7e824f90e6522b775f2f9) |
+| activate | applied | applied | 10906 | [`fa64008750f3ebf3…`](https://explorer.testnet.lez.logos.co/transaction/fa64008750f3ebf3be8cd8a1b26fb1efd39cff0ffddefa10a915aa38ed224a0f) |
+| queue-one-approval | refused | reverted | 10912 | [`fd95b57411c3cc1e…`](https://explorer.testnet.lez.logos.co/transaction/fd95b57411c3cc1e53d218ff5f3f129a59e5fee65b9a51774966716674a97b64) |
+| queue | applied | applied | 10918 | [`df1e0c742576e25d…`](https://explorer.testnet.lez.logos.co/transaction/df1e0c742576e25ddf9e1900a986612ed30f87f79105f0f50c00141c89ade151) |
+| execute-in-time-lock | refused | reverted | 10922 | [`0e8471fa725b2684…`](https://explorer.testnet.lez.logos.co/transaction/0e8471fa725b26840f8e771391025619e652692caee75d9b551e94ac20fb1e95) |
+| execute-by-non-executor | refused | reverted | 10924 | [`13d5f227998edd44…`](https://explorer.testnet.lez.logos.co/transaction/13d5f227998edd448f496898d8d133d759dc1235429aee9e1ebce814ad2dd557) |
+| spend-60 | applied | applied | 10930 | [`a93d331f3f498e63…`](https://explorer.testnet.lez.logos.co/transaction/a93d331f3f498e638a665132d2e6529a0e3d40b1c70d9312172558037bbdb13c) |
+| spend-over-limit | refused | reverted | 10931 | [`bbba66b414ad2a14…`](https://explorer.testnet.lez.logos.co/transaction/bbba66b414ad2a14e5ce5c60e9de0aebf6d7e6159383089506889b5eae9797d8) |
+| spend-by-non-spender | refused | reverted | 10937 | [`c1cf115515d836f5…`](https://explorer.testnet.lez.logos.co/transaction/c1cf115515d836f5f1d0aac07fb9b051eade91f730d5af931302d5676306faf0) |
+| queue-steal | applied | applied | 10939 | [`b261b7cefd918130…`](https://explorer.testnet.lez.logos.co/transaction/b261b7cefd9181300aea219ff48420d08d402af92c1b324c04906e73e635fa62) |
+| queue-config-one-approval | refused | reverted | 10943 | [`90dda374b563b44e…`](https://explorer.testnet.lez.logos.co/transaction/90dda374b563b44e8df0774b88c9b37b7b2ed8cfe4f0661e8df48b76303f9ed7) |
+| queue-config | applied | applied | 10949 | [`0f45077bd34e460f…`](https://explorer.testnet.lez.logos.co/transaction/0f45077bd34e460fc195c7bdda4181450c2c8094436bdb8ed97571b6291d933d) |
+| execute | applied | applied | 10977 | [`c4747aade485dad4…`](https://explorer.testnet.lez.logos.co/transaction/c4747aade485dad42dbaa9d4e1a0598021ae5d9de24ff8ab23b015434c291291) |
+| queue-again | refused | reverted | 10977 | [`916e369a73c2fada…`](https://explorer.testnet.lez.logos.co/transaction/916e369a73c2fadac64b30d84f2f49026b81cc19e6d9adc005bcf85758e42101) |
+| execute-again | refused | reverted | 10977 | [`4c75ff17faf25846…`](https://explorer.testnet.lez.logos.co/transaction/4c75ff17faf25846d00db6c72e34af68b66f7d18ce2bfd5434b6fa41d7495da8) |
 | execute-steal | refused | rejected | None | `-` |
-| execute-config | applied | applied | 10249 | [`50eddb4247fe6148…`](https://explorer.testnet.lez.logos.co/transaction/50eddb4247fe6148ebcd5acfc04b0f2d26c85436100e76a88daf607d0411d19b) |
-| queue-stale-approvals | refused | reverted | 10262 | [`593a29230a5b9b12…`](https://explorer.testnet.lez.logos.co/transaction/593a29230a5b9b12dacba6922c3f8a1ee2fdd1c2e8eaf810202b1ec5450a6394) |
-| queue-removed-member | refused | reverted | 10274 | [`43578e5c3bd1d4e9…`](https://explorer.testnet.lez.logos.co/transaction/43578e5c3bd1d4e97fab32b171e40df5b024ee9edfb7535bc5d66c100209367f) |
-| queue-big | applied | applied | 10281 | [`7fb479d6fda11271…`](https://explorer.testnet.lez.logos.co/transaction/7fb479d6fda11271d217bcdf5cd977a1605c1bf918ff200e6751b15fe59935ff) |
-| queue-veto | applied | applied | 10293 | [`14193ce7ad48511f…`](https://explorer.testnet.lez.logos.co/transaction/14193ce7ad48511f78bcc0e22e25e0df4ebb66199fdddc5947f7d59176cfc757) |
-| execute-veto | applied | applied | 10306 | [`c8cb8d69b56799f2…`](https://explorer.testnet.lez.logos.co/transaction/c8cb8d69b56799f2dce27d27b03a3816080a3ec1526fa967f2f31ec3aca3f516) |
-| execute-vetoed | refused | reverted | 10326 | [`1c47d06c3653e6e6…`](https://explorer.testnet.lez.logos.co/transaction/1c47d06c3653e6e63b9861996eecdb7fbceeb545ba6d0bc82b58ff61e7e54ebd) |
-| register | applied | applied | 10327 | [`e4b5cb373469cae0…`](https://explorer.testnet.lez.logos.co/transaction/e4b5cb373469cae03e0289f5e338bca9c2f95763bbec024783285f67f9ee1457) |
-| register-again | refused | reverted | 10333 | [`996f19c0c89b684b…`](https://explorer.testnet.lez.logos.co/transaction/996f19c0c89b684b8cea5d9302928186d02f8c8ef68def9a1a003acb3dbc84b5) |
+| execute-config | applied | applied | 10977 | [`8dce20e217021848…`](https://explorer.testnet.lez.logos.co/transaction/8dce20e2170218481c96c7ddb24f022024b3e9f7f2f93483e316b6630c9ab8b8) |
+| queue-stale-approvals | refused | reverted | 10981 | [`bba8d25fa96643f4…`](https://explorer.testnet.lez.logos.co/transaction/bba8d25fa96643f4be648841c471fb2c6123804d59fa2e7e476d40983a7af49f) |
+| queue-removed-member | refused | not-included | None | `d159bd78383a65f37e299d0cf434f2ca09d769f447efc97352bf83725415f344` |
+| queue-big | applied | applied | 10990 | [`4f47e0dd6fe8330b…`](https://explorer.testnet.lez.logos.co/transaction/4f47e0dd6fe8330b552b2b619fcce66353903c2af016b90781b2895517831f61) |
+| queue-veto | applied | applied | 10999 | [`c6b8269ce35b8fda…`](https://explorer.testnet.lez.logos.co/transaction/c6b8269ce35b8fdafd946e55244577470ea23128903dcf3eee7a6cfaff721b1e) |
+| execute-veto | applied | applied | 11005 | [`0ce9f0ffa03e31bb…`](https://explorer.testnet.lez.logos.co/transaction/0ce9f0ffa03e31bb12670fe83460c1d91b05ef9901ba40bd6b086f785c4eede2) |
+| execute-vetoed | refused | reverted | 11017 | [`57922e1188405332…`](https://explorer.testnet.lez.logos.co/transaction/57922e11884053329499eef11ec7e99544238d7ac743a8c109a3998c006868cc) |
+| register | applied | applied | 11031 | [`b281312fd31906ce…`](https://explorer.testnet.lez.logos.co/transaction/b281312fd31906ce08a74b30abd9a3b113abf18378fe48b6ae804529c181c92a) |
+| register-again | refused | reverted | 11037 | [`9ff9808d0149687c…`](https://explorer.testnet.lez.logos.co/transaction/9ff9808d0149687ce99aaf5b9a99bef793dca6e516b023d7df212d7c94203b7f) |
 
 ## `evidence/testnet/private.tsv`
 
-Program header: [`9RgveUGvnm91JPJM8a8mPkScxenQrDNmjzagj8EMv6vr`](https://explorer.testnet.lez.logos.co/account/9RgveUGvnm91JPJM8a8mPkScxenQrDNmjzagj8EMv6vr), ImageID `24d955ee85544249ebe79f3c9bab5482158898ef1753c655ebd59d030e27762a`
+Program header: [`CehtqLan7giiHfVV5qDD9dtXvVi2h7GMdXM87HD2bbQF`](https://explorer.testnet.lez.logos.co/account/CehtqLan7giiHfVV5qDD9dtXvVi2h7GMdXM87HD2bbQF), ImageID `24a69044e34c2604e1a277dc1958855f0a2d95d65d4b0735052b34a51d323cd9`
 
 | step | expected | verdict | block | transaction |
 |---|---|---|---:|---|
-| create | applied | applied | 10434 | [`a9f2a34b6a6f14d7…`](https://explorer.testnet.lez.logos.co/transaction/a9f2a34b6a6f14d729e75693ec57049f1d0ab0f80cbd485e386e61d59d68ed78) |
-| activate | applied | applied | 10441 | [`3367e64f4a74130f…`](https://explorer.testnet.lez.logos.co/transaction/3367e64f4a74130fe6341e431935a538e90e848d5416b004b4e77113983f5a3f) |
-| fund-private-vault | applied | applied | 10465 | [`727f8318fdaa82f2…`](https://explorer.testnet.lez.logos.co/transaction/727f8318fdaa82f2d370d000bdbe345c58d5c88569fa04268e071f0de838e20c) |
+| create | applied | applied | 11370 | [`11a85c5ca94948c1…`](https://explorer.testnet.lez.logos.co/transaction/11a85c5ca94948c1b1df7b3c5dbbedd906a99308c86a44d7df7ee4ff7d62de0b) |
+| activate | applied | applied | 11400 | [`2876d549fb74c1df…`](https://explorer.testnet.lez.logos.co/transaction/2876d549fb74c1df5f67da0fd8771d7cd4bba6a234d559c230533d2384ef33b7) |
+| fund-private-vault | applied | applied | 11424 | [`9f5d10e6ac186082…`](https://explorer.testnet.lez.logos.co/transaction/9f5d10e6ac1860829c9d6efb5ad8a21ee80694cea992277a43cec849251c22d8) |
 | steal-with-group-keys | refused | rejected | None | `-` |
-| spend-private | applied | applied | 10479 | [`b699f403ac42e3b9…`](https://explorer.testnet.lez.logos.co/transaction/b699f403ac42e3b94d77664f33895a9dd6c756b301597b2e778228e8284e0c53) |
-| queue | applied | applied | 10481 | [`2289d5c6f62c4037…`](https://explorer.testnet.lez.logos.co/transaction/2289d5c6f62c403706bc0766e7bae1886ede8391dbcb8a3de2bd69db9cd05dbe) |
-| execute-private | applied | applied | 10491 | [`9bdd33ee0d6caaab…`](https://explorer.testnet.lez.logos.co/transaction/9bdd33ee0d6caaaba8a8eabbb7d5569e101a704ac7e5881463e959569b8580ac) |
+| spend-private | applied | applied | 11438 | [`4506c74dd0fc093f…`](https://explorer.testnet.lez.logos.co/transaction/4506c74dd0fc093f5db5c67c21aae34f1ae3700af2ee77661076b8e8bf7ec21c) |
+| queue | applied | applied | 11444 | [`3aefdc96f130cfdd…`](https://explorer.testnet.lez.logos.co/transaction/3aefdc96f130cfdd1c2880a6fd4f004ead1bb1bc3b72858fa6918a4981ffd406) |
+| execute-private | applied | applied | 11465 | [`eb399bc1c6160e8d…`](https://explorer.testnet.lez.logos.co/transaction/eb399bc1c6160e8d0c24e3809fbe0b1661917660b6f00c381871108239ffb534) |
 
