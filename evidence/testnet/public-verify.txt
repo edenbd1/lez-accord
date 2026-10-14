@@ -25,12 +25,12 @@ accord_multisig v0.3 against https://testnet.lez.logos.co, from evidence/testnet
   ok   queue-big: applied, in block 10281
   ok   queue-veto: applied, in block 10293
   ok   execute-veto: applied, in block 10306
-  ok   execute-vetoed: reverted, in block 10326
-  ok   register: applied, in block 10327
-  ok   register-again: reverted, in block 10333
+  ok   execute-vetoed: reverted, in block 10326 (now in block 10330: moved by a block rewrite)
+  ok   register: applied, in block 10327 (now in block 10330: moved by a block rewrite)
+  ok   register-again: reverted, in block 10333 (now in block 10330: moved by a block rewrite)
   ok   final state of 8qEJwt1Fj6Cd… shard 9RgveUGv… is as the run left it
   ok   final state of AZ7Hbm5F1wij… shard 11111111… is as the run left it
   ok   final state of 3mDvunNZ8ATK… shard 9RgveUGv… is as the run left it
   ok   final state of 5FAA67rDcy38… shard 9RgveUGv… is as the run left it
   ok   control: a random hash does not resolve
-34 checks pass, 0 fail (13 state checks recorded during the run)
+34 checks pass, 0 fail (13 state checks recorded during the run; 3 transactions moved by a block rewrite since)

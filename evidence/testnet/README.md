@@ -7,7 +7,7 @@ and driven by both runs.
 
 | run | manifest | verifier |
 | --- | --- | --- |
-| public lifecycle, `scripts/e2e.sh` | [`public.tsv`](public.tsv): 12 applied, 16 refused as expected, 13 state checks, 0 failures ([transcript](public-transcript.txt)) | [`34 checks pass, 0 fail`](public-verify.txt) |
+| public lifecycle, `scripts/e2e.sh` | [`public.tsv`](public.tsv): 12 applied, 16 refused as expected, 13 state checks, 0 failures ([transcript](public-transcript.txt)) | [`34 checks pass, 0 fail`](public-verify.txt); 3 transactions since moved a few blocks by a testnet block rewrite, reported by the verifier |
 | private vault, `scripts/e2e-private.sh` | [`private.tsv`](private.tsv): 6 applied, 1 refused as expected, 7 state checks, 0 failures ([transcript](private-transcript.txt)) | [`9 checks pass, 0 fail`](private-verify.txt) |
 
 Re-check either from a clean clone, with nothing but `curl` and `python3`:
