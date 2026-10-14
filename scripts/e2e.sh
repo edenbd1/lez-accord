@@ -94,7 +94,14 @@ FINAL+=("$CFG $ACCORD_PROGRAM" "$VAULT $NATIVE")
 echo "== 1. create a 2-of-3 with a $LOCK time lock and a spending limit; fund its vault"
 step create applied -- "${P[@]}" create "$MS" --member alice:pa --member bob:a --member carol:ae \
   --threshold 2 --time-lock "$LOCK" --limit bob:1:100:1d
-"$W" auth-transfer send --from "Public/$PAYER" --to "Public/$VAULT" --amount 1000 2>&1 | grep -E "hash" | sed 's/^/  fund vault: /'
+# The wallet waits on a dropped transfer for as long as its polling allows and
+# never sends it again, so each attempt is cut at 4 minutes and the balance
+# decides. An attempt is signed with the payer's nonce as the chain has it, so
+# a late earlier attempt and a new one cannot both land.
+for attempt in 1 2 3; do
+  perl -e 'alarm 240; exec @ARGV' "$W" auth-transfer send --from "Public/$PAYER" --to "Public/$VAULT" --amount 1000 2>&1 | grep -E "hash" | sed "s/^/  fund vault (attempt $attempt): /"
+  for _ in 1 2 3 4 5 6; do [ "$(bal "$VAULT")" = 1000 ] && break 2; sleep 10; done
+done
 check "vault funded before activation" "$(bal "$VAULT")" 1000
 check "not initialised yet" "$(jget "$(show)" initialised)" False
 
