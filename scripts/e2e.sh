@@ -197,6 +197,7 @@ for f in "${FINAL[@]}"; do
   echo "# final $1 $2 $(shard "$1" "$2" | python3 -c 'import hashlib,sys;print(hashlib.sha256(bytes.fromhex(sys.stdin.read().strip())).hexdigest())')" >> "$OUT"
 done
 
+python3 scripts/reresolve.py "$RPC" "$OUT"
 applied=$(awk -F'\t' '$3=="applied"' "$OUT" | wc -l | tr -d ' ')
 refused=$(awk -F'\t' '$2=="refused" && ($3=="reverted"||$3=="rejected"||$3=="not-included")' "$OUT" | wc -l | tr -d ' ')
 checks=$(grep -c '^# check ok' "$OUT")

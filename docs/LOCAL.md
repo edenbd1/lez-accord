@@ -3,7 +3,9 @@
 ```bash
 git clone https://github.com/logos-blockchain/logos-execution-zone lez && cd lez
 git checkout db66590ab821a4e142c211017a3866d007f6fa77
-cargo build --release --features standalone -p sequencer_service -p wallet
+cargo build --release -p wallet                      # the v0.3.0 wallet the CLI's config format matches
+git checkout 1a003bfbfb89fcf987f62975cd08a401169e1b8c
+cargo build --release --features standalone -p sequencer_service   # v0.3.1, as on the testnet
 mkdir -p /tmp/seq && cp lez/sequencer/service/configs/debug/sequencer_config.json /tmp/seq/
 cd /tmp/seq && RUST_LOG=info sequencer_service sequencer_config.json --listen-address 127.0.0.1 &   # port 3040
 

@@ -15,6 +15,13 @@ committed guest runs there as built. What changed and matters here:
   `accord` CLI does not depend on it: read-only commands (`now`, `ids`,
   `show`, `queued`) work against `https://testnet.lez.logos.co`, and a v0.3.0
   wallet home opens.
+- **The block header lost its producer key and signature.** A v0.3.0
+  `common` cannot decode a v0.3.1 block ("Unexpected variant tag"), which
+  public transactions never notice but a private account's sync does: the
+  first testnet run's private vault could not be read or spent. The CLI now
+  patches in v0.3.1's `common` (`cli/vendor/lez-common`, `src/` copied from
+  `1a003bfb`, nothing else changed); local runs and CI use a v0.3.1 sequencer
+  to match.
 - **The v0.3.1 wallet** uses a different `wallet_config.json` shape (a
   `sequencer` field); a v0.3.1 binary is built at `_lez/v031/wallet` as a
   fallback for funding and balance checks.
@@ -36,3 +43,18 @@ wallet home):
   `seq_poll_max_retries` 30. Testnet blocks come every 15 to 60 s, and the
   defaults (12 s, 5 blocks) give up on a deploy segment that is still on its
   way.
+
+The testnet drops some transactions, includes others late, and has rewritten
+recent blocks. Two things in the run account for that:
+
+- **A public transaction not included within 180 s is sent again**, up to three
+  attempts (`cli/src/main.rs`, `send`). Each attempt is signed with the payer's
+  current nonce, so while an earlier attempt is only late they share a nonce
+  and at most one lands; every earlier attempt is looked for before the next
+  is sent. Locally no transaction is ever dropped, so a `not-included` verdict
+  on the testnet means the sequencer lost all three.
+- **At the end of a run, `scripts/reresolve.py` re-reads every transaction's
+  block** and rewrites the manifest's block column where a rewrite moved it,
+  with a `# moved` line for each; a transaction recorded `not-included` that
+  landed afterwards gets a `# late` line, and its verdict is left as the run
+  saw it.

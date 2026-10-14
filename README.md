@@ -24,7 +24,7 @@ encrypted coordination room over Logos Delivery. Prototype for RFP-005
 
 | | |
 | --- | --- |
-| LEZ | v0.3.0, commit `db66590a` |
+| LEZ | program and CLI built on v0.3.0 (`db66590a`); run against v0.3.1 (`1a003bfb`), as the public testnet is, with v0.3.1's block format patched into the CLI (`cli/vendor/lez-common`) |
 | Program | `programs/accord`, guest `accord_multisig`, written against `lee_core` |
 | Binary | `artifacts/programs/v0.3/accord_multisig.bin` |
 | IDL | `idl/accord_multisig.idl.json` (SPEL's shape, drift-checked) |
@@ -59,10 +59,12 @@ the committed binary again afterwards ([`evidence/mutation/guest.txt`](evidence/
 ## Quick start (local sequencer)
 
 ```bash
-# LEZ v0.3.0: the standalone sequencer and the wallet
+# LEZ: the v0.3.0 wallet, and the v0.3.1 standalone sequencer the testnet runs
 git clone https://github.com/logos-blockchain/logos-execution-zone lez && cd lez
 git checkout db66590ab821a4e142c211017a3866d007f6fa77
-cargo build --release --features standalone -p sequencer_service -p wallet
+cargo build --release -p wallet
+git checkout 1a003bfbfb89fcf987f62975cd08a401169e1b8c
+cargo build --release --features standalone -p sequencer_service
 export PATH="$PWD/target/release:$PATH"; cd -
 
 # the guest (local RISC Zero toolchain; DOCKER=1 for the pinned builder), the CLI

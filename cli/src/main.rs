@@ -501,19 +501,39 @@ impl Ctx {
             before.push(self.shard(*a, *p).await?);
         }
         let data = Program::serialize_instruction(ix.clone())?;
-        let sent = self.wallet().send_pub_tx_paid_by(self.mentions(rows, signers), data, program, self.payer).await;
-        let hash = match sent {
-            Ok(h) => h,
-            Err(e) => {
-                let line = serde_json::json!({"op": op, "label": self.label, "verdict": "rejected", "error": format!("{e:?}")});
-                println!("{line}");
-                return Ok(line);
+        // A sequencer that drops transactions is met by sending again, up to three
+        // times. Every attempt is signed with the payer's next nonce as the chain
+        // sees it, so while an earlier attempt is only late the attempts share a
+        // nonce and at most one of them can land; each is looked for again
+        // before the next is sent.
+        let mut sent_hashes = vec![];
+        let mut found = None;
+        for attempt in 1..=3 {
+            let sent = self.wallet().send_pub_tx_paid_by(self.mentions(rows.clone(), signers), data.clone(), program, self.payer).await;
+            match sent {
+                Ok(h) => sent_hashes.push(h),
+                Err(e) if sent_hashes.is_empty() => {
+                    let line = serde_json::json!({"op": op, "label": self.label, "verdict": "rejected", "error": format!("{e:?}")});
+                    println!("{line}");
+                    return Ok(line);
+                }
+                Err(e) => eprintln!("{op}: attempt {attempt} not sent: {e:?}"),
             }
-        };
-        let polled = tokio::time::timeout(Duration::from_secs(180), self.wallet().poll_transaction(hash)).await;
-        let block = match polled {
-            Ok(Ok((_, b))) => Some(b),
-            _ => None,
+            for (i, h) in sent_hashes.iter().enumerate() {
+                let wait = if i + 1 == sent_hashes.len() { 180 } else { 5 };
+                if let Ok(Ok((_, b))) = tokio::time::timeout(Duration::from_secs(wait), self.wallet().poll_transaction(*h)).await {
+                    found = Some((*h, b));
+                    break;
+                }
+            }
+            if found.is_some() {
+                break;
+            }
+            eprintln!("{op}: attempt {attempt} not included yet");
+        }
+        let (hash, block) = match found {
+            Some((h, b)) => (h, Some(b)),
+            None => (*sent_hashes.last().expect("one attempt was sent"), None),
         };
         let mut after = vec![];
         for (a, p) in watch {

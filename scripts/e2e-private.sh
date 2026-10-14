@@ -87,6 +87,7 @@ check "destination received 100 more" "$(bal "$DEST")" 160
 check "the members' view of the vault" "$(jget "$(off "${P[@]}" vault track "$MS" --group "$GROUP")" balance_seen_by_this_member)" 340
 check "and still nothing public about it" "$(bal "$VAULT")" 0
 
+python3 scripts/reresolve.py "$RPC" "$OUT"
 applied=$(awk -F'\t' '$3=="applied"' "$OUT" | wc -l | tr -d ' ')
 refused=$(awk -F'\t' '$2=="refused" && ($3=="reverted"||$3=="rejected"||$3=="not-included")' "$OUT" | wc -l | tr -d ' ')
 echo "summary: $applied applied, $refused refused as expected, $(grep -c '^# check ok' "$OUT") state checks ok, failures=$fail"

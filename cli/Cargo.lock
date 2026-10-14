@@ -1263,7 +1263,6 @@ dependencies = [
 [[package]]
 name = "common"
 version = "0.1.0"
-source = "git+https://github.com/logos-blockchain/logos-execution-zone.git?rev=db66590ab821a4e142c211017a3866d007f6fa77#db66590ab821a4e142c211017a3866d007f6fa77"
 dependencies = [
  "anyhow",
  "base64 0.22.1",

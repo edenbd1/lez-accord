@@ -48,11 +48,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - run: sudo apt-get update && sudo apt-get install -y libpcsclite-dev pkg-config libclang-dev
-      - name: LEZ v0.3.0 sequencer and wallet
+      # The sequencer is v0.3.1, as on the public testnet; the wallet stays v0.3.0,
+      # whose config and storage format the CLI's wallet crate reads.
+      - name: LEZ v0.3.1 sequencer, v0.3.0 wallet
         run: |
           git clone https://github.com/logos-blockchain/logos-execution-zone /tmp/lez
           cd /tmp/lez && git checkout db66590ab821a4e142c211017a3866d007f6fa77
-          cargo build --release --features standalone -p sequencer_service -p wallet
+          cargo build --release -p wallet
+          git checkout 1a003bfbfb89fcf987f62975cd08a401169e1b8c
+          cargo build --release --features standalone -p sequencer_service
           echo /tmp/lez/target/release >> "$GITHUB_PATH"
       - run: cargo build --release --manifest-path cli/Cargo.toml
       - name: Start the sequencer and a wallet
