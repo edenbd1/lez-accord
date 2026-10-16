@@ -1,0 +1,71 @@
+# M=1: spend under limit 0 (sub-quorum 1) from private vault C7zxcKZhKPZ7YjV5wCX69MgRCLXtqXBAeKQRU8WJZ89o of acc-pm-10162011, to 3258o4mESGLjPPFka3mFTqyVCfBwZhc5aQBgrdELb6fq
+# 2026-10-16T20:57:46Z against https://testnet.lez.logos.co; ACCORD_AT_DELAY_MS=60000
+# Mac16,8 Apple M4 Pro hw.memsize=25769803776 hw.ncpu=14
+# load before: load averages: 46.91 73.76 74.59; other provers running: 1
+Latest block is 25262
+proving the private-vault spend locally; this takes minutes
+{"op":"spend-private-proved","prove_and_submit_ms":340819,"signatures":1}
+{"block":null,"label":"spend-private-m1","op":"spend-private","tx":"0b959b889cccc3730804c3875f59c2c25b51bbd093f61d6f63f812c4e4e93dab","vault":"C7zxcKZhKPZ7YjV5wCX69MgRCLXtqXBAeKQRU8WJZ89o","verdict":"not-included"}
+Latest block is 25383
+Syncing to block 25383. Blocks to sync: 121
+Synced to block 25383 in 993.409041ms
+     1242.57 real      2151.42 user        29.01 sys
+          6590939136  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             2511073  page reclaims
+                 807  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                 568  messages sent
+                 657  messages received
+                   0  signals received
+              154409  voluntary context switches
+             3721924  involuntary context switches
+          1343073614  instructions retired
+           688560618  cycles elapsed
+            10076712  peak memory footprint
+# load during: 20:58:16 64.85 75.35 75.13; r0vm processes incl. this run's: 2
+# load during: 20:58:46 83.68 78.73 76.34; r0vm processes incl. this run's: 2
+# load during: 20:59:16 105.42 84.76 78.63; r0vm processes incl. this run's: 2
+# load during: 20:59:46 121.29 90.38 80.87; r0vm processes incl. this run's: 2
+# load during: 21:00:16 145.98 99.43 84.48; r0vm processes incl. this run's: 3
+# load during: 21:00:46 132.11 100.64 85.45; r0vm processes incl. this run's: 3
+# load during: 21:01:16 136.54 104.38 87.31; r0vm processes incl. this run's: 3
+# load during: 21:01:46 137.87 108.00 89.23; r0vm processes incl. this run's: 3
+# load during: 21:02:16 134.25 110.03 90.61; r0vm processes incl. this run's: 3
+# load during: 21:02:47 129.35 110.97 91.62; r0vm processes incl. this run's: 3
+# load during: 21:03:17 109.23 107.90 91.18; r0vm processes incl. this run's: 2
+# load during: 21:03:47 84.10 102.19 89.70; r0vm processes incl. this run's: 0
+# load during: 21:04:17 52.95 92.92 86.77; r0vm processes incl. this run's: 0
+# load during: 21:04:47 33.42 84.38 83.89; r0vm processes incl. this run's: 0
+# load during: 21:05:17 21.74 76.68 81.11; r0vm processes incl. this run's: 0
+# load during: 21:05:47 14.38 69.63 78.41; r0vm processes incl. this run's: 0
+# load during: 21:06:17 9.66 63.21 75.77; r0vm processes incl. this run's: 0
+# load during: 21:06:47 6.49 57.33 73.21; r0vm processes incl. this run's: 0
+# load during: 21:07:17 5.54 52.23 70.81; r0vm processes incl. this run's: 0
+# load during: 21:07:47 4.37 47.48 68.44; r0vm processes incl. this run's: 0
+# load during: 21:08:17 5.40 43.62 66.31; r0vm processes incl. this run's: 0
+# load during: 21:08:47 5.21 39.92 64.18; r0vm processes incl. this run's: 0
+# load during: 21:09:17 4.66 36.47 62.09; r0vm processes incl. this run's: 0
+# load during: 21:09:47 4.34 33.35 60.07; r0vm processes incl. this run's: 0
+# load during: 21:10:17 4.03 30.50 58.11; r0vm processes incl. this run's: 0
+# load during: 21:10:47 3.64 27.87 56.20; r0vm processes incl. this run's: 0
+# load during: 21:11:17 3.27 25.46 54.34; r0vm processes incl. this run's: 0
+# load during: 21:11:47 3.40 23.37 52.59; r0vm processes incl. this run's: 0
+# load during: 21:12:17 3.16 21.40 50.86; r0vm processes incl. this run's: 0
+# load during: 21:12:47 2.97 19.60 49.18; r0vm processes incl. this run's: 0
+# load during: 21:13:17 3.60 18.17 47.64; r0vm processes incl. this run's: 0
+# load during: 21:13:47 3.24 16.68 46.08; r0vm processes incl. this run's: 0
+# load during: 21:14:17 3.33 15.41 44.59; r0vm processes incl. this run's: 0
+# load during: 21:14:47 4.06 14.44 43.23; r0vm processes incl. this run's: 0
+# load during: 21:15:17 4.47 13.54 41.91; r0vm processes incl. this run's: 0
+# load during: 21:15:47 4.11 12.59 40.58; r0vm processes incl. this run's: 0
+# load during: 21:16:17 3.93 11.74 39.30; r0vm processes incl. this run's: 0
+# load during: 21:16:47 4.05 11.03 38.09; r0vm processes incl. this run's: 0
+# load during: 21:17:17 3.58 10.24 36.86; r0vm processes incl. this run's: 0
+# load during: 21:17:47 4.59 9.86 35.80; r0vm processes incl. this run's: 0
+# load during: 21:18:17 4.97 9.42 34.74; r0vm processes incl. this run's: 0
+{"tx": "0b959b889cccc3730804c3875f59c2c25b51bbd093f61d6f63f812c4e4e93dab", "resolves": false}

@@ -1,0 +1,10 @@
+# run against http://127.0.0.1:3048, 2026-10-16T20:32:10Z
+# program VN5EDQ3Au14E6eMVPjFjekZYGeALXz9iX1W3TCFhG97 24a69044e34c2604e1a277dc1958855f0a2d95d65d4b0735052b34a51d323cd9
+{"block":30,"label":"create","op":"create","tx":"1c98e7c1b4d2fb3b70a411bf1703488ab2895798214b66f584568d5f547e17d9","verdict":"applied"}
+{"block":31,"label":"activate","op":"activate","tx":"ea5c286cd7d24a95d185df281f37e9cb12af74aba611fa5bc6ad25312d2fb9ed","verdict":"applied"}
+{"block":47,"label":"fund","op":"vault-fund","tx":"24e813edce757d25e1bb04b22cfc74996f80e62d88fda896dd260e600030daac","vault":"GiveoHQU1p6hrbHXW5rFkuZRrXjoyD8ZtoSB8iszduUQ","verdict":"applied"}
+{"balance_seen_by_this_member":"1000","op":"vault-track","private_vault":"GiveoHQU1p6hrbHXW5rFkuZRrXjoyD8ZtoSB8iszduUQ"}
+MS=acc-pm-10162032
+GROUP=accord-pm-10162032
+VAULT=GiveoHQU1p6hrbHXW5rFkuZRrXjoyD8ZtoSB8iszduUQ
+DEST=EBNAwFyonoEYEeZ996h4tJrgoJYrvm6UqrzJ4fc2WyY

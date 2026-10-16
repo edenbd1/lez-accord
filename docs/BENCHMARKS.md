@@ -79,8 +79,8 @@ The succinct receipt is nearly constant in M (about +340 bytes per approval, the
 signatures themselves in the journal). Proving time grows with the number of segments, about 20 s per
 approval on this machine; every M up to 16 proves in under seven minutes. These are
 the program's own receipt, not a whole private transaction: the privacy-preserving
-circuit adds its own proving on top, and that composed transaction is measured per M
-on the testnet next. The window's start `at` is chosen by the client (the program
+circuit adds its own proving on top; the composed transaction is measured per M on
+the testnet in [PRIVATE-TX-MEASURED.md](PRIVATE-TX-MEASURED.md). The window's start `at` is chosen by the client (the program
 reads no clock), so a client whose proof takes longer than ten minutes opens the
 window when the proof is expected to finish.
 

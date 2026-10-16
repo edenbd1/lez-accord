@@ -1,0 +1,15 @@
+# run against https://testnet.lez.logos.co, 2026-10-16T20:11:50Z
+# program CehtqLan7giiHfVV5qDD9dtXvVi2h7GMdXM87HD2bbQF 24a69044e34c2604e1a277dc1958855f0a2d95d65d4b0735052b34a51d323cd9
+{"attempts":["343dabdb9f030cd45e79b7aa3790e4e37e6e1c341342f231dc3ca7ac3b882da2","ebcdb800874069ed2c133eccbafd2583ca3280c0135e2edabb8043ff56ab66dd"],"block":25049,"label":"create","op":"create","tx":"343dabdb9f030cd45e79b7aa3790e4e37e6e1c341342f231dc3ca7ac3b882da2","verdict":"reverted"}
+{"block":null,"label":"fund","op":"vault-fund","tx":"9ea3f1bcbd267f45de7711a2a2adfbb3514769430ae5a132d77dffe195009969","vault":"C7zxcKZhKPZ7YjV5wCX69MgRCLXtqXBAeKQRU8WJZ89o","verdict":"not-included"}
+{"balance_seen_by_this_member":"0","op":"vault-track","private_vault":"C7zxcKZhKPZ7YjV5wCX69MgRCLXtqXBAeKQRU8WJZ89o"}
+MS=acc-pm-10162011
+GROUP=accord-pm-10162011
+VAULT=C7zxcKZhKPZ7YjV5wCX69MgRCLXtqXBAeKQRU8WJZ89o
+DEST=3258o4mESGLjPPFka3mFTqyVCfBwZhc5aQBgrdELb6fq
+# 2026-10-16T20:37:09Z the create above reverted (E7116 a spender appears twice: the setup built the M=1 limit as k1+k2+k1, `seq 2 1` counting down); the fund above was not included; create again under the same id, so the vault id is the same
+# limits: --limit k1:1:100:1d --limit k1+k2+k3:3:100:1d --limit k1+k2+k3+k4+k5:5:100:1d --limit k1+k2+k3+k4+k5+k6+k7+k8+k9+k10:10:100:1d
+{"block":25173,"label":"create","op":"create","tx":"c5df66c8f143a25dfe29ecc9d0a52ffd64113662600e152dcb037f965eb92b99","verdict":"applied"}
+{"block":25186,"label":"activate","op":"activate","tx":"88c39ca71090c71fe13c8d8aa036dc426a9f566d6c6ee1a538bbec1ddca39046","verdict":"applied"}
+{"block":25216,"label":"fund2","op":"vault-fund","tx":"e260e4d696a538b16232f9eef9e71d9be8368e58dba69b11c96fedd7ed7836bf","vault":"C7zxcKZhKPZ7YjV5wCX69MgRCLXtqXBAeKQRU8WJZ89o","verdict":"applied"}
+{"balance_seen_by_this_member":"1000","op":"vault-track","private_vault":"C7zxcKZhKPZ7YjV5wCX69MgRCLXtqXBAeKQRU8WJZ89o"}

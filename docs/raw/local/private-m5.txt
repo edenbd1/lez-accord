@@ -1,0 +1,35 @@
+# M=5: spend under limit 2 (sub-quorum 5) from private vault GiveoHQU1p6hrbHXW5rFkuZRrXjoyD8ZtoSB8iszduUQ of acc-pm-10162032, to EBNAwFyonoEYEeZ996h4tJrgoJYrvm6UqrzJ4fc2WyY
+# 2026-10-16T21:21:56Z against http://127.0.0.1:3048; ACCORD_AT_DELAY_MS=0
+# Mac16,8 Apple M4 Pro hw.memsize=25769803776 hw.ncpu=14
+# load before: load averages: 33.55 27.57 37.10; other provers running: 0
+Latest block is 228
+proving the private-vault spend locally; this takes minutes
+{"op":"spend-private-proved","prove_and_submit_ms":165070,"signatures":5}
+{"block":240,"label":"spend-private-m5","op":"spend-private","tx":"da030dacc3cbd5b9e619923661cfc2ebe18117a4ce1419c8eb73bcc2b2551e17","vault":"GiveoHQU1p6hrbHXW5rFkuZRrXjoyD8ZtoSB8iszduUQ","verdict":"applied"}
+Latest block is 240
+Syncing to block 240. Blocks to sync: 12
+Synced to block 240 in 69.064417ms
+      177.18 real      1800.47 user        20.14 sys
+          7625261056  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             1950097  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                  45  messages sent
+                  94  messages received
+                   0  signals received
+                 104  voluntary context switches
+             2809921  involuntary context switches
+           718952713  instructions retired
+           244211966  cycles elapsed
+            10011032  peak memory footprint
+# load during: 21:22:26 42.73 30.27 37.74; r0vm processes incl. this run's: 1
+# load during: 21:22:56 46.02 32.17 38.17; r0vm processes incl. this run's: 1
+# load during: 21:23:26 54.07 35.28 39.08; r0vm processes incl. this run's: 1
+# load during: 21:23:56 60.47 38.62 40.15; r0vm processes incl. this run's: 1
+# load during: 21:24:26 52.31 38.69 40.12; r0vm processes incl. this run's: 1
+{"tx": "da030dacc3cbd5b9e619923661cfc2ebe18117a4ce1419c8eb73bcc2b2551e17", "resolves": true, "block": 240, "tx_bytes": 248780, "kind_tag": 1}

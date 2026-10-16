@@ -1072,7 +1072,10 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
             let cfg = config_account(&p, &id);
             let msg = spend_message(&cfg, limit, l.uses, &to, &asset, amount);
             let approvals = signers.iter().map(|k| ctx.sign(k, &msg)).collect::<Result<_>>()?;
-            let ix = Instruction::Spend { multisig_id: id, limit, uses: l.uses, asset, amount, approvals, at: ctx.now().await? };
+            // ACCORD_AT_DELAY_MS: open the window later than now, for a private proof
+            // expected to take longer than the window (the program reads no clock).
+            let delay: u64 = std::env::var("ACCORD_AT_DELAY_MS").ok().and_then(|v| v.parse().ok()).unwrap_or(0);
+            let ix = Instruction::Spend { multisig_id: id, limit, uses: l.uses, asset, amount, approvals, at: ctx.now().await? + delay };
             match private_vault {
                 None => {
                     ctx.send("spend", &ix, rows::spend(&p, &id, &asset, to), &[], &[(cfg, p)]).await?;
@@ -1092,7 +1095,9 @@ async fn run(mut ctx: Ctx, cmd: Cmd, elf: &PathBuf) -> Result<()> {
                     let pwd = lee::privacy_preserving_transaction::circuit::ProgramWithDependencies::new(program, p, std::collections::HashMap::new());
                     let before = ctx.shard(cfg, p).await?;
                     eprintln!("proving the private-vault spend locally; this takes minutes");
+                    let t0 = std::time::Instant::now();
                     let sent = ctx.wallet().send_privacy_preserving_tx(mentions, Program::serialize_instruction(ix)?, &pwd).await.map(|(h, _)| h);
+                    eprintln!("{}", serde_json::json!({"op": "spend-private-proved", "signatures": signers.len(), "prove_and_submit_ms": t0.elapsed().as_millis() as u64}));
                     report_private(&ctx, "spend-private", sent.map_err(|e| anyhow!("{e:?}")), cfg, p, before, vault).await?;
                     let w = ctx.wallet.as_mut().expect("this command opens the wallet");
                     w.sync_to_latest_block().await?;

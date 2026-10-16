@@ -1,0 +1,31 @@
+# M=1: spend under limit 0 (sub-quorum 1) from private vault C7zxcKZhKPZ7YjV5wCX69MgRCLXtqXBAeKQRU8WJZ89o of acc-pm-10162011, to 3258o4mESGLjPPFka3mFTqyVCfBwZhc5aQBgrdELb6fq
+# 2026-10-16T20:47:31Z against https://testnet.lez.logos.co; ACCORD_AT_DELAY_MS=0
+# Mac16,8 Apple M4 Pro hw.memsize=25769803776 hw.ncpu=14
+Latest block is 25227
+Syncing to block 25227. Blocks to sync: 3
+Synced to block 25227 in 61.675792ms
+proving the private-vault spend locally; this takes minutes
+{"op":"spend-private-proved","prove_and_submit_ms":465879,"signatures":1}
+{"block":25254,"label":"spend-private-m1","op":"spend-private","tx":"30fdfcaf2e8ff6f384d968619564021a3cf6f30fea401e8d1737a8565df10757","vault":"C7zxcKZhKPZ7YjV5wCX69MgRCLXtqXBAeKQRU8WJZ89o","verdict":"applied"}
+Latest block is 25254
+Syncing to block 25254. Blocks to sync: 27
+Synced to block 25254 in 621.444ms
+      529.11 real      2462.27 user        53.84 sys
+          4547002368  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             3940186  page reclaims
+                2219  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                 125  messages sent
+                 268  messages received
+                   0  signals received
+               85219  voluntary context switches
+             6973219  involuntary context switches
+           934877058  instructions retired
+           394164485  cycles elapsed
+            11715136  peak memory footprint
+{"tx": "30fdfcaf2e8ff6f384d968619564021a3cf6f30fea401e8d1737a8565df10757", "resolves": true, "block": 25254, "tx_bytes": 248012, "kind_tag": 1}

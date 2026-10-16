@@ -1,0 +1,43 @@
+# M=5: spend under limit 2 (sub-quorum 5) from private vault C7zxcKZhKPZ7YjV5wCX69MgRCLXtqXBAeKQRU8WJZ89o of acc-pm-10162011, to 3258o4mESGLjPPFka3mFTqyVCfBwZhc5aQBgrdELb6fq
+# 2026-10-16T21:36:51Z against https://testnet.lez.logos.co; ACCORD_AT_DELAY_MS=60000
+# Mac16,8 Apple M4 Pro hw.memsize=25769803776 hw.ncpu=14
+# load before: load averages: 8.82 36.82 42.37; other provers running: 0
+Latest block is 25477
+proving the private-vault spend locally; this takes minutes
+{"op":"spend-private-proved","prove_and_submit_ms":165302,"signatures":5}
+{"block":25498,"label":"spend-private-m5","op":"spend-private","tx":"5e8f7d3ad6f9e4679922c20d55815fc0a6cc5233e36fa15e8dc1f3675dc68cdd","vault":"C7zxcKZhKPZ7YjV5wCX69MgRCLXtqXBAeKQRU8WJZ89o","verdict":"applied"}
+Latest block is 25504
+Syncing to block 25504. Blocks to sync: 27
+Synced to block 25504 in 244.578208ms
+      413.00 real      1778.42 user        20.12 sys
+          7211270144  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             1834090  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                 239  messages sent
+                 323  messages received
+                   0  signals received
+                 189  voluntary context switches
+             2955796  involuntary context switches
+           868816376  instructions retired
+           376179472  cycles elapsed
+            11813416  peak memory footprint
+# load during: 21:37:21 21.72 37.18 42.30; r0vm processes incl. this run's: 1
+# load during: 21:37:51 40.49 40.22 43.22; r0vm processes incl. this run's: 1
+# load during: 21:38:22 44.68 41.26 43.49; r0vm processes incl. this run's: 1
+# load during: 21:38:52 52.35 43.55 44.25; r0vm processes incl. this run's: 1
+# load during: 21:39:22 45.54 42.73 43.93; r0vm processes incl. this run's: 1
+# load during: 21:39:52 34.33 40.46 43.07; r0vm processes incl. this run's: 0
+# load during: 21:40:22 22.46 36.99 41.73; r0vm processes incl. this run's: 0
+# load during: 21:40:52 25.80 36.24 41.28; r0vm processes incl. this run's: 0
+# load during: 21:41:22 19.82 33.82 40.23; r0vm processes incl. this run's: 0
+# load during: 21:41:52 13.58 30.98 38.98; r0vm processes incl. this run's: 0
+# load during: 21:42:22 9.59 28.34 37.74; r0vm processes incl. this run's: 0
+# load during: 21:42:52 7.27 25.98 36.56; r0vm processes incl. this run's: 0
+# load during: 21:43:22 5.37 23.73 35.38; r0vm processes incl. this run's: 0
+{"tx": "5e8f7d3ad6f9e4679922c20d55815fc0a6cc5233e36fa15e8dc1f3675dc68cdd", "resolves": true, "block": 25498, "tx_bytes": 248780, "kind_tag": 1}

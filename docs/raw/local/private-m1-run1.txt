@@ -1,0 +1,31 @@
+# M=1: spend under limit 0 (sub-quorum 1) from private vault GiveoHQU1p6hrbHXW5rFkuZRrXjoyD8ZtoSB8iszduUQ of acc-pm-10162032, to EBNAwFyonoEYEeZ996h4tJrgoJYrvm6UqrzJ4fc2WyY
+# 2026-10-16T20:36:56Z against http://127.0.0.1:3048; ACCORD_AT_DELAY_MS=0
+# Mac16,8 Apple M4 Pro hw.memsize=25769803776 hw.ncpu=14
+Latest block is 48
+Syncing to block 48. Blocks to sync: 1
+Synced to block 48 in 4.757666ms
+proving the private-vault spend locally; this takes minutes
+{"op":"spend-private-proved","prove_and_submit_ms":236380,"signatures":1}
+{"block":65,"label":"spend-private-m1","op":"spend-private","tx":"14df6f30cb8006b5b58f82bdfe6e7a35b680d4a27e4b1d611066e2a719aadad1","vault":"GiveoHQU1p6hrbHXW5rFkuZRrXjoyD8ZtoSB8iszduUQ","verdict":"applied"}
+Latest block is 65
+Syncing to block 65. Blocks to sync: 17
+Synced to block 65 in 82.982ms
+      248.52 real      2116.58 user        22.95 sys
+          5425135616  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             2470435  page reclaims
+                1158  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                  46  messages sent
+                  99  messages received
+                   0  signals received
+                4362  voluntary context switches
+             2581487  involuntary context switches
+           727044043  instructions retired
+           264999415  cycles elapsed
+            10699136  peak memory footprint
+{"tx": "14df6f30cb8006b5b58f82bdfe6e7a35b680d4a27e4b1d611066e2a719aadad1", "resolves": true, "block": 65, "tx_bytes": 248012, "kind_tag": 1}

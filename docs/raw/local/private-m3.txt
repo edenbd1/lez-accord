@@ -1,0 +1,38 @@
+# M=3: spend under limit 1 (sub-quorum 3) from private vault GiveoHQU1p6hrbHXW5rFkuZRrXjoyD8ZtoSB8iszduUQ of acc-pm-10162032, to EBNAwFyonoEYEeZ996h4tJrgoJYrvm6UqrzJ4fc2WyY
+# 2026-10-16T21:18:46Z against http://127.0.0.1:3048; ACCORD_AT_DELAY_MS=0
+# Mac16,8 Apple M4 Pro hw.memsize=25769803776 hw.ncpu=14
+# load before: load averages: 5.60 9.15 33.77; other provers running: 1
+Latest block is 216
+Syncing to block 216. Blocks to sync: 151
+Synced to block 216 in 679.142208ms
+proving the private-vault spend locally; this takes minutes
+{"op":"spend-private-proved","prove_and_submit_ms":164321,"signatures":3}
+{"block":228,"label":"spend-private-m3","op":"spend-private","tx":"184e1c6352e3449ecc19eeae9b8cf97c480c2cb8c6da7eaaff0f630677ada886","vault":"GiveoHQU1p6hrbHXW5rFkuZRrXjoyD8ZtoSB8iszduUQ","verdict":"applied"}
+Latest block is 228
+Syncing to block 228. Blocks to sync: 12
+Synced to block 228 in 59.668042ms
+      189.31 real      1756.73 user        22.94 sys
+          6012551168  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             2282884  page reclaims
+                1953  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                  53  messages sent
+                 108  messages received
+                   0  signals received
+                 715  voluntary context switches
+             3052526  involuntary context switches
+          1017658018  instructions retired
+           395983070  cycles elapsed
+            10371480  peak memory footprint
+# load during: 21:19:16 22.22 12.75 34.21; r0vm processes incl. this run's: 1
+# load during: 21:19:46 50.73 20.89 36.44; r0vm processes incl. this run's: 2
+# load during: 21:20:16 51.48 23.94 37.00; r0vm processes incl. this run's: 1
+# load during: 21:20:46 53.43 27.02 37.67; r0vm processes incl. this run's: 1
+# load during: 21:21:16 53.00 29.48 38.19; r0vm processes incl. this run's: 2
+# load during: 21:21:46 37.85 28.17 37.42; r0vm processes incl. this run's: 1
+{"tx": "184e1c6352e3449ecc19eeae9b8cf97c480c2cb8c6da7eaaff0f630677ada886", "resolves": true, "block": 228, "tx_bytes": 248396, "kind_tag": 1}

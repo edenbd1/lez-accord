@@ -1,0 +1,28 @@
+# M=3: spend under limit 1 (sub-quorum 3) from private vault C7zxcKZhKPZ7YjV5wCX69MgRCLXtqXBAeKQRU8WJZ89o of acc-pm-10162011, to 3258o4mESGLjPPFka3mFTqyVCfBwZhc5aQBgrdELb6fq
+# 2026-10-16T20:56:33Z against https://testnet.lez.logos.co; ACCORD_AT_DELAY_MS=120000
+# Mac16,8 Apple M4 Pro hw.memsize=25769803776 hw.ncpu=14
+Latest block is 25262
+Syncing to block 25262. Blocks to sync: 8
+Synced to block 25262 in 377.383459ms
+proving the private-vault spend locally; this takes minutes
+{"op":"spend-private-proved","prove_and_submit_ms":207,"signatures":3}
+{"error":"MissingMembershipProof(C7zxcKZhKPZ7YjV5wCX69MgRCLXtqXBAeKQRU8WJZ89o)","label":"spend-private-m3","op":"spend-private","vault":"C7zxcKZhKPZ7YjV5wCX69MgRCLXtqXBAeKQRU8WJZ89o","verdict":"rejected"}
+Latest block is 25262
+        1.13 real         0.04 user         0.02 sys
+            19873792  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                1135  page reclaims
+                 335  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                  36  messages sent
+                  69  messages received
+                   0  signals received
+                  46  voluntary context switches
+                 586  involuntary context switches
+           478650463  instructions retired
+           216175937  cycles elapsed
+             9159232  peak memory footprint

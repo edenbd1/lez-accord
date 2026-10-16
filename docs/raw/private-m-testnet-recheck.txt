@@ -1,0 +1,10 @@
+# re-check against https://testnet.lez.logos.co 2026-10-16T22:02:17.256566Z head 
+{"M": 1, "tx": "fda6307341be61c353127f1871035c54339ad0225b9543d463748d2c37863b2b", "resolves": true, "block": 25552, "tx_bytes": 248012, "kind_tag": 1}
+{"M": 3, "tx": "804ce7d1513c59d57b97d7b2667aa7cbdb4822fead88ec7b5df559bd90e77556", "resolves": true, "block": 25471, "tx_bytes": 248396, "kind_tag": 1}
+{"M": 5, "tx": "5e8f7d3ad6f9e4679922c20d55815fc0a6cc5233e36fa15e8dc1f3675dc68cdd", "resolves": true, "block": 25498, "tx_bytes": 248780, "kind_tag": 1}
+{"M": 10, "tx": "6b3bad982da1b7cd53d80a74f662f1199eb84b27dc51d6c34a41597d11f013c6", "resolves": true, "block": 25523, "tx_bytes": 249740, "kind_tag": 1}
+{"M": "m1-attempt1(rolled back)", "tx": "30fdfcaf2e8ff6f384d968619564021a3cf6f30fea401e8d1737a8565df10757", "resolves": true, "block": 25263, "tx_bytes": 248012, "kind_tag": 1}
+{"M": "m1-attempt2(not included)", "tx": "0b959b889cccc3730804c3875f59c2c25b51bbd093f61d6f63f812c4e4e93dab", "resolves": false, "block": null, "tx_bytes": null, "kind_tag": null}
+{"M": "control(random)", "tx": "884972724cef3cd6fd513535d0adcf92558a5ec7cfd15cd56bcaba7639d89ce1", "resolves": false, "block": null, "tx_bytes": null, "kind_tag": null}
+{"dest 3258o4mESGLjPPFka3mFTqyVCfBwZhc5aQBgrdELb6fq balance": 50, "private vault C7zxcKZh public balance": 0}
+# limits (min_signers, uses, spent): [(1, 2, '20'), (3, 1, '10'), (5, 1, '10'), (10, 1, '10')]
